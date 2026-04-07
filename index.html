@@ -310,6 +310,13 @@
           <div class="check-sub">Минимум 30 минут</div>
         </div>
       </li>
+      <li class="check-item" data-id="stories" onclick="toggleCheck(this)">
+        <div class="check-box">✓</div>
+        <div class="check-content">
+          <div class="check-text">3 сторис 📱</div>
+          <div class="check-sub">Каждый день</div>
+        </div>
+      </li>
     </ul>
   </div>
 
@@ -412,7 +419,10 @@
 </div>
 
 <div class="footer">
-  <div class="week-label" id="weekLabel"></div>
+  <div>
+    <div class="week-label" id="weekLabel"></div>
+    <div class="week-label" id="footerDate" style="margin-top:4px;font-weight:600;color:var(--text2)"></div>
+  </div>
   <div class="footer-btns">
     <button class="save-history-btn" onclick="saveToHistory()">💾 Сохранить день в историю</button>
     <button class="reset-btn" onclick="resetDay()">Сбросить день</button>
@@ -486,6 +496,8 @@ function renderHeader() {
   const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
   document.getElementById('weekLabel').textContent =
     `Неделя ${mon.getDate()}.${String(mon.getMonth()+1).padStart(2,'0')} – ${sun.getDate()}.${String(sun.getMonth()+1).padStart(2,'0')}`;
+  document.getElementById('footerDate').textContent =
+    `${now.getDate()} ${MONTHS_RU[now.getMonth()]}`;
 }
 
 function renderRings() {
@@ -502,6 +514,8 @@ function renderRings() {
       from: '#86efac', to: '#15803d', track: '#dcfce7', display: c.includes('post') ? '✓' : '–' },
     { label: 'AI 30мин',  val: c.includes('ai') ? 1 : 0, max: 1,
       from: '#93c5fd', to: '#1d4ed8', track: '#dbeafe', display: c.includes('ai') ? '✓' : '–' },
+    { label: 'Сторис',   val: c.includes('stories') ? 1 : 0, max: 1,
+      from: '#f0abfc', to: '#a21caf', track: '#fae8ff', display: c.includes('stories') ? '✓' : '–' },
   ];
 
   el.innerHTML = '';
@@ -823,6 +837,7 @@ function renderHistory() {
     body += `<div class="history-checklist-item ${h.workout!==undefined?(h.workout?'done':'missed'):(h.touches>0?'done':'missed')}">${h.workout!==undefined?(h.workout?'✓':'✗'):''} Тренировка</div>`;
     body += `<div class="history-checklist-item ${h.post?'done':'missed'}">${h.post?'✓':'✗'} Пост в Telegram</div>`;
     body += `<div class="history-checklist-item ${h.ai?'done':'missed'}">${h.ai?'✓':'✗'} Изучение AI</div>`;
+    body += `<div class="history-checklist-item ${h.stories?'done':'missed'}">${h.stories?'✓':'✗'} 3 сторис</div>`;
 
     // Касания — журнал
     if (h.touchLog && h.touchLog.length) {
@@ -871,6 +886,7 @@ function autoSaveToHistory() {
     post: state.day.checks.includes('post'),
     ai: state.day.checks.includes('ai'),
     workout: state.day.checks.includes('workout'),
+    stories: state.day.checks.includes('stories'),
     calls: (state.day.callLog || []).length,
     proposals: state.week.proposal,
     yt: state.week.ytCount || 0,
