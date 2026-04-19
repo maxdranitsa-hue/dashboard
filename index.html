@@ -216,6 +216,79 @@
   .data-btn.import { background:var(--surface2); }
   .import-input { display:none; }
 
+  /* MANIFEST BLOCK */
+  .manifest { background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%); color:#fff; border-radius: var(--r); padding: 20px 24px; margin-bottom: 18px; position: relative; }
+  .manifest-top { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; flex-wrap:wrap; }
+  .manifest-goals { flex:1; min-width: 220px; }
+  .manifest-label { font-size:10px; color:#fcd34d; text-transform:uppercase; letter-spacing:.8px; font-weight:700; margin-bottom:8px; }
+  .manifest-line { font-size:14px; line-height:1.55; color:#e5e5e5; margin-bottom:6px; }
+  .manifest-line b { color:#fff; font-weight:700; }
+  .manifest-anchor { margin-top:14px; padding:12px 14px; background:rgba(252,211,77,.1); border-left:3px solid #fcd34d; border-radius:6px; font-size:14px; color:#fef3c7; font-style:italic; line-height:1.5; }
+  .manifest-actions { display:flex; gap:8px; flex-direction:column; }
+  .manifest-btn { padding:10px 18px; border-radius:8px; border:none; font-size:13px; font-weight:600; cursor:pointer; transition:all .15s; white-space:nowrap; }
+  .checkin-btn { background:#fcd34d; color:#1a1a1a; }
+  .checkin-btn:hover { background:#fbbf24; transform:translateY(-1px); }
+  .manifest-expand-btn { background:rgba(255,255,255,.1); color:#fff; border:1px solid rgba(255,255,255,.2); }
+  .manifest-expand-btn:hover { background:rgba(255,255,255,.2); }
+  .manifest-full { display:none; margin-top:16px; padding-top:16px; border-top:1px solid rgba(255,255,255,.15); font-size:13px; line-height:1.65; color:#d4d4d4; }
+  .manifest-full.open { display:block; }
+  .manifest-full h4 { font-size:12px; color:#fcd34d; text-transform:uppercase; letter-spacing:.6px; margin:14px 0 6px; font-weight:700; }
+  .manifest-full h4:first-child { margin-top:0; }
+  .manifest-full ul { list-style:none; padding:0; }
+  .manifest-full li { padding:3px 0; padding-left:16px; position:relative; }
+  .manifest-full li:before { content:'→'; position:absolute; left:0; color:#fcd34d; }
+  .checkin-toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:#16a34a; color:#fff; padding:14px 24px; border-radius:10px; font-weight:600; box-shadow:0 6px 24px rgba(22,163,74,.4); opacity:0; transition:opacity .3s; z-index:1000; pointer-events:none; }
+  .checkin-toast.show { opacity:1; }
+
+  /* LEADS PIPELINE */
+  .leads-section { background:var(--surface); border:1.5px solid var(--border); border-radius:var(--r); padding:20px; margin-bottom:14px; }
+  .leads-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:8px; }
+  .leads-title { font-size:11px; font-weight:600; color:var(--text3); text-transform:uppercase; letter-spacing:.6px; }
+  .leads-add-btn { padding:7px 14px; border-radius:8px; border:none; background:var(--text); color:#fff; font-size:12px; font-weight:600; cursor:pointer; transition:opacity .15s; }
+  .leads-add-btn:hover { opacity:.8; }
+  .leads-board { display:grid; grid-template-columns:repeat(5, 1fr); gap:10px; }
+  .lead-column { background:var(--surface2); border-radius:10px; padding:10px; min-height:120px; }
+  .lead-col-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding:0 2px; }
+  .lead-col-name { font-size:11px; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:.4px; }
+  .lead-col-count { font-size:11px; color:var(--text3); background:var(--surface); padding:2px 7px; border-radius:10px; }
+  .lead-card { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:10px 12px; margin-bottom:8px; font-size:12px; cursor:grab; transition:border-color .15s, transform .1s; position:relative; }
+  .lead-card:hover { border-color:var(--text); }
+  .lead-card.dragging { opacity:.4; }
+  .lead-name { font-weight:700; font-size:13px; color:var(--text); margin-bottom:3px; line-height:1.3; }
+  .lead-meta { font-size:11px; color:var(--text3); margin-bottom:5px; }
+  .lead-action { font-size:12px; color:var(--text2); background:var(--bg); padding:5px 7px; border-radius:5px; margin-top:5px; line-height:1.35; }
+  .lead-amount { font-size:11px; font-weight:700; color:var(--green); margin-top:5px; }
+  .lead-move { display:flex; gap:3px; margin-top:6px; }
+  .lead-move-btn { flex:1; padding:3px 0; border:1px solid var(--border); background:var(--surface2); color:var(--text3); font-size:11px; cursor:pointer; border-radius:4px; transition:all .1s; }
+  .lead-move-btn:hover { background:var(--text); color:#fff; border-color:var(--text); }
+  .lead-del-btn { position:absolute; top:5px; right:5px; background:none; border:none; color:var(--text3); cursor:pointer; font-size:14px; padding:2px 5px; line-height:1; opacity:.5; }
+  .lead-del-btn:hover { color:var(--red); opacity:1; }
+  .lead-col-new { background:#eff6ff; }
+  .lead-col-dialog { background:#fffbeb; }
+  .lead-col-kp { background:#fef2f2; }
+  .lead-col-wait { background:#faf5ff; }
+  .lead-col-closed { background:#f0fdf4; }
+  .lead-deadline-ok { color:var(--text3); font-size:11px; }
+  .lead-deadline-warn { color:var(--yellow); font-size:11px; font-weight:600; }
+  .lead-deadline-bad { color:var(--red); font-size:11px; font-weight:700; }
+
+  /* LEAD MODAL */
+  .modal-bg { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.5); z-index:100; justify-content:center; align-items:center; padding:20px; }
+  .modal-bg.show { display:flex; }
+  .modal { background:#fff; border-radius:12px; padding:24px; width:100%; max-width:440px; max-height:90vh; overflow-y:auto; }
+  .modal h3 { font-size:16px; margin-bottom:14px; font-weight:700; }
+  .modal-field { margin-bottom:12px; }
+  .modal-field label { display:block; font-size:11px; color:var(--text2); text-transform:uppercase; letter-spacing:.4px; margin-bottom:5px; font-weight:600; }
+  .modal-field input, .modal-field textarea, .modal-field select { width:100%; border:1.5px solid var(--border); border-radius:8px; padding:9px 12px; font-size:13px; font-family:inherit; outline:none; transition:border-color .15s; }
+  .modal-field input:focus, .modal-field textarea:focus, .modal-field select:focus { border-color:var(--text); }
+  .modal-field textarea { resize:vertical; min-height:60px; }
+  .modal-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:18px; }
+  .modal-btn { padding:9px 18px; border-radius:8px; border:none; font-size:13px; font-weight:600; cursor:pointer; transition:opacity .15s; }
+  .modal-btn.primary { background:var(--text); color:#fff; }
+  .modal-btn.primary:hover { opacity:.8; }
+  .modal-btn.cancel { background:var(--bg); color:var(--text2); }
+  .modal-btn.cancel:hover { background:var(--border); }
+
   /* FOOTER */
   .footer { display:flex; justify-content:space-between; align-items:center; margin-top:8px; }
   .week-label { font-size:12px; color:var(--text3); }
@@ -230,6 +303,13 @@
     .card.full { grid-column:1; }
     .gap-cards { grid-template-columns:repeat(2,1fr); }
     .pipeline { grid-template-columns:repeat(2,1fr); }
+    .leads-board { grid-template-columns:1fr; }
+    .manifest-top { flex-direction:column; }
+    .manifest-actions { flex-direction:row; width:100%; }
+    .manifest-btn { flex:1; }
+  }
+  @media (max-width:900px) and (min-width:621px) {
+    .leads-board { grid-template-columns:repeat(2, 1fr); }
   }
 </style>
 </head>
@@ -250,6 +330,50 @@
   Каждый день без касаний и контента — это день без воронки. 4 корпоративных клиента по $6,500 не появятся сами.
 </div>
 
+<!-- MANIFEST -->
+<div class="manifest">
+  <div class="manifest-top">
+    <div class="manifest-goals">
+      <div class="manifest-label">Куда я иду — к весне 2027</div>
+      <div class="manifest-line"><b>$15k в месяц чистыми</b> (≈$30k выручки) · <b>30 000 подписчиков YouTube</b> · <b>долг $55 000 погашен</b> · <b>поездка в США</b> · команда работает на моё имя</div>
+      <div class="manifest-anchor">«Каждый туториал — моя инвестиция в известность. Я её отдаю, чтобы получить.»</div>
+    </div>
+    <div class="manifest-actions">
+      <button class="manifest-btn checkin-btn" onclick="startCheckin()">🎯 Утренний чек-ин</button>
+      <button class="manifest-btn manifest-expand-btn" onclick="toggleManifest()">Развернуть манифест ▾</button>
+    </div>
+  </div>
+  <div class="manifest-full" id="manifestFull">
+    <h4>Почему я это делаю</h4>
+    <ul>
+      <li>Позиционирование свободы — моя, моего времени, моего выбора</li>
+      <li>Известность — стать топ-of-mind в AI-нише</li>
+      <li>США, Европа, английский рынок — туда хочу выйти, туда хочу переехать</li>
+      <li>Семья — дочери видят отца, который строит, а не работает «на кого-то»</li>
+      <li>Имя — 17 лет работал. Теперь работаю на то, что останется</li>
+    </ul>
+    <h4>Что я НЕ делаю никогда</h4>
+    <ul>
+      <li>Не занимаюсь тем, что не строит моё имя</li>
+      <li>Не сомневаюсь в принятых решениях — иду по своему треку и плану</li>
+      <li>Не возвращаюсь каждый день к сомнениям о выбранном направлении</li>
+      <li>Не работаю в найме</li>
+      <li>Не начинаю день со скроллинга новостей и ленты</li>
+      <li>Не плачу за подкасты — живые каналы зовут сами</li>
+    </ul>
+    <h4>Правила для контента</h4>
+    <ul>
+      <li><b>Я не раздаю знания — я раздаю приглашение в свою работу.</b></li>
+      <li>Если я не сниму — кто-то другой снимет через 2 недели и заберёт мою аудиторию</li>
+      <li>Первые 15 секунд каждого видео — рамка «я решаю свою задачу», а не «я учу инструменту»</li>
+    </ul>
+    <h4>Одно действие, без которого день не считается</h4>
+    <ul>
+      <li>Каждый день — либо я что-то выпускаю, либо двигаю следующий выпуск ближе к готовности</li>
+    </ul>
+  </div>
+</div>
+
 <!-- КОЛЬЦА АКТИВНОСТИ -->
 <div class="rings-section" id="ringsSection"></div>
 
@@ -262,7 +386,7 @@
 <!-- ВОРОНКА: только КП и Сделки -->
 <div class="pipeline">
   <div class="pipe">
-    <div class="pipe-label">КП отправлено</div>
+    <div class="pipe-label">КП отправлено (счётчик)</div>
     <div class="pipe-num" id="pProposalNum">0</div>
     <div class="pipe-controls">
       <button class="pipe-btn" onclick="pipeAdd('proposal')">+</button>
@@ -278,6 +402,85 @@
     </div>
   </div>
 </div>
+
+<!-- LEADS — ОБРАЩЕНИЯ И ВОРОНКА -->
+<div class="leads-section">
+  <div class="leads-header">
+    <div class="leads-title">Лиды и обращения</div>
+    <button class="leads-add-btn" onclick="openLeadModal()">+ Новый лид</button>
+  </div>
+  <div class="leads-board" id="leadsBoard"></div>
+</div>
+
+<!-- МОДАЛКА ДЛЯ ЛИДА -->
+<div class="modal-bg" id="leadModalBg" onclick="if(event.target===this)closeLeadModal()">
+  <div class="modal">
+    <h3 id="leadModalTitle">Новый лид</h3>
+    <input type="hidden" id="leadModalId">
+    <div class="modal-field">
+      <label>Имя / название компании *</label>
+      <input type="text" id="leadName" placeholder="Иван С. / ООО Ромашка">
+    </div>
+    <div class="modal-field">
+      <label>Канал обращения</label>
+      <select id="leadChannel">
+        <option value="Telegram">Telegram</option>
+        <option value="Instagram">Instagram</option>
+        <option value="YouTube">YouTube</option>
+        <option value="Email">Email</option>
+        <option value="Рекомендация">Рекомендация</option>
+        <option value="Аутрич">Аутрич</option>
+        <option value="VC.RU">VC.RU</option>
+        <option value="Другое">Другое</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label>Продукт</label>
+      <select id="leadProduct">
+        <option value="Корпобучение">Корпобучение ($6500)</option>
+        <option value="Личный коучинг">Личный коучинг ($2500)</option>
+        <option value="Интенсив">Интенсив (55k₽)</option>
+        <option value="Discovery">Discovery</option>
+        <option value="Разработка">Разработка</option>
+        <option value="Курс Claude Code">Курс Claude Code</option>
+        <option value="Другое">Другое</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label>Сумма потенциала ($)</label>
+      <input type="number" id="leadAmount" placeholder="6500">
+    </div>
+    <div class="modal-field">
+      <label>Next action (что дальше, к какой дате)</label>
+      <textarea id="leadAction" placeholder="Написать ответ до 18.04, созвон 20.04 в 14:00"></textarea>
+    </div>
+    <div class="modal-field">
+      <label>Дедлайн следующего шага (опционально)</label>
+      <input type="date" id="leadDeadline">
+    </div>
+    <div class="modal-field">
+      <label>Статус</label>
+      <select id="leadStatus">
+        <option value="new">Новый</option>
+        <option value="dialog">В диалоге</option>
+        <option value="kp">КП в работе / отправлено</option>
+        <option value="wait">Ждёт оплату</option>
+        <option value="closed">Закрыт (win)</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label>Заметки</label>
+      <textarea id="leadNotes" placeholder="Любой контекст, ссылки, детали"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" onclick="closeLeadModal()">Отмена</button>
+      <button class="modal-btn primary" onclick="saveLead()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="checkin-toast" id="checkinToast">Промпт скопирован. Открой Claude Code и вставь.</div>
 
 <div class="grid">
 
@@ -378,6 +581,12 @@
     </div>
   </div>
 
+  <!-- АКТИВНЫЕ КП -->
+  <div class="card full">
+    <div class="card-title">Активные КП — жду ответ</div>
+    <div id="activeKpList"></div>
+  </div>
+
   <!-- ИСТОРИЯ -->
   <div class="card full">
     <div class="card-title">История по дням</div>
@@ -431,8 +640,15 @@
 
 <script>
 const RATE = 80;
-const GOAL_USD = 19800;
+const GOAL_USD = 30000;
 const GOAL_RUB = GOAL_USD * RATE;
+const LEAD_STATUSES = [
+  { id: 'new',    name: 'Новые',        hint: 'Не ответил',          cls: 'lead-col-new' },
+  { id: 'dialog', name: 'В диалоге',    hint: 'Переписка / созвон',  cls: 'lead-col-dialog' },
+  { id: 'kp',     name: 'КП в работе',  hint: 'Готовлю / отправил',  cls: 'lead-col-kp' },
+  { id: 'wait',   name: 'Ждёт оплату',  hint: 'КП ушло, жду ответ',  cls: 'lead-col-wait' },
+  { id: 'closed', name: 'Закрыто',      hint: 'Win',                 cls: 'lead-col-closed' }
+];
 const MONTHS_RU = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
 const DAYS_FULL = ['воскресенье','понедельник','вторник','среда','четверг','пятница','суббота'];
 const DAYS_MON = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
@@ -467,6 +683,8 @@ function saveState() {
 function loadDeals() { return JSON.parse(localStorage.getItem(getMonthKey()) || '[]'); }
 function saveDeals(d) { localStorage.setItem(getMonthKey(), JSON.stringify(d)); }
 function loadHistory() { return JSON.parse(localStorage.getItem('history') || '[]'); }
+function loadLeads() { return JSON.parse(localStorage.getItem('leads') || '[]'); }
+function saveLeads(l) { localStorage.setItem('leads', JSON.stringify(l)); }
 
 let state = loadState();
 
@@ -483,6 +701,8 @@ function render() {
   renderWeekBars();
   renderGapCards();
   renderDeals();
+  renderLeads();
+  renderActiveKp();
   renderHistory();
   renderAlert();
 }
@@ -1050,6 +1270,241 @@ function resetDay() {
 }
 
 document.getElementById('dealAmountInput').addEventListener('keydown', e => { if (e.key === 'Enter') addDeal(); });
+
+// ============ MANIFEST & CHECK-IN ============
+function toggleManifest() {
+  const el = document.getElementById('manifestFull');
+  el.classList.toggle('open');
+  const btn = document.querySelector('.manifest-expand-btn');
+  btn.textContent = el.classList.contains('open') ? 'Свернуть манифест ▴' : 'Развернуть манифест ▾';
+}
+
+function startCheckin() {
+  const today = new Date();
+  const dateStr = `${today.getDate()} ${MONTHS_RU[today.getMonth()]} ${today.getFullYear()}`;
+  const dayName = DAYS_FULL[today.getDay()];
+  const history = loadHistory();
+  const yesterday = history[0] || null;
+  const leads = loadLeads();
+  const newLeads = leads.filter(l => l.status === 'new').length;
+  const waitLeads = leads.filter(l => l.status === 'wait').length;
+  const kpLeads = leads.filter(l => l.status === 'kp').length;
+  const deals = loadDeals();
+  const totalRub = deals.reduce((s,d) => s + d.amount, 0);
+  const totalUsd = Math.round(totalRub / RATE);
+
+  const prompt = `Утренний чек-ин. Сегодня ${dayName}, ${dateStr}.
+
+Контекст:
+- Выручка месяца: $${totalUsd.toLocaleString('en')} из $${GOAL_USD.toLocaleString('en')} цели
+- Новых лидов без ответа: ${newLeads}
+- КП в работе: ${kpLeads}
+- КП отправлено, жду ответ: ${waitLeads}
+${yesterday ? `- Вчера: касаний ${yesterday.touches}/7, пост ${yesterday.post?'✓':'✗'}, AI ${yesterday.ai?'✓':'✗'}` : ''}
+
+Прочитай мой MANIFEST.md в /Users/maxdranitsa/second-brain/vault/MANIFEST.md — это мой якорь на 12 месяцев.
+
+Задай мне три вопроса строго по очереди, не больше трёх:
+1. Что я сделал вчера, что двигает меня к целям манифеста
+2. Что я делаю сегодня (3 главных действия, не больше)
+3. Где затык и что с ним делать сейчас
+
+Не давай мне новых стратегий. Твоя задача — вернуть меня к уже принятым решениям. Если я пытаюсь пересматривать стратегию — напомни, что вопрос закрыт, и верни к действию.
+
+После ответа на третий вопрос — кратко (до 80 слов) подытожь план на день и скажи "иди работай".`;
+
+  navigator.clipboard.writeText(prompt).then(() => {
+    const toast = document.getElementById('checkinToast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3500);
+  }).catch(() => {
+    alert('Не удалось скопировать. Промпт:\n\n' + prompt);
+  });
+}
+
+// ============ LEADS ============
+function openLeadModal(leadId) {
+  const lead = leadId ? loadLeads().find(l => l.id === leadId) : null;
+  document.getElementById('leadModalTitle').textContent = lead ? 'Редактировать лид' : 'Новый лид';
+  document.getElementById('leadModalId').value = lead ? lead.id : '';
+  document.getElementById('leadName').value = lead ? lead.name : '';
+  document.getElementById('leadChannel').value = lead ? lead.channel : 'Telegram';
+  document.getElementById('leadProduct').value = lead ? lead.product : 'Корпобучение';
+  document.getElementById('leadAmount').value = lead ? (lead.amount || '') : '';
+  document.getElementById('leadAction').value = lead ? (lead.action || '') : '';
+  document.getElementById('leadDeadline').value = lead ? (lead.deadline || '') : '';
+  document.getElementById('leadStatus').value = lead ? lead.status : 'new';
+  document.getElementById('leadNotes').value = lead ? (lead.notes || '') : '';
+  document.getElementById('leadModalBg').classList.add('show');
+  setTimeout(() => document.getElementById('leadName').focus(), 50);
+}
+
+function closeLeadModal() {
+  document.getElementById('leadModalBg').classList.remove('show');
+}
+
+function saveLead() {
+  const name = document.getElementById('leadName').value.trim();
+  if (!name) { document.getElementById('leadName').focus(); return; }
+
+  const id = document.getElementById('leadModalId').value;
+  const leads = loadLeads();
+  const now = new Date();
+  const nowIso = now.toISOString();
+
+  const data = {
+    name,
+    channel: document.getElementById('leadChannel').value,
+    product: document.getElementById('leadProduct').value,
+    amount: parseInt(document.getElementById('leadAmount').value) || 0,
+    action: document.getElementById('leadAction').value.trim(),
+    deadline: document.getElementById('leadDeadline').value,
+    status: document.getElementById('leadStatus').value,
+    notes: document.getElementById('leadNotes').value.trim()
+  };
+
+  if (id) {
+    const idx = leads.findIndex(l => l.id === id);
+    if (idx >= 0) leads[idx] = { ...leads[idx], ...data, updated: nowIso };
+  } else {
+    leads.unshift({ id: 'l' + Date.now(), ...data, created: nowIso, updated: nowIso });
+  }
+  saveLeads(leads);
+  closeLeadModal();
+  render();
+}
+
+function deleteLead(id) {
+  if (!confirm('Удалить лид?')) return;
+  const leads = loadLeads().filter(l => l.id !== id);
+  saveLeads(leads);
+  render();
+}
+
+function moveLead(id, direction) {
+  const leads = loadLeads();
+  const idx = leads.findIndex(l => l.id === id);
+  if (idx < 0) return;
+  const statusIdx = LEAD_STATUSES.findIndex(s => s.id === leads[idx].status);
+  const newStatusIdx = Math.max(0, Math.min(LEAD_STATUSES.length - 1, statusIdx + direction));
+  leads[idx].status = LEAD_STATUSES[newStatusIdx].id;
+  leads[idx].updated = new Date().toISOString();
+  saveLeads(leads);
+  render();
+}
+
+function renderLeads() {
+  const leads = loadLeads();
+  const el = document.getElementById('leadsBoard');
+  el.innerHTML = '';
+
+  LEAD_STATUSES.forEach((status, sIdx) => {
+    const col = document.createElement('div');
+    col.className = 'lead-column ' + status.cls;
+
+    const colLeads = leads.filter(l => l.status === status.id);
+
+    let html = `<div class="lead-col-header">
+      <div class="lead-col-name">${status.name}</div>
+      <div class="lead-col-count">${colLeads.length}</div>
+    </div>`;
+
+    colLeads.forEach(lead => {
+      const deadlineClass = deadlineClassFor(lead.deadline);
+      const deadlineText = lead.deadline ? formatDeadline(lead.deadline) : '';
+      html += `<div class="lead-card" onclick="openLeadModal('${lead.id}')">
+        <button class="lead-del-btn" onclick="event.stopPropagation();deleteLead('${lead.id}')">×</button>
+        <div class="lead-name">${escapeHtml(lead.name)}</div>
+        <div class="lead-meta">${escapeHtml(lead.channel)} · ${escapeHtml(lead.product || '')}</div>
+        ${lead.action ? `<div class="lead-action">→ ${escapeHtml(lead.action)}</div>` : ''}
+        ${deadlineText ? `<div class="${deadlineClass}" style="margin-top:5px">⏰ ${deadlineText}</div>` : ''}
+        ${lead.amount ? `<div class="lead-amount">$${lead.amount.toLocaleString('en')}</div>` : ''}
+        <div class="lead-move" onclick="event.stopPropagation()">
+          ${sIdx > 0 ? `<button class="lead-move-btn" onclick="moveLead('${lead.id}',-1)">←</button>` : ''}
+          ${sIdx < LEAD_STATUSES.length - 1 ? `<button class="lead-move-btn" onclick="moveLead('${lead.id}',1)">→</button>` : ''}
+        </div>
+      </div>`;
+    });
+
+    col.innerHTML = html;
+    el.appendChild(col);
+  });
+}
+
+function renderActiveKp() {
+  const leads = loadLeads().filter(l => l.status === 'kp' || l.status === 'wait');
+  const el = document.getElementById('activeKpList');
+
+  if (!leads.length) {
+    el.innerHTML = '<div style="text-align:center;color:var(--text3);font-size:13px;padding:14px 0">Нет активных КП. Лиды со статусом «КП в работе» и «Ждёт оплату» появятся здесь.</div>';
+    return;
+  }
+
+  leads.sort((a, b) => {
+    if (a.deadline && b.deadline) return a.deadline.localeCompare(b.deadline);
+    if (a.deadline) return -1;
+    if (b.deadline) return 1;
+    return (b.updated || '').localeCompare(a.updated || '');
+  });
+
+  let html = '<div style="display:flex;flex-direction:column;gap:8px">';
+  leads.forEach(lead => {
+    const dCls = deadlineClassFor(lead.deadline);
+    const dAge = daysAgoISO(lead.updated);
+    const statusLabel = lead.status === 'kp' ? 'КП в работе' : 'Ждёт оплату';
+    const statusColor = lead.status === 'kp' ? 'var(--red)' : 'var(--blue)';
+    html += `<div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:12px;cursor:pointer;flex-wrap:wrap" onclick="openLeadModal('${lead.id}')">
+      <div style="flex:1;min-width:180px">
+        <div style="font-weight:700;font-size:14px;margin-bottom:3px">${escapeHtml(lead.name)}</div>
+        <div style="font-size:12px;color:var(--text3)">${escapeHtml(lead.channel)} · ${escapeHtml(lead.product || '')} ${lead.amount ? '· <span style="color:var(--green);font-weight:600">$'+lead.amount.toLocaleString('en')+'</span>' : ''}</div>
+        ${lead.action ? `<div style="font-size:12px;color:var(--text2);margin-top:4px">→ ${escapeHtml(lead.action)}</div>` : ''}
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:11px;font-weight:700;color:${statusColor};text-transform:uppercase;letter-spacing:.4px">${statusLabel}</div>
+        ${lead.deadline ? `<div class="${dCls}" style="margin-top:3px">⏰ ${formatDeadline(lead.deadline)}</div>` : ''}
+        <div style="font-size:11px;color:var(--text3);margin-top:3px">обн. ${dAge}</div>
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+function deadlineClassFor(deadline) {
+  if (!deadline) return 'lead-deadline-ok';
+  const today = new Date(); today.setHours(0,0,0,0);
+  const d = new Date(deadline + 'T00:00:00');
+  const diffDays = Math.round((d - today) / 86400000);
+  if (diffDays < 0) return 'lead-deadline-bad';
+  if (diffDays <= 1) return 'lead-deadline-warn';
+  return 'lead-deadline-ok';
+}
+
+function formatDeadline(deadline) {
+  if (!deadline) return '';
+  const d = new Date(deadline + 'T00:00:00');
+  const today = new Date(); today.setHours(0,0,0,0);
+  const diffDays = Math.round((d - today) / 86400000);
+  const dStr = `${d.getDate()}.${String(d.getMonth()+1).padStart(2,'0')}`;
+  if (diffDays < 0) return `${dStr} — просрочено на ${-diffDays}д`;
+  if (diffDays === 0) return `${dStr} — сегодня`;
+  if (diffDays === 1) return `${dStr} — завтра`;
+  return `${dStr} — через ${diffDays}д`;
+}
+
+function daysAgoISO(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso), now = new Date();
+  const diffDays = Math.floor((now - d) / 86400000);
+  if (diffDays === 0) return 'сегодня';
+  if (diffDays === 1) return 'вчера';
+  return `${diffDays} д назад`;
+}
+
+function escapeHtml(s) {
+  if (s === null || s === undefined) return '';
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
 
 render();
 setInterval(render, 60000);
