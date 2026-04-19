@@ -613,9 +613,9 @@
 
 </div>
 
-<!-- ВИДЕОКОНТЕНТ — В КОНЦЕ НЕДЕЛИ -->
+<!-- КОНТЕНТ — в любой день -->
 <div class="card" style="margin-bottom:14px">
-  <div class="card-title">Видеоконтент — суббота</div>
+  <div class="card-title">Контент за неделю</div>
   <div class="sat-grid">
     <div class="sat-counter">
       <div class="sat-label">YouTube</div>
@@ -623,16 +623,16 @@
       <div class="sat-btns">
         <button class="sat-btn" onclick="satSub('yt')">−</button>
         <button class="sat-btn" onclick="satAdd('yt')">+</button>
-        <span class="sat-target">цель 2</span>
+        <span class="sat-target">цель 2 / нед</span>
       </div>
     </div>
     <div class="sat-counter">
-      <div class="sat-label">Reels</div>
-      <div class="sat-num" id="reelsNum">0</div>
+      <div class="sat-label">Статьи</div>
+      <div class="sat-num" id="artNum">0</div>
       <div class="sat-btns">
-        <button class="sat-btn" onclick="satSub('reels')">−</button>
-        <button class="sat-btn" onclick="satAdd('reels')">+</button>
-        <span class="sat-target">цель 3</span>
+        <button class="sat-btn" onclick="satSub('article')">−</button>
+        <button class="sat-btn" onclick="satAdd('article')">+</button>
+        <span class="sat-target">цель 3 / нед</span>
       </div>
     </div>
   </div>
@@ -683,8 +683,8 @@ function getMonthKey() { const d = new Date(); return `deals_${d.getFullYear()}_
 
 function loadState() {
   return {
-    week: JSON.parse(localStorage.getItem(getWeekKey()) || '{"touch":0,"call":0,"proposal":0,"ytCount":0,"reelsCount":0}'),
-    day: JSON.parse(localStorage.getItem(getTodayKey()) || '{"checks":[],"touches":0,"touchLog":[],"callLog":[]}')
+    week: JSON.parse(localStorage.getItem(getWeekKey()) || '{"touch":0,"call":0,"proposal":0,"ytCount":0,"artCount":0}'),
+    day: JSON.parse(localStorage.getItem(getTodayKey()) || '{"checks":[],"touches":0,"touchLog":[],"callLog":[],"contentLog":[]}')
   };
 }
 function saveState() {
@@ -837,21 +837,32 @@ function renderPipeline() {
 }
 
 function renderSatCounters() {
-  const yt = state.week.ytCount || 0, reels = state.week.reelsCount || 0;
-  const ytEl = document.getElementById('ytNum'), reelsEl = document.getElementById('reelsNum');
+  const yt = state.week.ytCount || 0, art = state.week.artCount || 0;
+  const ytEl = document.getElementById('ytNum'), artEl = document.getElementById('artNum');
   ytEl.textContent = yt; ytEl.className = 'sat-num ' + (yt >= 2 ? 'ok' : yt > 0 ? 'partial' : 'zero');
-  reelsEl.textContent = reels; reelsEl.className = 'sat-num ' + (reels >= 3 ? 'ok' : reels > 0 ? 'partial' : 'zero');
+  artEl.textContent = art; artEl.className = 'sat-num ' + (art >= 3 ? 'ok' : art > 0 ? 'partial' : 'zero');
 }
 
 function renderWeekDays() {
   const el = document.getElementById('weekDays');
   el.innerHTML = '';
   const todayIdx = todayDayIdx();
-  const satDone = (state.week.ytCount || 0) >= 2 && (state.week.reelsCount || 0) >= 3;
+  const keys = weekDayKeys();
   DAYS_MON.forEach((d, i) => {
+    const log = contentForDayKey(keys[i]);
+    const ytN = log.filter(c => c.type === 'yt').length;
+    const artN = log.filter(c => c.type === 'article').length;
+    const hasContent = (ytN + artN) > 0;
     const div = document.createElement('div');
-    div.className = 'wday' + (i === todayIdx ? ' today' : '') + (i === 5 ? (satDone ? ' sat-day done' : ' sat-day') : '');
-    div.innerHTML = d + (i === 5 ? '<br><span style="font-size:9px">видео</span>' : '');
+    div.className = 'wday' + (i === todayIdx ? ' today' : '') + (hasContent ? ' sat-day done' : '');
+    let badge = '';
+    if (hasContent) {
+      const parts = [];
+      if (ytN) parts.push('▶' + ytN);
+      if (artN) parts.push('✎' + artN);
+      badge = '<br><span style="font-size:9px">' + parts.join(' ') + '</span>';
+    }
+    div.innerHTML = d + badge;
     el.appendChild(div);
   });
 }
@@ -864,7 +875,7 @@ function renderWeekBars() {
     { label: 'Встречи / нед', val: state.week.call, max: 8, goal: 2 },
     { label: 'КП / нед',      val: state.week.proposal, max: 4, goal: 1 },
     { label: 'YouTube',       val: state.week.ytCount || 0, max: 2, goal: 2 },
-    { label: 'Reels',         val: state.week.reelsCount || 0, max: 3, goal: 3 },
+    { label: 'Статьи',        val: state.week.artCount || 0, max: 3, goal: 3 },
   ];
   items.forEach(item => {
     const pct = Math.min(100, (item.val / item.max) * 100);
@@ -918,11 +929,11 @@ function renderGapCards() {
       cls: state.week.proposal >= 1 ? 'ok' : 'bad'
     },
     {
-      label: 'Видео (YT+Reels)',
-      val: (state.week.ytCount||0) + (state.week.reelsCount||0),
-      display: `${state.week.ytCount||0}+${state.week.reelsCount||0}`,
-      hint: (state.week.ytCount||0) >= 2 && (state.week.reelsCount||0) >= 3 ? 'Снято ✓' : 'Суббота — день съёмки',
-      cls: (state.week.ytCount||0) >= 2 && (state.week.reelsCount||0) >= 3 ? 'ok' : 'warn'
+      label: 'Контент / нед',
+      val: (state.week.ytCount||0) + (state.week.artCount||0),
+      display: `${state.week.ytCount||0}▶ ${state.week.artCount||0}✎`,
+      hint: (state.week.ytCount||0) >= 2 && (state.week.artCount||0) >= 3 ? 'Цели выполнены ✓' : 'YouTube 2 + статей 3',
+      cls: (state.week.ytCount||0) >= 2 && (state.week.artCount||0) >= 3 ? 'ok' : ((state.week.ytCount||0) + (state.week.artCount||0)) > 0 ? 'warn' : 'bad'
     },
   ];
 
@@ -1061,6 +1072,8 @@ function renderHistory() {
     badges += `<span class="history-badge ${h.ai?'ok':'bad'}">${h.ai?'✓':'✗'} AI</span>`;
     if ((h.calls||0) > 0) badges += `<span class="history-badge ok">Встречи: ${h.calls}</span>`;
     if ((h.proposals||0) > 0) badges += `<span class="history-badge ok">КП: ${h.proposals}</span>`;
+    if ((h.yt||0) > 0) badges += `<span class="history-badge ok">YT: ${h.yt}</span>`;
+    if ((h.articles||0) > 0) badges += `<span class="history-badge ok">Статьи: ${h.articles}</span>`;
 
     let body = '';
 
@@ -1087,13 +1100,22 @@ function renderHistory() {
       });
     }
 
+    // Контент — журнал
+    if (h.contentLog && h.contentLog.length) {
+      body += '<div class="history-section-title">Контент</div>';
+      h.contentLog.forEach(c => {
+        const label = c.type === 'yt' ? '▶ YouTube' : c.type === 'article' ? '✎ Статья' : c.type;
+        body += `<div class="history-log-item"><span class="history-log-time">${c.time || ''}</span>${label}</div>`;
+      });
+    }
+
     // Статистика
     body += '<div class="history-stats-row">';
     body += `<div class="history-stat"><div class="history-stat-val" style="color:${h.touches>=7?'var(--green)':h.touches>0?'var(--yellow)':'var(--red)'}">${h.touches}</div><div class="history-stat-label">Касания</div></div>`;
     body += `<div class="history-stat"><div class="history-stat-val">${h.calls||0}</div><div class="history-stat-label">Встречи</div></div>`;
     body += `<div class="history-stat"><div class="history-stat-val">${h.proposals||0}</div><div class="history-stat-label">КП</div></div>`;
     body += `<div class="history-stat"><div class="history-stat-val">${h.yt||0}</div><div class="history-stat-label">YouTube</div></div>`;
-    body += `<div class="history-stat"><div class="history-stat-val">${h.reels||0}</div><div class="history-stat-label">Reels</div></div>`;
+    body += `<div class="history-stat"><div class="history-stat-val">${h.articles||0}</div><div class="history-stat-label">Статьи</div></div>`;
     body += '</div>';
 
     div.innerHTML = `
@@ -1121,10 +1143,11 @@ function autoSaveToHistory() {
     stories: state.day.checks.includes('stories'),
     calls: (state.day.callLog || []).length,
     proposals: state.week.proposal,
-    yt: state.week.ytCount || 0,
-    reels: state.week.reelsCount || 0,
+    yt: (state.day.contentLog || []).filter(c => c.type === 'yt').length,
+    articles: (state.day.contentLog || []).filter(c => c.type === 'article').length,
     touchLog: state.day.touchLog || [],
-    callLog: state.day.callLog || []
+    callLog: state.day.callLog || [],
+    contentLog: state.day.contentLog || []
   };
   const idx = history.findIndex(h => h.date === dateStr);
   if (idx >= 0) history[idx] = entry; else history.unshift(entry);
@@ -1248,13 +1271,40 @@ function pipeSub(key) { if (state.week[key] > 0) state.week[key]--; saveState();
 
 function satAdd(type) {
   if (type === 'yt') state.week.ytCount = (state.week.ytCount||0) + 1;
-  else state.week.reelsCount = (state.week.reelsCount||0) + 1;
-  saveState(); render();
+  else if (type === 'article') state.week.artCount = (state.week.artCount||0) + 1;
+  else return;
+  const now = new Date();
+  const time = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+  state.day.contentLog = state.day.contentLog || [];
+  state.day.contentLog.push({ type, time });
+  saveState(); autoSaveToHistory(); render();
 }
 function satSub(type) {
   if (type === 'yt') state.week.ytCount = Math.max(0, (state.week.ytCount||0) - 1);
-  else state.week.reelsCount = Math.max(0, (state.week.reelsCount||0) - 1);
-  saveState(); render();
+  else if (type === 'article') state.week.artCount = Math.max(0, (state.week.artCount||0) - 1);
+  else return;
+  const log = state.day.contentLog || [];
+  for (let i = log.length - 1; i >= 0; i--) {
+    if (log[i].type === type) { log.splice(i, 1); break; }
+  }
+  state.day.contentLog = log;
+  saveState(); autoSaveToHistory(); render();
+}
+
+function contentForDayKey(key) {
+  try { const d = JSON.parse(localStorage.getItem(key) || '{}'); return d.contentLog || []; }
+  catch { return []; }
+}
+
+function weekDayKeys() {
+  const now = new Date(), day = now.getDay() || 7;
+  const mon = new Date(now); mon.setDate(now.getDate() - day + 1);
+  const keys = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(mon); d.setDate(mon.getDate() + i);
+    keys.push('day_' + d.getFullYear() + '_' + d.getMonth() + '_' + d.getDate());
+  }
+  return keys;
 }
 
 function addDeal() {
@@ -1675,10 +1725,10 @@ function mergeSnapshots(remote, local) {
       });
       out[k] = merged;
     } else if (k.startsWith('day_') && rv && lv) {
-      const score = x => (x.touchLog || []).length + (x.callLog || []).length + (x.checks || []).length + (x.touches || 0);
+      const score = x => (x.touchLog || []).length + (x.callLog || []).length + (x.checks || []).length + (x.touches || 0) + (x.contentLog || []).length;
       out[k] = score(lv) >= score(rv) ? lv : rv;
     } else if (k.startsWith('wk_') && rv && lv) {
-      const score = x => (x.touch || 0) + (x.call || 0) + (x.proposal || 0) + (x.ytCount || 0) + (x.reelsCount || 0) + (x.deal || 0);
+      const score = x => (x.touch || 0) + (x.call || 0) + (x.proposal || 0) + (x.ytCount || 0) + (x.artCount || 0) + (x.reelsCount || 0) + (x.deal || 0);
       out[k] = score(lv) >= score(rv) ? lv : rv;
     } else if (k.startsWith('deals_') && Array.isArray(rv) && Array.isArray(lv)) {
       const seen = new Set(), merged = [];
