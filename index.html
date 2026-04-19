@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Дашборд — Максим Драница</title>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -297,6 +298,10 @@
   .reset-btn:hover { border-color:var(--red); color:var(--red); }
   .save-history-btn { background:var(--text); border:none; color:#fff; border-radius:8px; padding:7px 14px; font-size:12px; cursor:pointer; transition:opacity .15s; }
   .save-history-btn:hover { opacity:.75; }
+  .gdrive-sync { display:flex; align-items:center; gap:10px; margin-top:10px; flex-wrap:wrap; font-size:12px; }
+  .sync-status { color:var(--text2); font-weight:500; }
+  .sync-status.ok { color:var(--green); }
+  .sync-status.err { color:var(--red); }
 
   @media (max-width:620px) {
     .grid { grid-template-columns:1fr; }
@@ -597,6 +602,12 @@
       <button class="data-btn export" onclick="exportAllData()">📥 Скачать все данные (JSON)</button>
       <button class="data-btn import" onclick="document.getElementById('importFile').click()">📤 Загрузить из бэкапа</button>
       <input type="file" id="importFile" class="import-input" accept=".json" onchange="importAllData(event)">
+    </div>
+    <div class="gdrive-sync">
+      <span id="syncStatus" class="sync-status">Google Drive: не подключён</span>
+      <button class="data-btn" id="syncConnectBtn" onclick="connectGDrive()">🔐 Подключить Google Drive</button>
+      <button class="data-btn" id="syncNowBtn" onclick="syncNow()" style="display:none">🔄 Синхронизировать сейчас</button>
+      <button class="data-btn" id="syncDisconnectBtn" onclick="disconnectGDrive()" style="display:none">Отключить</button>
     </div>
   </div>
 
@@ -1506,6 +1517,280 @@ function escapeHtml(s) {
   if (s === null || s === undefined) return '';
   return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
+
+// ==============================================================
+// Google Drive sync (backup of all localStorage to appDataFolder)
+// ==============================================================
+const GDRIVE_CLIENT_ID = '688906190680-uch3p6eg46dt1pi89drfl0nem6riftfg.apps.googleusercontent.com';
+const GDRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.appdata';
+const GDRIVE_FILE_NAME = 'dashboard-state.json';
+const SYNC_INTERVAL_MS = 60 * 60 * 1000; // 1 hour
+
+let gdTokenClient = null;
+let gdToken = null;
+let gdTokenExpiry = 0;
+let gdFileId = null;
+let gdLastSync = Number(localStorage.getItem('_lastSyncAt') || 0);
+let gdOnTokenResolve = null;
+let gdOnTokenReject = null;
+
+function gdInit() {
+  if (!window.google || !google.accounts || !google.accounts.oauth2) {
+    setTimeout(gdInit, 300);
+    return;
+  }
+  gdTokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: GDRIVE_CLIENT_ID,
+    scope: GDRIVE_SCOPE,
+    callback: (resp) => {
+      if (resp.error) {
+        const e = new Error(resp.error_description || resp.error);
+        if (gdOnTokenReject) { gdOnTokenReject(e); gdOnTokenReject = null; gdOnTokenResolve = null; }
+        return;
+      }
+      gdToken = resp.access_token;
+      gdTokenExpiry = Date.now() + ((resp.expires_in || 3600) * 1000) - 60000;
+      if (gdOnTokenResolve) { gdOnTokenResolve(gdToken); gdOnTokenResolve = null; gdOnTokenReject = null; }
+    }
+  });
+  updateSyncUI();
+  if (localStorage.getItem('_gdriveConnected') === '1') {
+    ensureGdToken(false)
+      .then(() => syncNow())
+      .catch(() => updateSyncUI('Нужно переподключиться', 'err'));
+  }
+}
+
+function ensureGdToken(interactive) {
+  if (gdToken && Date.now() < gdTokenExpiry) return Promise.resolve(gdToken);
+  return new Promise((resolve, reject) => {
+    gdOnTokenResolve = resolve;
+    gdOnTokenReject = reject;
+    gdTokenClient.requestAccessToken({ prompt: interactive ? 'consent' : '' });
+  });
+}
+
+function connectGDrive() {
+  if (!gdTokenClient) { alert('Модуль Google ещё не загрузился, попробуй через секунду.'); return; }
+  ensureGdToken(true)
+    .then(() => { localStorage.setItem('_gdriveConnected', '1'); return syncNow(); })
+    .catch(e => updateSyncUI('Ошибка: ' + e.message, 'err'));
+}
+
+function disconnectGDrive() {
+  if (!confirm('Отключить Google Drive? Локальные данные останутся на месте, но перестанут бэкапиться.')) return;
+  localStorage.removeItem('_gdriveConnected');
+  if (gdToken && google?.accounts?.oauth2) google.accounts.oauth2.revoke(gdToken, () => {});
+  gdToken = null; gdFileId = null; gdTokenExpiry = 0;
+  updateSyncUI();
+}
+
+async function gdFetch(url, opts) {
+  const token = await ensureGdToken(false);
+  const headers = Object.assign({}, (opts && opts.headers) || {}, { Authorization: 'Bearer ' + token });
+  return fetch(url, Object.assign({}, opts || {}, { headers }));
+}
+
+async function gdFindFile() {
+  if (gdFileId) return gdFileId;
+  const q = encodeURIComponent("name='" + GDRIVE_FILE_NAME + "' and trashed=false");
+  const resp = await gdFetch('https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=' + q + '&fields=files(id,name,modifiedTime)');
+  if (!resp.ok) throw new Error('Drive list failed: ' + resp.status);
+  const data = await resp.json();
+  if (data.files && data.files.length) gdFileId = data.files[0].id;
+  return gdFileId;
+}
+
+async function gdPull() {
+  const id = await gdFindFile();
+  if (!id) return null;
+  const resp = await gdFetch('https://www.googleapis.com/drive/v3/files/' + id + '?alt=media');
+  if (!resp.ok) return null;
+  try { return await resp.json(); } catch { return null; }
+}
+
+async function gdPush(snapshot) {
+  const body = JSON.stringify(snapshot);
+  const id = await gdFindFile();
+  if (id) {
+    const resp = await gdFetch('https://www.googleapis.com/upload/drive/v3/files/' + id + '?uploadType=media', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body
+    });
+    if (!resp.ok) throw new Error('Drive update failed: ' + resp.status);
+  } else {
+    const boundary = '----dash' + Date.now();
+    const meta = JSON.stringify({ name: GDRIVE_FILE_NAME, parents: ['appDataFolder'] });
+    const multipart =
+      '--' + boundary + '\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n' + meta + '\r\n' +
+      '--' + boundary + '\r\nContent-Type: application/json\r\n\r\n' + body + '\r\n--' + boundary + '--';
+    const resp = await gdFetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id', {
+      method: 'POST',
+      headers: { 'Content-Type': 'multipart/related; boundary=' + boundary },
+      body: multipart
+    });
+    if (!resp.ok) throw new Error('Drive create failed: ' + resp.status);
+    const data = await resp.json();
+    gdFileId = data.id;
+  }
+}
+
+function collectSnapshot() {
+  const data = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (!key || key.startsWith('_')) continue; // skip our own meta keys
+    const raw = localStorage.getItem(key);
+    try { data[key] = JSON.parse(raw); } catch { data[key] = raw; }
+  }
+  return { _savedAt: Date.now(), data };
+}
+
+function mergeSnapshots(remote, local) {
+  const R = (remote && remote.data) || {};
+  const L = (local && local.data) || {};
+  const out = Object.assign({}, R);
+  const rTime = (remote && remote._savedAt) || 0;
+  const lTime = (local && local._savedAt) || 0;
+
+  for (const k of Object.keys(L)) {
+    const rv = R[k], lv = L[k];
+    if (rv === undefined) { out[k] = lv; continue; }
+
+    if (k === 'history' && Array.isArray(rv) && Array.isArray(lv)) {
+      const merged = rv.slice();
+      lv.forEach(entry => {
+        const idx = merged.findIndex(h => h.date === entry.date);
+        if (idx >= 0) {
+          const a = (entry.touchLog || []).length + (entry.callLog || []).length;
+          const b = (merged[idx].touchLog || []).length + (merged[idx].callLog || []).length;
+          if (a > b) merged[idx] = entry;
+        } else merged.push(entry);
+      });
+      merged.sort((a, b) => {
+        const [ad, am, ay] = a.date.split('.').map(Number);
+        const [bd, bm, by] = b.date.split('.').map(Number);
+        return (by - ay) || (bm - am) || (bd - ad);
+      });
+      out[k] = merged;
+    } else if (k.startsWith('day_') && rv && lv) {
+      const score = x => (x.touchLog || []).length + (x.callLog || []).length + (x.checks || []).length + (x.touches || 0);
+      out[k] = score(lv) >= score(rv) ? lv : rv;
+    } else if (k.startsWith('wk_') && rv && lv) {
+      const score = x => (x.touch || 0) + (x.call || 0) + (x.proposal || 0) + (x.ytCount || 0) + (x.reelsCount || 0) + (x.deal || 0);
+      out[k] = score(lv) >= score(rv) ? lv : rv;
+    } else if (k.startsWith('deals_') && Array.isArray(rv) && Array.isArray(lv)) {
+      const seen = new Set(), merged = [];
+      for (const d of rv.concat(lv)) {
+        const sig = (d.name || '') + '|' + (d.date || '') + '|' + (d.amount || '');
+        if (!seen.has(sig)) { seen.add(sig); merged.push(d); }
+      }
+      out[k] = merged;
+    } else if (k === 'leads' && Array.isArray(rv) && Array.isArray(lv)) {
+      const seen = new Set(), merged = [];
+      for (const lead of rv.concat(lv)) {
+        const sig = lead.id || JSON.stringify(lead);
+        if (!seen.has(sig)) { seen.add(sig); merged.push(lead); }
+      }
+      out[k] = merged;
+    } else {
+      out[k] = lTime >= rTime ? lv : rv;
+    }
+  }
+  return { _savedAt: Math.max(rTime, lTime, Date.now()), data: out };
+}
+
+function applySnapshot(snapshot) {
+  if (!snapshot || !snapshot.data) return;
+  for (const [k, v] of Object.entries(snapshot.data)) {
+    localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v));
+  }
+}
+
+let gdSyncInFlight = false;
+async function syncNow() {
+  if (localStorage.getItem('_gdriveConnected') !== '1') return;
+  if (gdSyncInFlight) return;
+  gdSyncInFlight = true;
+  updateSyncUI('Синхронизация…');
+  try {
+    const remote = await gdPull();
+    const local = collectSnapshot();
+    let merged;
+    if (remote) {
+      merged = mergeSnapshots(remote, local);
+      applySnapshot(merged);
+      state = loadState();
+      render();
+    } else {
+      merged = local;
+    }
+    merged._savedAt = Date.now();
+    await gdPush(merged);
+    gdLastSync = Date.now();
+    localStorage.setItem('_lastSyncAt', String(gdLastSync));
+    updateSyncUI();
+  } catch (e) {
+    console.error('sync error', e);
+    updateSyncUI('Ошибка синка: ' + e.message, 'err');
+  } finally {
+    gdSyncInFlight = false;
+  }
+}
+
+function updateSyncUI(forceMsg, cls) {
+  const el = document.getElementById('syncStatus');
+  const connectBtn = document.getElementById('syncConnectBtn');
+  const nowBtn = document.getElementById('syncNowBtn');
+  const discBtn = document.getElementById('syncDisconnectBtn');
+  if (!el) return;
+
+  const connected = localStorage.getItem('_gdriveConnected') === '1';
+  if (connectBtn) connectBtn.style.display = connected ? 'none' : '';
+  if (nowBtn) nowBtn.style.display = connected ? '' : 'none';
+  if (discBtn) discBtn.style.display = connected ? '' : 'none';
+
+  el.classList.remove('ok', 'err');
+  if (forceMsg) {
+    el.textContent = forceMsg;
+    if (cls) el.classList.add(cls);
+    return;
+  }
+  if (!connected) { el.textContent = 'Google Drive: не подключён'; return; }
+  if (!gdLastSync) { el.textContent = '☁️ Подключено, ещё не синхронизировалось'; return; }
+  const m = Math.floor((Date.now() - gdLastSync) / 60000);
+  if (m < 1) el.textContent = '☁️ Синк только что';
+  else if (m < 60) el.textContent = '☁️ Синк ' + m + ' мин назад';
+  else el.textContent = '☁️ Синк ' + Math.floor(m / 60) + ' ч назад';
+  el.classList.add('ok');
+}
+
+// Hourly sync + refresh status label every minute
+setInterval(() => { syncNow(); }, SYNC_INTERVAL_MS);
+setInterval(updateSyncUI, 60 * 1000);
+
+// Best-effort final sync when closing tab / switching away
+function finalFlush() {
+  if (localStorage.getItem('_gdriveConnected') !== '1') return;
+  if (!gdToken || !gdFileId) return;
+  const snapshot = collectSnapshot();
+  snapshot._savedAt = Date.now();
+  try {
+    fetch('https://www.googleapis.com/upload/drive/v3/files/' + gdFileId + '?uploadType=media', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + gdToken },
+      body: JSON.stringify(snapshot),
+      keepalive: true
+    });
+  } catch {}
+}
+window.addEventListener('beforeunload', finalFlush);
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') syncNow();
+});
+
+gdInit();
 
 render();
 setInterval(render, 60000);
