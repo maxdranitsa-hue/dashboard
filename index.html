@@ -218,26 +218,26 @@
   .import-input { display:none; }
 
   /* MANIFEST BLOCK */
-  .manifest { background: var(--surface); color: var(--text); border:1.5px solid var(--border); border-radius: var(--r); padding: 22px 24px; margin-bottom: 18px; position: relative; }
+  .manifest { background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%); color:#fff; border-radius: var(--r); padding: 20px 24px; margin-bottom: 18px; position: relative; }
   .manifest-top { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; flex-wrap:wrap; }
   .manifest-goals { flex:1; min-width: 220px; }
-  .manifest-label { font-size:10px; color: var(--text3); text-transform:uppercase; letter-spacing:.8px; font-weight:700; margin-bottom:10px; }
-  .manifest-line { font-size:14px; line-height:1.55; color: var(--text2); margin-bottom:6px; }
-  .manifest-line b { color: var(--text); font-weight:700; }
-  .manifest-anchor { margin-top:14px; padding:12px 14px; background: #faf6ed; border-left:3px solid var(--text); border-radius:6px; font-size:14px; color: var(--text); font-style:italic; line-height:1.5; }
+  .manifest-label { font-size:10px; color:#fcd34d; text-transform:uppercase; letter-spacing:.8px; font-weight:700; margin-bottom:8px; }
+  .manifest-line { font-size:14px; line-height:1.55; color:#e5e5e5; margin-bottom:6px; }
+  .manifest-line b { color:#fff; font-weight:700; }
+  .manifest-anchor { margin-top:14px; padding:12px 14px; background:rgba(252,211,77,.1); border-left:3px solid #fcd34d; border-radius:6px; font-size:14px; color:#fef3c7; font-style:italic; line-height:1.5; }
   .manifest-actions { display:flex; gap:8px; flex-direction:column; }
   .manifest-btn { padding:10px 18px; border-radius:8px; border:none; font-size:13px; font-weight:600; cursor:pointer; transition:all .15s; white-space:nowrap; }
-  .checkin-btn { background: var(--text); color:#fff; }
-  .checkin-btn:hover { background:#000; transform:translateY(-1px); }
-  .manifest-expand-btn { background: var(--surface); color: var(--text2); border:1.5px solid var(--border); }
-  .manifest-expand-btn:hover { background: var(--bg); color: var(--text); border-color: var(--text3); }
-  .manifest-full { display:none; margin-top:16px; padding-top:16px; border-top:1px solid var(--border); font-size:13px; line-height:1.65; color: var(--text2); }
+  .checkin-btn { background:#fcd34d; color:#1a1a1a; }
+  .checkin-btn:hover { background:#fbbf24; transform:translateY(-1px); }
+  .manifest-expand-btn { background:rgba(255,255,255,.1); color:#fff; border:1px solid rgba(255,255,255,.2); }
+  .manifest-expand-btn:hover { background:rgba(255,255,255,.2); }
+  .manifest-full { display:none; margin-top:16px; padding-top:16px; border-top:1px solid rgba(255,255,255,.15); font-size:13px; line-height:1.65; color:#d4d4d4; }
   .manifest-full.open { display:block; }
-  .manifest-full h4 { font-size:12px; color: var(--text3); text-transform:uppercase; letter-spacing:.6px; margin:14px 0 6px; font-weight:700; }
+  .manifest-full h4 { font-size:12px; color:#fcd34d; text-transform:uppercase; letter-spacing:.6px; margin:14px 0 6px; font-weight:700; }
   .manifest-full h4:first-child { margin-top:0; }
   .manifest-full ul { list-style:none; padding:0; }
-  .manifest-full li { padding:3px 0; padding-left:16px; position:relative; color: var(--text); }
-  .manifest-full li:before { content:'→'; position:absolute; left:0; color: var(--text3); }
+  .manifest-full li { padding:3px 0; padding-left:16px; position:relative; }
+  .manifest-full li:before { content:'→'; position:absolute; left:0; color:#fcd34d; }
   .checkin-toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:#16a34a; color:#fff; padding:14px 24px; border-radius:10px; font-weight:600; box-shadow:0 6px 24px rgba(22,163,74,.4); opacity:0; transition:opacity .3s; z-index:1000; pointer-events:none; }
   .checkin-toast.show { opacity:1; }
 
@@ -265,11 +265,10 @@
   .lead-del-btn { position:absolute; top:5px; right:5px; background:none; border:none; color:var(--text3); cursor:pointer; font-size:14px; padding:2px 5px; line-height:1; opacity:.5; }
   .lead-del-btn:hover { color:var(--red); opacity:1; }
   .lead-col-new { background:#eff6ff; }
+  .lead-col-dialog { background:#fffbeb; }
   .lead-col-kp { background:#fef2f2; }
   .lead-col-wait { background:#faf5ff; }
   .lead-col-closed { background:#f0fdf4; }
-  .lead-col-lost { background:#f3f4f6; }
-  .lead-col-lost .lead-card { opacity:.75; }
   .lead-deadline-ok { color:var(--text3); font-size:11px; }
   .lead-deadline-warn { color:var(--yellow); font-size:11px; font-weight:600; }
   .lead-deadline-bad { color:var(--red); font-size:11px; font-weight:700; }
@@ -317,133 +316,9 @@
   @media (max-width:900px) and (min-width:621px) {
     .leads-board { grid-template-columns:repeat(2, 1fr); }
   }
-
-  /* TOP NAV (табы) */
-  .top-nav {
-    display:flex; gap:4px;
-    background:var(--surface); border:1.5px solid var(--border);
-    border-radius:12px; padding:5px;
-    margin-bottom:18px;
-    overflow-x:auto;
-  }
-  .top-nav-btn {
-    flex:1; min-width:fit-content;
-    padding:10px 16px;
-    background:transparent; border:none;
-    border-radius:8px;
-    font-family:inherit; font-size:13px; font-weight:600;
-    color:var(--text2); cursor:pointer;
-    transition:all .15s;
-    white-space:nowrap;
-    display:flex; align-items:center; justify-content:center; gap:7px;
-  }
-  .top-nav-btn:hover { background:var(--bg); color:var(--text); }
-  .top-nav-btn.active {
-    background:var(--text); color:#fff;
-    box-shadow:0 2px 8px rgba(0,0,0,.12);
-  }
-  .top-nav-btn-badge {
-    font-size:10px; font-weight:700;
-    padding:1px 6px; border-radius:4px;
-    background:var(--bg); color:var(--text3);
-    line-height:1.4;
-  }
-  .top-nav-btn.active .top-nav-btn-badge {
-    background:rgba(255,255,255,.2); color:#fff;
-  }
-  [data-tab] { display:none; }
-  body.tab-today [data-tab~="today"],
-  body.tab-week [data-tab~="week"],
-  body.tab-leads [data-tab~="leads"],
-  body.tab-history [data-tab~="history"] { display:block; }
-  body.tab-today .grid > [data-tab~="today"],
-  body.tab-week .grid > [data-tab~="week"],
-  body.tab-leads .grid > [data-tab~="leads"],
-  body.tab-history .grid > [data-tab~="history"] { display:block; }
-  body.tab-today .rings-section[data-tab~="today"] { display:flex; }
-  body.tab-today .pipeline[data-tab~="today"],
-  body.tab-week .pipeline[data-tab~="week"],
-  body.tab-leads .pipeline[data-tab~="leads"] { display:grid; }
-  body.tab-today .grid[data-tab~="today"],
-  body.tab-week .grid[data-tab~="week"],
-  body.tab-leads .grid[data-tab~="leads"],
-  body.tab-history .grid[data-tab~="history"] { display:grid; }
-  @media (max-width:600px) {
-    .top-nav-btn { padding:9px 12px; font-size:12px; }
-  }
-
-  /* TOGGLE BAR (кнопки разворачивания) */
-  .toggle-bar { display:flex; gap:10px; margin-bottom:14px; flex-wrap:wrap; }
-  .toggle-btn {
-    display:inline-flex; align-items:center; gap:9px;
-    padding:10px 16px;
-    background:var(--surface);
-    border:1.5px solid var(--border);
-    border-radius:10px;
-    cursor:pointer;
-    transition:all .15s;
-    font-family:inherit; font-size:13px; font-weight:600; color:var(--text);
-    white-space:nowrap;
-  }
-  .toggle-btn:hover { background:var(--surface2); border-color:var(--text3); }
-  .toggle-btn.active { background:var(--text); color:#fff; border-color:var(--text); }
-  .toggle-btn-icon { font-size:15px; line-height:1; }
-  .toggle-btn-summary {
-    font-size:11px; font-weight:600;
-    padding:2px 8px; border-radius:5px;
-    background:var(--bg); color:var(--text3);
-  }
-  .toggle-btn.active .toggle-btn-summary { background:rgba(255,255,255,.18); color:#fff; }
-  .toggle-btn-arrow { font-size:10px; color:var(--text3); transition:transform .2s; margin-left:2px; }
-  .toggle-btn.active .toggle-btn-arrow { transform:rotate(180deg); color:#fff; }
-
-  /* COLLAPSIBLE CARDS */
-  .card.collapsible { display:none; padding:18px 20px; }
-  .card.collapsible.open { display:block; }
-
-  /* CALC (распределение прибыли) */
-  .header-actions { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-  .calc-open-btn { background:var(--surface); border:1.5px solid var(--border); border-radius:10px; padding:10px 14px; font-size:13px; font-weight:600; color:var(--text); cursor:pointer; transition:all .15s; white-space:nowrap; }
-  .calc-open-btn:hover { background:var(--text); color:#fff; border-color:var(--text); }
-  .calc-row { display:flex; gap:10px; }
-  .calc-row .modal-field { flex:1; margin-bottom:12px; }
-  .calc-row .modal-field.pct { max-width:110px; }
-  .calc-results { background:var(--surface2); border:1.5px solid var(--border); border-radius:10px; padding:14px; margin-top:6px; }
-  .calc-result-line { display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px solid var(--border); gap:12px; }
-  .calc-result-line:last-child { border-bottom:none; padding-bottom:0; }
-  .calc-result-line:first-child { padding-top:0; }
-  .calc-result-label { font-size:13px; color:var(--text2); }
-  .calc-result-value { font-size:15px; font-weight:700; color:var(--text); white-space:nowrap; }
-  .calc-result-line.cut { background:var(--red-bg); margin:6px -14px; padding:11px 14px; border-radius:8px; border:1px solid #fecaca; border-bottom:1px solid #fecaca; }
-  .calc-result-line.cut .calc-result-value { color:var(--red); font-size:17px; }
-  .calc-result-line.cut .calc-result-label { font-weight:600; }
-  .calc-result-line.rest .calc-result-value { color:var(--text2); }
-  .calc-result-line.final { background:var(--green-bg); margin:8px -14px -14px; padding:14px; border-radius:0 0 9px 9px; border-top:1.5px solid var(--green); border-bottom:none; }
-  .calc-result-line.final .calc-result-label { font-weight:700; color:var(--green); font-size:14px; }
-  .calc-result-line.final .calc-result-value { color:var(--green); font-size:22px; }
-  .calc-hint { font-size:11px; color:var(--text3); margin-top:10px; line-height:1.4; }
-  .calc-rate-info { font-size:11px; color:var(--text3); margin-top:-8px; margin-bottom:12px; padding-left:2px; line-height:1.4; }
-  .calc-rate-info b { color:var(--text2); font-weight:600; }
-  .calc-result-usd { display:block; font-size:13px; font-weight:600; color:#16a34a; opacity:.8; margin-top:3px; }
-  .calc-result-line.final .calc-result-value { text-align:right; line-height:1.3; }
-  .calc-save-btn { width:100%; padding:12px; background:var(--green); color:#fff; border:none; border-radius:9px; font-size:14px; font-weight:700; cursor:pointer; transition:all .15s; margin-top:14px; }
-  .calc-save-btn:hover { background:#15803d; transform:translateY(-1px); }
-  .calc-save-btn:disabled { background:var(--border); cursor:not-allowed; color:var(--text3); transform:none; }
-  .calc-save-btn.flashed { background:var(--text); }
-  .calc-history { margin-top:20px; padding-top:16px; border-top:1.5px solid var(--border); }
-  .calc-history-title { font-size:11px; font-weight:700; color:var(--text3); text-transform:uppercase; letter-spacing:.6px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; }
-  .calc-history-empty { font-size:12px; color:var(--text3); padding:14px 0; text-align:center; font-style:italic; }
-  .calc-history-item { background:var(--surface2); border:1px solid var(--border); border-radius:9px; padding:11px 13px; margin-bottom:8px; position:relative; }
-  .calc-history-head { font-size:11px; color:var(--text3); margin-bottom:5px; display:flex; justify-content:space-between; align-items:center; gap:8px; }
-  .calc-history-amount { font-size:15px; font-weight:700; color:var(--text); margin-bottom:5px; }
-  .calc-history-split { font-size:12px; color:var(--text2); line-height:1.55; }
-  .calc-history-split b { color:var(--text); font-weight:600; }
-  .calc-history-split .usd { display:inline-block; font-size:11px; font-weight:600; color:var(--green); margin-left:4px; opacity:.85; }
-  .calc-history-del { background:none; border:none; color:var(--text3); cursor:pointer; font-size:18px; line-height:1; padding:0 4px; transition:color .15s; }
-  .calc-history-del:hover { color:var(--red); }
 </style>
 </head>
-<body class="tab-today">
+<body>
 
 <!-- HEADER -->
 <div class="header">
@@ -451,10 +326,7 @@
     <h1>Максим Драница</h1>
     <div class="date" id="dateDisplay"></div>
   </div>
-  <div class="header-actions">
-    <button class="calc-open-btn" onclick="openCalcModal()" title="Калькулятор распределения прибыли">💰 Распределение</button>
-    <div class="goal-chip" id="goalChip">🎯 Осталось: 1 584 000 ₽</div>
-  </div>
+  <div class="goal-chip" id="goalChip">🎯 Осталось: 1 584 000 ₽</div>
 </div>
 
 <!-- ALERT -->
@@ -508,43 +380,17 @@
   </div>
 </div>
 
-<!-- КОЛЬЦА АКТИВНОСТИ (только Сегодня) -->
-<div class="rings-section" id="ringsSection" data-tab="today"></div>
+<!-- КОЛЬЦА АКТИВНОСТИ -->
+<div class="rings-section" id="ringsSection"></div>
 
-<!-- TOP NAV -->
-<div class="top-nav">
-  <button class="top-nav-btn active" data-nav="today" onclick="switchTab('today')">📍 Сегодня</button>
-  <button class="top-nav-btn" data-nav="week" onclick="switchTab('week')">📊 Неделя</button>
-  <button class="top-nav-btn" data-nav="leads" onclick="switchTab('leads')">🎯 Лиды <span class="top-nav-btn-badge" id="navLeadsBadge"></span></button>
-  <button class="top-nav-btn" data-nav="history" onclick="switchTab('history')">📅 История</button>
-</div>
-
-<!-- ПРОГРЕСС НЕДЕЛИ (вкладка «Неделя») -->
-<div class="card" id="weekProgressCard" data-tab="week" style="margin-bottom:14px">
+<!-- ПРОГРЕСС НЕДЕЛИ -->
+<div class="card" style="margin-bottom:14px">
   <div class="card-title">Прогресс недели</div>
   <div class="week-bars" id="weekBars"></div>
 </div>
 
-<!-- ИСТОРИЯ ПО ДНЯМ (вкладка «История») -->
-<div class="card" id="historyCard" data-tab="history" style="margin-bottom:14px">
-  <div class="card-title">История по дням</div>
-  <div class="history-filters" id="historyFilters"></div>
-  <div id="historyContent"></div>
-  <div class="data-actions">
-    <button class="data-btn export" onclick="exportAllData()">📥 Скачать все данные (JSON)</button>
-    <button class="data-btn import" onclick="document.getElementById('importFile').click()">📤 Загрузить из бэкапа</button>
-    <input type="file" id="importFile" class="import-input" accept=".json" onchange="importAllData(event)">
-  </div>
-  <div class="gdrive-sync">
-    <span id="syncStatus" class="sync-status">Google Drive: не подключён</span>
-    <button class="data-btn" id="syncConnectBtn" onclick="connectGDrive()">🔐 Подключить Google Drive</button>
-    <button class="data-btn" id="syncNowBtn" onclick="syncNow()" style="display:none">🔄 Синхронизировать сейчас</button>
-    <button class="data-btn" id="syncDisconnectBtn" onclick="disconnectGDrive()" style="display:none">Отключить</button>
-  </div>
-</div>
-
 <!-- ВОРОНКА: только КП и Сделки -->
-<div class="pipeline" data-tab="leads">
+<div class="pipeline">
   <div class="pipe">
     <div class="pipe-label">КП отправлено (счётчик)</div>
     <div class="pipe-num" id="pProposalNum">0</div>
@@ -564,7 +410,7 @@
 </div>
 
 <!-- LEADS — ОБРАЩЕНИЯ И ВОРОНКА -->
-<div class="leads-section" data-tab="leads">
+<div class="leads-section">
   <div class="leads-header">
     <div class="leads-title">Лиды и обращения</div>
     <button class="leads-add-btn" onclick="openLeadModal()">+ Новый лид</button>
@@ -622,10 +468,10 @@
       <label>Статус</label>
       <select id="leadStatus">
         <option value="new">Новый</option>
+        <option value="dialog">В диалоге</option>
         <option value="kp">КП в работе / отправлено</option>
         <option value="wait">Ждёт оплату</option>
         <option value="closed">Закрыт (win)</option>
-        <option value="lost">Не состоялись (отказ / тишина)</option>
       </select>
     </div>
     <div class="modal-field">
@@ -642,73 +488,10 @@
 <!-- TOAST -->
 <div class="checkin-toast" id="checkinToast">Промпт скопирован. Открой Claude Code и вставь.</div>
 
-<!-- CALC MODAL — распределение прибыли -->
-<div class="modal-bg" id="calcModalBg" onclick="if(event.target===this)closeCalcModal()">
-  <div class="modal" style="max-width:480px">
-    <h3>💰 Распределение прибыли</h3>
-
-    <div class="modal-field">
-      <label>Сумма для распределения (₽)</label>
-      <input type="text" id="calcAmount" placeholder="100 000" oninput="formatAmountInput(this); recalcSplit()" inputmode="decimal" autocomplete="off">
-    </div>
-
-    <div class="modal-field">
-      <label>Курс ₽/$ (необязательно — иначе берётся актуальный)</label>
-      <input type="number" id="calcRate" placeholder="" oninput="recalcSplit()" step="0.01" min="0" inputmode="decimal">
-    </div>
-    <div class="calc-rate-info" id="calcRateInfo">Загружаю курс…</div>
-
-    <div class="calc-row">
-      <div class="modal-field">
-        <label>Первая доля — кто</label>
-        <input type="text" id="calcLabel1" oninput="recalcSplit()">
-      </div>
-      <div class="modal-field pct">
-        <label>%</label>
-        <input type="number" id="calcPct1" oninput="recalcSplit()" step="0.1" min="0" max="100">
-      </div>
-    </div>
-
-    <div class="calc-row">
-      <div class="modal-field">
-        <label>Вторая доля — кто</label>
-        <input type="text" id="calcLabel2" oninput="recalcSplit()">
-      </div>
-      <div class="modal-field pct">
-        <label>% от остатка</label>
-        <input type="number" id="calcPct2" oninput="recalcSplit()" step="0.1" min="0" max="100">
-      </div>
-    </div>
-
-    <div class="modal-field">
-      <label>Кому идёт остаток</label>
-      <input type="text" id="calcLabel3" oninput="recalcSplit()">
-    </div>
-
-    <div class="calc-results" id="calcResults"></div>
-
-    <div class="calc-hint">Логика: <b>Алина</b> получает % от суммы, <b>Анастасия</b> — % <i>от остатка</i> после Алины, <b>Макс</b> получает то, что осталось. Имена, проценты и сумма сохраняются автоматически.</div>
-
-    <button class="calc-save-btn" id="calcSaveBtn" onclick="saveSplit()">💾 Сохранить распределение</button>
-
-    <div class="calc-history">
-      <div class="calc-history-title">
-        <span>История распределений</span>
-        <span id="calcHistoryCount" style="font-weight:500;text-transform:none;letter-spacing:0;font-size:11px"></span>
-      </div>
-      <div id="calcHistoryList"></div>
-    </div>
-
-    <div class="modal-actions">
-      <button class="modal-btn cancel" onclick="closeCalcModal()">Закрыть</button>
-    </div>
-  </div>
-</div>
-
 <div class="grid">
 
   <!-- ЧЕКЛИСТ -->
-  <div class="card" data-tab="today">
+  <div class="card">
     <div class="card-title">Сегодня</div>
     <ul class="checklist" id="checklist">
       <li class="check-item" data-id="workout" onclick="toggleCheck(this)">
@@ -747,7 +530,7 @@
   </div>
 
   <!-- КАСАНИЯ -->
-  <div class="card" data-tab="today">
+  <div class="card">
     <div class="card-title">Касания сегодня</div>
     <div class="touch-row">
       <div class="touch-big bad" id="touchBig">0</div>
@@ -767,7 +550,7 @@
   </div>
 
   <!-- ВСТРЕЧИ / РАЗБОРЫ / ЗВОНКИ -->
-  <div class="card full" data-tab="today">
+  <div class="card full">
     <div class="card-title">Встречи / разборы / звонки</div>
     <textarea class="log-area" id="callLogInput" placeholder="С кем встреча, о чём разговор, что решили"></textarea>
     <button class="log-save" onclick="saveLog('call')">Сохранить</button>
@@ -775,13 +558,13 @@
   </div>
 
   <!-- ПРОСАДКИ — карточки -->
-  <div class="card full" data-tab="today">
+  <div class="card full">
     <div class="card-title">Статус</div>
     <div class="gap-cards" id="gapCards"></div>
   </div>
 
   <!-- СДЕЛКИ МЕСЯЦА -->
-  <div class="card full" data-tab="week">
+  <div class="card full">
     <div class="card-title">Сделки месяца</div>
     <div class="deal-inputs">
       <input class="deal-input" id="dealNameInput" placeholder="Клиент / название (необязательно)">
@@ -805,16 +588,33 @@
   </div>
 
   <!-- АКТИВНЫЕ КП -->
-  <div class="card full" data-tab="leads">
+  <div class="card full">
     <div class="card-title">Активные КП — жду ответ</div>
     <div id="activeKpList"></div>
   </div>
 
+  <!-- ИСТОРИЯ -->
+  <div class="card full">
+    <div class="card-title">История по дням</div>
+    <div class="history-filters" id="historyFilters"></div>
+    <div id="historyContent"></div>
+    <div class="data-actions">
+      <button class="data-btn export" onclick="exportAllData()">📥 Скачать все данные (JSON)</button>
+      <button class="data-btn import" onclick="document.getElementById('importFile').click()">📤 Загрузить из бэкапа</button>
+      <input type="file" id="importFile" class="import-input" accept=".json" onchange="importAllData(event)">
+    </div>
+    <div class="gdrive-sync">
+      <span id="syncStatus" class="sync-status">Google Drive: не подключён</span>
+      <button class="data-btn" id="syncConnectBtn" onclick="connectGDrive()">🔐 Подключить Google Drive</button>
+      <button class="data-btn" id="syncNowBtn" onclick="syncNow()" style="display:none">🔄 Синхронизировать сейчас</button>
+      <button class="data-btn" id="syncDisconnectBtn" onclick="disconnectGDrive()" style="display:none">Отключить</button>
+    </div>
+  </div>
 
 </div>
 
 <!-- КОНТЕНТ — в любой день -->
-<div class="card" data-tab="week" style="margin-bottom:14px">
+<div class="card" style="margin-bottom:14px">
   <div class="card-title">Контент за неделю</div>
   <div class="sat-grid">
     <div class="sat-counter">
@@ -839,7 +639,7 @@
   <div class="week-days" id="weekDays"></div>
 </div>
 
-<div class="footer" data-tab="today">
+<div class="footer">
   <div>
     <div class="week-label" id="weekLabel"></div>
     <div class="week-label" id="footerDate" style="margin-top:4px;font-weight:600;color:var(--text2)"></div>
@@ -856,10 +656,10 @@ const GOAL_USD = 25000;
 const GOAL_RUB = GOAL_USD * RATE;
 const LEAD_STATUSES = [
   { id: 'new',    name: 'Новые',        hint: 'Не ответил',          cls: 'lead-col-new' },
+  { id: 'dialog', name: 'В диалоге',    hint: 'Переписка / созвон',  cls: 'lead-col-dialog' },
   { id: 'kp',     name: 'КП в работе',  hint: 'Готовлю / отправил',  cls: 'lead-col-kp' },
   { id: 'wait',   name: 'Ждёт оплату',  hint: 'КП ушло, жду ответ',  cls: 'lead-col-wait' },
-  { id: 'closed', name: 'Закрыто',      hint: 'Win',                 cls: 'lead-col-closed' },
-  { id: 'lost',   name: 'Не состоялись', hint: 'Отказ / тишина',     cls: 'lead-col-lost' }
+  { id: 'closed', name: 'Закрыто',      hint: 'Win',                 cls: 'lead-col-closed' }
 ];
 const MONTHS_RU = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
 const DAYS_FULL = ['воскресенье','понедельник','вторник','среда','четверг','пятница','суббота'];
@@ -895,14 +695,7 @@ function saveState() {
 function loadDeals() { return JSON.parse(localStorage.getItem(getMonthKey()) || '[]'); }
 function saveDeals(d) { localStorage.setItem(getMonthKey(), JSON.stringify(d)); }
 function loadHistory() { return JSON.parse(localStorage.getItem('history') || '[]'); }
-function loadLeads() {
-  const leads = JSON.parse(localStorage.getItem('leads') || '[]');
-  // Миграция: убрали статус 'dialog' — переводим такие лиды в 'new'
-  let migrated = false;
-  leads.forEach(l => { if (l.status === 'dialog') { l.status = 'new'; migrated = true; } });
-  if (migrated) localStorage.setItem('leads', JSON.stringify(leads));
-  return leads;
-}
+function loadLeads() { return JSON.parse(localStorage.getItem('leads') || '[]'); }
 function saveLeads(l) { localStorage.setItem('leads', JSON.stringify(l)); }
 
 let state = loadState();
@@ -924,14 +717,6 @@ function render() {
   renderActiveKp();
   renderHistory();
   renderAlert();
-  renderNavBadges();
-}
-
-function renderNavBadges() {
-  const leads = loadLeads().filter(l => l.status === 'new' || l.status === 'kp' || l.status === 'wait');
-  const badge = document.getElementById('navLeadsBadge');
-  if (badge) badge.textContent = leads.length || '';
-  if (badge) badge.style.display = leads.length ? '' : 'none';
 }
 
 function renderHeader() {
@@ -1092,9 +877,7 @@ function renderWeekBars() {
     { label: 'YouTube',       val: state.week.ytCount || 0, max: 2, goal: 2 },
     { label: 'Статьи',        val: state.week.artCount || 0, max: 3, goal: 3 },
   ];
-  let reached = 0;
   items.forEach(item => {
-    if (item.val >= item.goal) reached++;
     const pct = Math.min(100, (item.val / item.max) * 100);
     const cls = item.val >= item.goal ? '' : item.val >= Math.ceil(item.goal * .5) ? 'warn' : 'bad';
     const row = document.createElement('div');
@@ -1106,8 +889,6 @@ function renderWeekBars() {
     `;
     el.appendChild(row);
   });
-  const sum = document.getElementById('weekProgressSummary');
-  if (sum) sum.textContent = `${reached}/${items.length} целей`;
 }
 
 function renderGapCards() {
@@ -1264,9 +1045,6 @@ function renderHistory() {
   const history = loadHistory();
   const el = document.getElementById('historyContent');
   renderHistoryFilters();
-
-  const summary = document.getElementById('historySummary');
-  if (summary) summary.textContent = history.length ? `${history.length} ${history.length === 1 ? 'день' : (history.length < 5 ? 'дня' : 'дней')}` : 'пусто';
 
   if (!history.length) {
     el.innerHTML = '<div class="no-history">История пуста. День сохраняется автоматически.</div>';
@@ -2062,293 +1840,10 @@ document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'hidden') syncNow();
 });
 
-const TABS = ['today','week','leads','history'];
-function switchTab(tab) {
-  if (!TABS.includes(tab)) tab = 'today';
-  TABS.forEach(t => document.body.classList.remove('tab-' + t));
-  document.body.classList.add('tab-' + tab);
-  document.querySelectorAll('.top-nav-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.nav === tab);
-  });
-  localStorage.setItem('activeTab', tab);
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-function initTabs() {
-  const saved = localStorage.getItem('activeTab') || 'today';
-  switchTab(saved);
-}
-
 gdInit();
 
-initTabs();
 render();
 setInterval(render, 60000);
-
-// ===== CALC: распределение прибыли =====
-function parseAmount(str) {
-  if (typeof str !== 'string') str = String(str ?? '');
-  const cleaned = str.replace(/\s| /g, '').replace(',', '.');
-  const n = parseFloat(cleaned);
-  return isNaN(n) ? 0 : n;
-}
-function formatThousands(numStr) {
-  // numStr — строка только из цифр и опциональной "."
-  const [intPart, decPart] = numStr.split('.');
-  const formattedInt = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-  return decPart !== undefined ? `${formattedInt}.${decPart}` : formattedInt;
-}
-function formatAmountInput(input) {
-  const oldValue = input.value;
-  const cursorPos = input.selectionStart ?? oldValue.length;
-  const digitsBefore = oldValue.slice(0, cursorPos).replace(/[^\d]/g, '').length;
-
-  // Оставляем только цифры и одну точку (запятую конвертируем в точку)
-  let raw = oldValue.replace(/,/g, '.').replace(/[^\d.]/g, '');
-  const parts = raw.split('.');
-  if (parts.length > 2) raw = parts[0] + '.' + parts.slice(1).join('');
-  if (raw === '' || raw === '.') { input.value = ''; return; }
-
-  const newValue = formatThousands(raw);
-  input.value = newValue;
-
-  // Восстанавливаем курсор по числу цифр слева от него
-  let newPos = newValue.length;
-  let count = 0;
-  for (let i = 0; i < newValue.length; i++) {
-    if (/\d/.test(newValue[i])) count++;
-    if (count >= digitsBefore) { newPos = i + 1; break; }
-  }
-  if (digitsBefore === 0) newPos = 0;
-  input.setSelectionRange(newPos, newPos);
-}
-async function openCalcModal() {
-  const saved = JSON.parse(localStorage.getItem('calcSettings_v2') || '{}');
-  document.getElementById('calcLabel1').value = saved.label1 || 'Алина';
-  document.getElementById('calcPct1').value = saved.pct1 ?? 5;
-  document.getElementById('calcLabel2').value = saved.label2 || 'Анастасия';
-  document.getElementById('calcPct2').value = saved.pct2 ?? 30;
-  document.getElementById('calcLabel3').value = saved.label3 || 'Макс';
-  document.getElementById('calcRate').value = saved.manualRate ?? '';
-  document.getElementById('calcRateInfo').textContent = 'Загружаю курс…';
-  const amountInput = document.getElementById('calcAmount');
-  amountInput.value = saved.lastAmount ? formatThousands(String(saved.lastAmount)) : '';
-  recalcSplit();
-  renderCalcHistory();
-  document.getElementById('calcModalBg').classList.add('show');
-  setTimeout(() => { amountInput.focus(); amountInput.select(); }, 50);
-  // Подтянуть курс асинхронно
-  const rate = await fetchUSDRate();
-  window.__currentUSDRate = rate.value;
-  const placeholder = rate.value.toFixed(2);
-  document.getElementById('calcRate').placeholder = placeholder;
-  const sourceText = rate.source === 'по умолчанию'
-    ? `<b>${placeholder}</b> ₽/$ — по умолчанию (не удалось получить актуальный)`
-    : `<b>${placeholder}</b> ₽/$ — ${rate.source} от ${fmtDateShort(rate.date)}`;
-  document.getElementById('calcRateInfo').innerHTML = sourceText;
-  recalcSplit();
-}
-function closeCalcModal() {
-  document.getElementById('calcModalBg').classList.remove('show');
-}
-function fmtMoneyRub(v) {
-  return new Intl.NumberFormat('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v) + ' ₽';
-}
-function recalcSplit() {
-  const amount = parseAmount(document.getElementById('calcAmount').value);
-  const pct1 = parseFloat(document.getElementById('calcPct1').value) || 0;
-  const pct2 = parseFloat(document.getElementById('calcPct2').value) || 0;
-  const label1 = document.getElementById('calcLabel1').value.trim() || 'Первая доля';
-  const label2 = document.getElementById('calcLabel2').value.trim() || 'Вторая доля';
-  const label3 = document.getElementById('calcLabel3').value.trim() || 'Остаток';
-  const rate = getEffectiveRate();
-
-  const cut1 = amount * pct1 / 100;
-  const after1 = amount - cut1;
-  const cut2 = after1 * pct2 / 100;
-  const final = after1 - cut2;
-  const finalUSD = rate > 0 ? final / rate : 0;
-
-  document.getElementById('calcResults').innerHTML = `
-    <div class="calc-result-line">
-      <span class="calc-result-label">Сумма на вход</span>
-      <span class="calc-result-value">${fmtMoneyRub(amount)}</span>
-    </div>
-    <div class="calc-result-line cut">
-      <span class="calc-result-label">${escapeHtml(label1)} — ${pct1}%</span>
-      <span class="calc-result-value">−${fmtMoneyRub(cut1)}</span>
-    </div>
-    <div class="calc-result-line rest">
-      <span class="calc-result-label">Остаток после ${pct1}%</span>
-      <span class="calc-result-value">${fmtMoneyRub(after1)}</span>
-    </div>
-    <div class="calc-result-line cut">
-      <span class="calc-result-label">${escapeHtml(label2)} — ${pct2}% от остатка</span>
-      <span class="calc-result-value">−${fmtMoneyRub(cut2)}</span>
-    </div>
-    <div class="calc-result-line final">
-      <span class="calc-result-label">${escapeHtml(label3)} (остаток)</span>
-      <span class="calc-result-value">
-        ${fmtMoneyRub(final)}
-        <span class="calc-result-usd">≈ ${fmtUSD(finalUSD)} (по ${rate.toFixed(2)} ₽/$)</span>
-      </span>
-    </div>
-  `;
-
-  const saveBtn = document.getElementById('calcSaveBtn');
-  if (saveBtn) saveBtn.disabled = !(amount > 0);
-
-  const manualRate = parseFloat(document.getElementById('calcRate').value) || null;
-  localStorage.setItem('calcSettings_v2', JSON.stringify({
-    label1, pct1, label2, pct2, label3, lastAmount: amount, manualRate
-  }));
-}
-const USD_FALLBACK_RATE = 90;
-
-async function fetchUSDRate() {
-  try {
-    const cache = JSON.parse(localStorage.getItem('usdRateCache') || 'null');
-    if (cache && Date.now() - cache.fetchedAt < 3600000) return cache;
-  } catch(e) {}
-  try {
-    const r = await fetch('https://www.cbr-xml-daily.ru/daily_json.js');
-    if (r.ok) {
-      const j = await r.json();
-      const value = j && j.Valute && j.Valute.USD && j.Valute.USD.Value;
-      const date = j && j.Date;
-      if (value && date) {
-        const cache = { value, date, source: 'ЦБ РФ', fetchedAt: Date.now() };
-        localStorage.setItem('usdRateCache', JSON.stringify(cache));
-        return cache;
-      }
-    }
-  } catch(e) {}
-  try {
-    const r = await fetch('https://open.er-api.com/v6/latest/USD');
-    if (r.ok) {
-      const j = await r.json();
-      const value = j && j.rates && j.rates.RUB;
-      if (value) {
-        const cache = { value, date: new Date().toISOString(), source: 'open.er-api', fetchedAt: Date.now() };
-        localStorage.setItem('usdRateCache', JSON.stringify(cache));
-        return cache;
-      }
-    }
-  } catch(e) {}
-  try {
-    const cache = JSON.parse(localStorage.getItem('usdRateCache') || 'null');
-    if (cache) return cache;
-  } catch(e) {}
-  return { value: USD_FALLBACK_RATE, date: null, source: 'по умолчанию', fetchedAt: 0 };
-}
-
-function getCurrentRate() { return window.__currentUSDRate || USD_FALLBACK_RATE; }
-function getEffectiveRate() {
-  const el = document.getElementById('calcRate');
-  const manual = el ? parseFloat(el.value) : NaN;
-  return (manual && manual > 0) ? manual : getCurrentRate();
-}
-function fmtDateShort(iso) {
-  if (!iso) return '';
-  const d = new Date(iso);
-  return d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
-}
-function fmtUSD(v) {
-  return '$' + new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v);
-}
-
-function saveSplit() {
-  const amount = parseAmount(document.getElementById('calcAmount').value);
-  if (!(amount > 0)) return;
-  const pct1 = parseFloat(document.getElementById('calcPct1').value) || 0;
-  const pct2 = parseFloat(document.getElementById('calcPct2').value) || 0;
-  const label1 = document.getElementById('calcLabel1').value.trim() || 'Первая доля';
-  const label2 = document.getElementById('calcLabel2').value.trim() || 'Вторая доля';
-  const label3 = document.getElementById('calcLabel3').value.trim() || 'Остаток';
-  const rate = getEffectiveRate();
-
-  const cut1 = amount * pct1 / 100;
-  const after1 = amount - cut1;
-  const cut2 = after1 * pct2 / 100;
-  const final = after1 - cut2;
-  const finalUSD = rate > 0 ? final / rate : 0;
-
-  const record = {
-    id: Date.now(),
-    date: new Date().toISOString(),
-    amount, rate,
-    label1, pct1, cut1,
-    label2, pct2, cut2,
-    label3, final, finalUSD
-  };
-
-  const history = JSON.parse(localStorage.getItem('calcHistory') || '[]');
-  history.unshift(record);
-  localStorage.setItem('calcHistory', JSON.stringify(history));
-  renderCalcHistory();
-
-  const btn = document.getElementById('calcSaveBtn');
-  const orig = btn.innerHTML;
-  btn.innerHTML = '✓ Сохранено';
-  btn.classList.add('flashed');
-  setTimeout(() => {
-    btn.innerHTML = orig;
-    btn.classList.remove('flashed');
-  }, 1400);
-}
-
-function deleteSplitRecord(id) {
-  if (!confirm('Удалить эту запись из истории?')) return;
-  const history = JSON.parse(localStorage.getItem('calcHistory') || '[]');
-  const filtered = history.filter(r => r.id !== id);
-  localStorage.setItem('calcHistory', JSON.stringify(filtered));
-  renderCalcHistory();
-}
-
-function renderCalcHistory() {
-  const history = JSON.parse(localStorage.getItem('calcHistory') || '[]');
-  const list = document.getElementById('calcHistoryList');
-  const count = document.getElementById('calcHistoryCount');
-  if (!list) return;
-  count.textContent = history.length ? `всего: ${history.length}` : '';
-  if (!history.length) {
-    list.innerHTML = '<div class="calc-history-empty">Пока нет сохранённых распределений</div>';
-    return;
-  }
-  const recent = history.slice(0, 10);
-  list.innerHTML = recent.map(r => {
-    const d = new Date(r.date);
-    const dateStr = d.toLocaleDateString('ru-RU', { day:'2-digit', month:'2-digit', year:'numeric' }) +
-      ' · ' + d.toLocaleTimeString('ru-RU', { hour:'2-digit', minute:'2-digit' });
-    return `
-      <div class="calc-history-item">
-        <div class="calc-history-head">
-          <span>${dateStr} · курс ${r.rate.toFixed(2)} ₽/$</span>
-          <button class="calc-history-del" onclick="deleteSplitRecord(${r.id})" title="Удалить">×</button>
-        </div>
-        <div class="calc-history-amount">${fmtMoneyRub(r.amount)}</div>
-        <div class="calc-history-split">
-          <b>${escapeHtml(r.label1)}</b> ${fmtMoneyRub(r.cut1)} ·
-          <b>${escapeHtml(r.label2)}</b> ${fmtMoneyRub(r.cut2)} ·
-          <b>${escapeHtml(r.label3)}</b> ${fmtMoneyRub(r.final)}
-          <span class="usd">≈ ${fmtUSD(r.finalUSD)}</span>
-        </div>
-      </div>
-    `;
-  }).join('');
-  if (history.length > 10) {
-    list.innerHTML += `<div class="calc-history-empty">Показаны последние 10 из ${history.length}</div>`;
-  }
-}
-
-function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-// Esc — закрыть модалку
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && document.getElementById('calcModalBg').classList.contains('show')) {
-    closeCalcModal();
-  }
-});
 </script>
 </body>
 </html>
