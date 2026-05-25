@@ -755,6 +755,33 @@
   .deal-item-name { font-size: 13px; font-weight: 600; flex: 1; min-width: 0; }
   .deal-item-date { font-size: 11px; color: var(--text-3); margin-top: 2px; font-weight: 500; }
   .deal-item-amount { font-size: 15px; font-weight: 700; color: var(--green-dark); }
+
+  /* Архив прошлых месяцев */
+  .archive-month { margin-bottom: 8px; border-radius: 10px; background: var(--bg); overflow: hidden; }
+  .archive-month summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 11px 14px;
+    display: flex; align-items: center; gap: 10px;
+    user-select: none;
+    transition: background .12s;
+  }
+  .archive-month summary::-webkit-details-marker { display: none; }
+  .archive-month summary:hover { background: var(--surface); }
+  .archive-arrow {
+    display: inline-block;
+    color: var(--text-3);
+    font-size: 11px;
+    transition: transform .2s;
+    width: 12px;
+    flex-shrink: 0;
+  }
+  .archive-month[open] .archive-arrow { transform: rotate(90deg); color: var(--green-dark); }
+  .archive-month-label { font-size: 13px; font-weight: 700; color: var(--text); flex: 1; }
+  .archive-month-meta { font-size: 12px; color: var(--text-2); }
+  .archive-month-meta b { color: var(--text); }
+  .archive-body { padding: 6px 6px 10px; display: flex; flex-direction: column; gap: 4px; }
+  .archive-body .deal-item { background: var(--surface); }
   .deal-del { background: none; border: none; color: var(--text-3); cursor: pointer; font-size: 14px; padding: 0 4px; }
   .deal-del:hover { color: var(--red); }
 
@@ -1244,15 +1271,14 @@
       <!-- ===== PAGE: FINANCE ===== -->
       <section class="page" data-page="finance">
         <div class="card">
-          <div class="card-head"><div class="card-title">Сделки мая</div></div>
+          <div class="card-head"><div class="card-title" id="financeMonthTitle">Выручка месяца</div></div>
           <div class="quick-input">
             <input id="dealNameInput" placeholder="Клиент / название" style="flex:2">
             <input id="dealAmountInput" type="number" placeholder="Сумма ₽" style="max-width:160px">
-            <button class="btn btn-primary" onclick="addDeal()">+ Сделка</button>
+            <button class="btn btn-primary" onclick="addDeal()">+ Быстрая продажа</button>
           </div>
-          <div class="deal-list" id="dealList"></div>
-          <div id="dealSummary" style="display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
-            <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text-2);margin-bottom:8px"><span>Получено:</span><span style="font-weight:800;color:var(--text);font-size:18px" id="dealTotalVal"></span></div>
+          <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+            <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text-2);margin-bottom:8px"><span>Получено:</span><span style="font-weight:800;color:var(--text);font-size:18px" id="dealTotalVal">0 ₽</span></div>
             <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text-2)"><span>Прогресс к 2 000 000 ₽:</span><span id="dealGoalPct" style="font-weight:700">0%</span></div>
             <div style="height:10px;background:var(--border);border-radius:5px;overflow:hidden;margin-top:8px"><div style="height:100%;background:linear-gradient(90deg,var(--green-mid),var(--green-dark));transition:width .4s" id="dealGoalFill"></div></div>
           </div>
@@ -1264,6 +1290,7 @@
             <div id="clientsSummary" style="font-size:12px;color:var(--text-2)"></div>
           </div>
           <div id="clientsList"></div>
+          <div id="clientsArchive"></div>
         </div>
 
         <div class="card" style="margin-top:14px">
@@ -1437,7 +1464,6 @@
       <div class="modal-field"><label>Вторая доля</label><input type="text" id="calcLabel2" oninput="recalcSplit()"></div>
       <div class="modal-field pct"><label>% от остатка</label><input type="number" id="calcPct2" oninput="recalcSplit()" step="0.1" min="0" max="100"></div>
     </div>
-    <div class="modal-field"><label>Кому идёт остаток</label><input type="text" id="calcLabel3" oninput="recalcSplit()"></div>
     <div class="calc-results" id="calcResults"></div>
     <button class="calc-save-btn" id="calcSaveBtn" onclick="saveSplit()">Сохранить распределение</button>
     <div class="calc-history">
@@ -1796,6 +1822,74 @@ function importLeadsFromVault() {
   localStorage.setItem(FLAG, '1');
 }
 
+// Одноразовая миграция: ручные сделки из deals_YYYY_M → won-лиды
+function migrateDealsToLeads() {
+  const FLAG = 'deals_migrated_to_leads_v1';
+  if (localStorage.getItem(FLAG) === '1') return;
+  const leads = loadLeads();
+  const leadsByName = new Map(leads.map(l => [((l.name || '') + '|' + (l.company || '')).toLowerCase().trim(), l]));
+  let migrated = 0;
+  const dealKeys = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k && k.startsWith('deals_') && /^deals_\d+_\d+$/.test(k)) dealKeys.push(k);
+  }
+  for (const key of dealKeys) {
+    let deals;
+    try { deals = JSON.parse(localStorage.getItem(key) || '[]'); } catch { continue; }
+    if (!Array.isArray(deals)) continue;
+    const parts = key.split('_');
+    const year = parseInt(parts[1]);
+    const month = parseInt(parts[2]);
+    for (const d of deals) {
+      if (!d || typeof d.amount !== 'number') continue;
+      const closedAt = d.t ? new Date(d.t).toISOString() : new Date(year, month, 15).toISOString();
+      // Парсинг "Имя — Компания"
+      const dashIdx = (d.name || '').indexOf(' — ');
+      let leadName = d.name || '(без названия)';
+      let leadCompany = '';
+      if (dashIdx > 0) { leadName = d.name.slice(0, dashIdx).trim(); leadCompany = d.name.slice(dashIdx + 3).trim(); }
+      const dedupKey = (leadName + '|' + leadCompany).toLowerCase().trim();
+      const existing = leadsByName.get(dedupKey);
+      if (existing) {
+        existing.status = 'won';
+        existing.potential_chek_rub = d.amount;
+        existing.closed_at = closedAt;
+        existing.status_changed_at = closedAt;
+        existing.updated_at = closedAt;
+        existing.history = existing.history || [];
+        existing.history.unshift({ date: closedAt, text: 'Сделка закрыта (won): '+d.amount.toLocaleString('ru-RU')+' ₽ — мигрировано из ручных сделок' });
+        migrated++;
+      } else {
+        const newLead = {
+          id: 'lead_' + closedAt.slice(0,10) + '_m' + String(Math.floor(Math.random()*900)+100),
+          name: leadName,
+          company: leadCompany,
+          channel: 'other',
+          potential_chek_rub: d.amount,
+          status: 'won',
+          created_at: closedAt,
+          updated_at: closedAt,
+          status_changed_at: closedAt,
+          closed_at: closedAt,
+          next_action: '',
+          next_action_date: null,
+          history: [{ date: closedAt, text: 'Мигрировано из ручных сделок («+ Сделка»)' }]
+        };
+        leads.push(newLead);
+        leadsByName.set(dedupKey, newLead);
+        migrated++;
+      }
+    }
+    localStorage.removeItem(key);
+  }
+  if (migrated) {
+    saveLeads(leads);
+    console.log('Мигрировано сделок в won-лиды:', migrated);
+  }
+  localStorage.setItem(FLAG, '1');
+}
+
 function migrateLeadIfNeeded(l) {
   // Старая схема → новая
   if (l.history) return l; // уже мигрирован
@@ -1878,10 +1972,20 @@ function navTo(page) {
 }
 
 // ===== METRICS =====
+// Источник правды для выручки месяца — won-лиды с closed_at в нужном месяце
+function getMonthRevenueFromLeads(year, month) {
+  return loadLeads()
+    .filter(l => l.status === 'won' && l.closed_at)
+    .filter(l => { const d = new Date(l.closed_at); return d.getFullYear() === year && d.getMonth() === month; })
+    .reduce((a, l) => a + (l.potential_chek_rub || 0), 0);
+}
+function getCurrentMonthRevenue() {
+  const d = new Date();
+  return getMonthRevenueFromLeads(d.getFullYear(), d.getMonth());
+}
 function getPrevMonthDealsTotal() {
   const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - 1);
-  const key = 'deals_'+d.getFullYear()+'_'+d.getMonth();
-  return JSON.parse(localStorage.getItem(key) || '[]').reduce((a,x)=>a+x.amount,0);
+  return getMonthRevenueFromLeads(d.getFullYear(), d.getMonth());
 }
 function getPrevHistoryLead() {
   const history = loadHistory();
@@ -1919,9 +2023,8 @@ function getAvgCycleDays() {
 }
 
 function renderMetrics() {
-  // Сделки
-  const deals = loadDeals();
-  const total = deals.reduce((a,d)=>a+d.amount,0);
+  // Выручка месяца = сумма won-лидов с closed_at в текущем месяце
+  const total = getCurrentMonthRevenue();
   document.getElementById('metricRevenueK').textContent = fmtMoneyRubShort(total);
   setChip(document.getElementById('metricRevenueChip'), total, getPrevMonthDealsTotal());
   const pct = Math.min(100, (total/GOAL_RUB)*100);
@@ -2126,8 +2229,7 @@ function renderActiveKp() {
 
 // ===== DONUT (Прогресс мая) =====
 function renderDonut() {
-  const deals = loadDeals();
-  const total = deals.reduce((a,d)=>a+d.amount,0);
+  const total = getCurrentMonthRevenue();
   const pct = Math.min(100, (total/GOAL_RUB)*100);
   const len = 283;
   const offset = len * (1 - pct/100);
@@ -2344,13 +2446,9 @@ function handleWinFlow(lead, leads) {
   lead.potential_chek_rub = sum;
   lead.history = lead.history || [];
   lead.history.unshift({ date: nowIso(), text: 'Сделка закрыта (won): '+fmtMoneyRub(sum) });
-  // Авто-добавление в сделки месяца
-  const deals = loadDeals();
-  deals.push({ id: Date.now(), name: lead.name + (lead.company ? ' — '+lead.company : ''), amount: sum, t: Date.now(), leadId: lead.id });
-  saveDeals(deals);
   saveLeads(leads);
   render();
-  toast('🎉 Сделка добавлена в Финансы');
+  toast('🎉 Сделка закрыта — попала в Купившие клиенты');
 }
 
 // ===== LEAD MODAL =====
@@ -2595,43 +2693,50 @@ function renderLogs() {
   if (cEl) cEl.innerHTML = renderOne(state.day.callLog, 'call');
 }
 
-// ===== DEALS =====
+// ===== DEALS (Финансы — карточка с быстрой продажей и summary) =====
+const RU_MONTHS = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
 function addDeal() {
   const name = document.getElementById('dealNameInput').value.trim();
   const amount = parseFloat(document.getElementById('dealAmountInput').value);
   if (!amount || amount <= 0) { alert('Введи сумму'); return; }
-  const deals = loadDeals();
-  deals.push({ id: Date.now(), name: name || '(без названия)', amount, t: Date.now() });
-  saveDeals(deals);
+  if (!name) { alert('Введи имя клиента'); return; }
+  const now = nowIso();
+  const newLead = {
+    id: genLeadId(),
+    name,
+    company: '',
+    channel: 'other',
+    potential_chek_rub: amount,
+    status: 'won',
+    created_at: now,
+    updated_at: now,
+    status_changed_at: now,
+    closed_at: now,
+    next_action: '',
+    next_action_date: null,
+    history: [{ date: now, text: 'Быстрая продажа: '+fmtMoneyRub(amount) }]
+  };
+  const leads = loadLeads();
+  leads.push(newLead);
+  saveLeads(leads);
   document.getElementById('dealNameInput').value = '';
   document.getElementById('dealAmountInput').value = '';
-  render(); toast('Сделка добавлена');
-}
-function deleteDeal(id) {
-  if (!confirm('Удалить сделку?')) return;
-  saveDeals(loadDeals().filter(d => d.id !== id)); render();
+  render(); toast('🎉 Продажа добавлена');
 }
 function renderDeals() {
-  const deals = loadDeals();
-  const el = document.getElementById('dealList');
-  if (!el) return;
-  if (!deals.length) { el.innerHTML = '<div class="card-empty">Пока нет сделок в этом месяце</div>'; document.getElementById('dealSummary').style.display = 'none'; return; }
-  el.innerHTML = deals.map(d => `
-    <div class="deal-item">
-      <div style="flex:1;min-width:0">
-        <div class="deal-item-name">${escapeHtml(d.name)}</div>
-        <div class="deal-item-date">${new Date(d.t).toLocaleDateString('ru-RU')}</div>
-      </div>
-      <div class="deal-item-amount">${fmtMoneyRub(d.amount)}</div>
-      <button class="deal-del" onclick="deleteDeal(${d.id})">×</button>
-    </div>
-  `).join('');
-  const total = deals.reduce((a,d)=>a+d.amount,0);
+  // Заголовок «Выручка <месяца>»
+  const now = new Date();
+  const title = document.getElementById('financeMonthTitle');
+  if (title) title.textContent = 'Выручка ' + RU_MONTHS[now.getMonth()];
+  // Summary
+  const total = getCurrentMonthRevenue();
   const pct = Math.min(100, (total/GOAL_RUB)*100);
-  document.getElementById('dealSummary').style.display = 'block';
-  document.getElementById('dealTotalVal').textContent = fmtMoneyRub(total);
-  document.getElementById('dealGoalPct').textContent = pct.toFixed(0) + '%';
-  document.getElementById('dealGoalFill').style.width = pct + '%';
+  const totalEl = document.getElementById('dealTotalVal');
+  if (totalEl) totalEl.textContent = fmtMoneyRub(total);
+  const pctEl = document.getElementById('dealGoalPct');
+  if (pctEl) pctEl.textContent = pct.toFixed(0) + '%';
+  const fillEl = document.getElementById('dealGoalFill');
+  if (fillEl) fillEl.style.width = pct + '%';
 }
 
 // ===== HISTORY =====
@@ -2773,7 +2878,6 @@ async function openCalcModal() {
   document.getElementById('calcPct1').value = s.pct1 != null ? s.pct1 : 5;
   document.getElementById('calcLabel2').value = s.label2 || 'Анастасия';
   document.getElementById('calcPct2').value = s.pct2 != null ? s.pct2 : 30;
-  document.getElementById('calcLabel3').value = s.label3 || 'Макс';
   document.getElementById('calcRate').value = s.manualRate || '';
   document.getElementById('calcRateInfo').textContent = 'Загружаю курс…';
   const aIn = document.getElementById('calcAmount');
@@ -2796,7 +2900,6 @@ function recalcSplit() {
   const pct2 = parseFloat(document.getElementById('calcPct2').value) || 0;
   const l1 = document.getElementById('calcLabel1').value.trim() || 'Первая';
   const l2 = document.getElementById('calcLabel2').value.trim() || 'Вторая';
-  const l3 = document.getElementById('calcLabel3').value.trim() || 'Остаток';
   const rate = getEffectiveRate();
   const cut1 = amount * pct1 / 100;
   const after1 = amount - cut1;
@@ -2808,11 +2911,11 @@ function recalcSplit() {
     '<div class="calc-result-line cut"><span class="calc-result-label">'+escapeHtml(l1)+' — '+pct1+'%</span><span class="calc-result-value">−'+fmtMoneyRubFull(cut1)+'</span></div>'+
     '<div class="calc-result-line"><span class="calc-result-label">Остаток после '+pct1+'%</span><span class="calc-result-value">'+fmtMoneyRubFull(after1)+'</span></div>'+
     '<div class="calc-result-line cut"><span class="calc-result-label">'+escapeHtml(l2)+' — '+pct2+'% от остатка</span><span class="calc-result-value">−'+fmtMoneyRubFull(cut2)+'</span></div>'+
-    '<div class="calc-result-line final"><span class="calc-result-label">'+escapeHtml(l3)+' (остаток)</span><span class="calc-result-value">'+fmtMoneyRubFull(final)+'<span class="calc-result-usd">≈ '+fmtUSD(finalUSD)+' (по '+rate.toFixed(2)+' ₽/$)</span></span></div>';
+    '<div class="calc-result-line final"><span class="calc-result-label">Остаток</span><span class="calc-result-value">'+fmtMoneyRubFull(final)+'<span class="calc-result-usd">≈ '+fmtUSD(finalUSD)+' (по '+rate.toFixed(2)+' ₽/$)</span></span></div>';
   const sb = document.getElementById('calcSaveBtn');
   if (sb) sb.disabled = !(amount > 0);
   const mr = parseFloat(document.getElementById('calcRate').value) || null;
-  localStorage.setItem('calcSettings_v2', JSON.stringify({label1:l1, pct1, label2:l2, pct2, label3:l3, lastAmount:amount, manualRate:mr}));
+  localStorage.setItem('calcSettings_v2', JSON.stringify({label1:l1, pct1, label2:l2, pct2, lastAmount:amount, manualRate:mr}));
 }
 function saveSplit() {
   const amount = parseAmount(document.getElementById('calcAmount').value);
@@ -2821,14 +2924,13 @@ function saveSplit() {
   const pct2 = parseFloat(document.getElementById('calcPct2').value) || 0;
   const l1 = document.getElementById('calcLabel1').value.trim() || 'Первая';
   const l2 = document.getElementById('calcLabel2').value.trim() || 'Вторая';
-  const l3 = document.getElementById('calcLabel3').value.trim() || 'Остаток';
   const rate = getEffectiveRate();
   const cut1 = amount * pct1 / 100;
   const after1 = amount - cut1;
   const cut2 = after1 * pct2 / 100;
   const final = after1 - cut2;
   const finalUSD = rate > 0 ? final / rate : 0;
-  const rec = {id:Date.now(), date:new Date().toISOString(), amount, rate, label1:l1, pct1, cut1, label2:l2, pct2, cut2, label3:l3, final, finalUSD};
+  const rec = {id:Date.now(), date:new Date().toISOString(), amount, rate, label1:l1, pct1, cut1, label2:l2, pct2, cut2, label3:'Остаток', final, finalUSD};
   const h = JSON.parse(localStorage.getItem('calcHistory') || '[]');
   h.unshift(rec);
   localStorage.setItem('calcHistory', JSON.stringify(h));
@@ -2855,40 +2957,81 @@ function renderCalcHistory() {
   list.innerHTML = h.slice(0, 10).map(r => {
     const d = new Date(r.date);
     const ds = d.toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric'}) + ' · ' + d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
-    return '<div class="calc-history-item"><div class="calc-history-head"><span>'+ds+' · '+r.rate.toFixed(2)+' ₽/$</span><button class="calc-history-del" onclick="deleteSplitRecord('+r.id+')">×</button></div><div class="calc-history-amount">'+fmtMoneyRubFull(r.amount)+'</div><div class="calc-history-split"><b>'+escapeHtml(r.label1)+'</b> '+fmtMoneyRubFull(r.cut1)+' · <b>'+escapeHtml(r.label2)+'</b> '+fmtMoneyRubFull(r.cut2)+' · <b>'+escapeHtml(r.label3)+'</b> '+fmtMoneyRubFull(r.final)+'<span class="usd">≈ '+fmtUSD(r.finalUSD)+'</span></div></div>';
+    return '<div class="calc-history-item"><div class="calc-history-head"><span>'+ds+' · '+r.rate.toFixed(2)+' ₽/$</span><button class="calc-history-del" onclick="deleteSplitRecord('+r.id+')">×</button></div><div class="calc-history-amount">'+fmtMoneyRubFull(r.amount)+'</div><div class="calc-history-split"><b>'+escapeHtml(r.label1)+'</b> '+fmtMoneyRubFull(r.cut1)+' · <b>'+escapeHtml(r.label2)+'</b> '+fmtMoneyRubFull(r.cut2)+' · <b>Остаток</b> '+fmtMoneyRubFull(r.final)+'<span class="usd">≈ '+fmtUSD(r.finalUSD)+'</span></div></div>';
   }).join('');
   if (h.length > 10) list.innerHTML += '<div class="calc-history-empty">Показаны 10 из '+h.length+'</div>';
 }
 function renderClients() {
   const won = loadLeads().filter(l => l.status === 'won' && l.closed_at);
   const el = document.getElementById('clientsList');
+  const archiveEl = document.getElementById('clientsArchive');
   const summary = document.getElementById('clientsSummary');
   if (!el) return;
-  if (!won.length) {
-    el.innerHTML = '<div class="card-empty">Пока нет закрытых сделок. Перетащи лида в колонку «Закрыто (win)» и впиши финальную сумму.</div>';
-    if (summary) summary.textContent = '';
-    return;
-  }
-  const sorted = won.sort((a,b) => new Date(b.closed_at) - new Date(a.closed_at));
-  const total = sorted.reduce((s,l) => s + (l.potential_chek_rub||0), 0);
-  const cycles = sorted
-    .filter(l => l.created_at && l.closed_at)
-    .map(l => Math.max(1, Math.floor((new Date(l.closed_at) - new Date(l.created_at))/86400000)));
-  const avgCycle = cycles.length ? Math.round(cycles.reduce((a,b)=>a+b,0)/cycles.length) : null;
+
+  const now = new Date();
+  const curYear = now.getFullYear();
+  const curMonth = now.getMonth();
+  const isCurrent = l => { const d = new Date(l.closed_at); return d.getFullYear() === curYear && d.getMonth() === curMonth; };
+
+  const currentMonthWon = won.filter(isCurrent).sort((a,b) => new Date(b.closed_at) - new Date(a.closed_at));
+  const archived = won.filter(l => !isCurrent(l));
+
+  // Summary — только текущий месяц
+  const curTotal = currentMonthWon.reduce((s,l) => s + (l.potential_chek_rub||0), 0);
+  const curCycles = currentMonthWon.filter(l => l.created_at && l.closed_at).map(l => Math.max(1, Math.floor((new Date(l.closed_at) - new Date(l.created_at))/86400000)));
+  const curAvg = curCycles.length ? Math.round(curCycles.reduce((a,b)=>a+b,0)/curCycles.length) : null;
   if (summary) {
-    summary.innerHTML = '<b style="color:var(--green-dark)">'+sorted.length+'</b> клиентов · <b>'+fmtMoneyRub(total)+'</b>' + (avgCycle != null ? ' · средний цикл ~'+avgCycle+' дн.' : '');
+    if (currentMonthWon.length) {
+      summary.innerHTML = '<b style="color:var(--green-dark)">'+currentMonthWon.length+'</b> в этом месяце · <b>'+fmtMoneyRub(curTotal)+'</b>' + (curAvg != null ? ' · цикл ~'+curAvg+' дн.' : '');
+    } else { summary.textContent = ''; }
   }
-  el.innerHTML = sorted.map(l => {
-    const cycle = l.created_at && l.closed_at ? Math.max(1, Math.floor((new Date(l.closed_at) - new Date(l.created_at))/86400000)) : null;
-    const closed = new Date(l.closed_at);
-    return `<div class="deal-item" onclick="openLeadModal('${l.id}')" style="cursor:pointer">
-      <div style="flex:1;min-width:0">
-        <div class="deal-item-name">${escapeHtml(l.name)}${l.company ? ' <span style="color:var(--text-3);font-weight:400">— '+escapeHtml(l.company)+'</span>' : ''}</div>
-        <div class="deal-item-date">${closed.toLocaleDateString('ru-RU')}${cycle != null ? ' · цикл '+cycle+' дн.' : ''} · ${escapeHtml(leadChannelById(l.channel).name)}</div>
-      </div>
-      <div class="deal-item-amount">${fmtMoneyRub(l.potential_chek_rub||0)}</div>
-    </div>`;
-  }).join('');
+
+  // Текущий месяц
+  if (!currentMonthWon.length) {
+    el.innerHTML = '<div class="card-empty">В этом месяце пока нет закрытых продаж. Перетащи лида в «Won» или используй «+ Быстрая продажа».</div>';
+  } else {
+    el.innerHTML = currentMonthWon.map(l => renderClientItem(l)).join('');
+  }
+
+  // Архив прошлых месяцев — группируем по YYYY-MM
+  if (!archiveEl) return;
+  if (!archived.length) { archiveEl.innerHTML = ''; return; }
+  const byMonth = {};
+  for (const l of archived) {
+    const d = new Date(l.closed_at);
+    const key = d.getFullYear()+'-'+String(d.getMonth()).padStart(2,'0');
+    if (!byMonth[key]) byMonth[key] = { year: d.getFullYear(), month: d.getMonth(), leads: [] };
+    byMonth[key].leads.push(l);
+  }
+  const groups = Object.values(byMonth).sort((a,b) => (b.year - a.year) || (b.month - a.month));
+  archiveEl.innerHTML =
+    '<div style="margin:18px -4px 0;padding:14px 4px 0;border-top:1px dashed var(--border)">'+
+      '<div style="font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px">Архив прошлых месяцев</div>'+
+      groups.map(g => {
+        const total = g.leads.reduce((s,l) => s + (l.potential_chek_rub||0), 0);
+        const label = RU_MONTHS[g.month].charAt(0).toUpperCase() + RU_MONTHS[g.month].slice(1) + ' ' + g.year;
+        const sortedLeads = g.leads.sort((a,b) => new Date(b.closed_at) - new Date(a.closed_at));
+        return '<details class="archive-month">'+
+          '<summary>'+
+            '<span class="archive-arrow">▸</span>'+
+            '<span class="archive-month-label">'+label+'</span>'+
+            '<span class="archive-month-meta">'+g.leads.length+' клиентов · <b>'+fmtMoneyRub(total)+'</b></span>'+
+          '</summary>'+
+          '<div class="archive-body">'+sortedLeads.map(l => renderClientItem(l)).join('')+'</div>'+
+        '</details>';
+      }).join('')+
+    '</div>';
+}
+function renderClientItem(l) {
+  const cycle = l.created_at && l.closed_at ? Math.max(1, Math.floor((new Date(l.closed_at) - new Date(l.created_at))/86400000)) : null;
+  const closed = new Date(l.closed_at);
+  return '<div class="deal-item" onclick="openLeadModal(\''+l.id+'\')" style="cursor:pointer">'+
+    '<div style="flex:1;min-width:0">'+
+      '<div class="deal-item-name">'+escapeHtml(l.name)+(l.company ? ' <span style="color:var(--text-3);font-weight:400">— '+escapeHtml(l.company)+'</span>' : '')+'</div>'+
+      '<div class="deal-item-date">'+closed.toLocaleDateString('ru-RU')+(cycle != null ? ' · цикл '+cycle+' дн.' : '')+' · '+escapeHtml(leadChannelById(l.channel).name)+'</div>'+
+    '</div>'+
+    '<div class="deal-item-amount">'+fmtMoneyRub(l.potential_chek_rub||0)+'</div>'+
+  '</div>';
 }
 
 function renderCalcRecent() {
@@ -2898,7 +3041,7 @@ function renderCalcRecent() {
   if (!h.length) { el.innerHTML = '<div class="card-empty">Пока нет сохранённых распределений</div>'; return; }
   el.innerHTML = h.map(r => {
     const d = new Date(r.date);
-    return '<div class="deal-item"><div style="flex:1"><div class="deal-item-name">'+d.toLocaleDateString('ru-RU')+'</div><div class="deal-item-date">'+escapeHtml(r.label3)+' получил</div></div><div class="deal-item-amount">'+fmtMoneyRub(r.final)+'</div></div>';
+    return '<div class="deal-item"><div style="flex:1"><div class="deal-item-name">'+d.toLocaleDateString('ru-RU')+'</div><div class="deal-item-date">Остаток</div></div><div class="deal-item-amount">'+fmtMoneyRub(r.final)+'</div></div>';
   }).join('');
 }
 
@@ -3365,6 +3508,7 @@ document.addEventListener('visibilitychange', () => {
 
 seedLeadsIfEmpty();
 importLeadsFromVault();
+migrateDealsToLeads();
 seedProjectsIfEmpty();
 const savedPage = localStorage.getItem('activeTab') || 'home';
 navTo(['home','leads','today','finance','history','projects'].includes(savedPage) ? savedPage : 'home');
