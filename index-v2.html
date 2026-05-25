@@ -2987,21 +2987,29 @@ async function ghGetFile(path) {
   return { exists: true, content, sha: data.sha };
 }
 
-async function ghPutFile(path, contentStr, sha, message, allowSelfHeal) {
+async function ghPutFile(path, contentStr, sha, message, retriesLeft) {
   if (!ghPat) throw new Error('no PAT');
-  if (allowSelfHeal === undefined) allowSelfHeal = true;
+  if (retriesLeft === undefined) retriesLeft = 2;
   const url = 'https://api.github.com/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/'+encodeGhPath(path);
   let b64;
   try { b64 = btoa(unescape(encodeURIComponent(contentStr))); }
   catch { b64 = btoa(contentStr); }
   const body = { message, content: b64, branch: GH_BRANCH };
   if (sha) body.sha = sha;
-  const resp = await fetch(url, { method: 'PUT', headers: Object.assign({'Content-Type':'application/json'}, ghHeaders()), body: JSON.stringify(body) });
-  // 409 / 422 → попробовать вытянуть свежий sha и повторить один раз
-  if ((resp.status === 409 || resp.status === 422) && allowSelfHeal) {
-    console.warn('PUT '+path+' '+resp.status+' — pulling fresh sha and retrying');
+  const resp = await fetch(url, { method: 'PUT', headers: Object.assign({'Content-Type':'application/json'}, ghHeaders()), body: JSON.stringify(body), cache: 'no-store' });
+  if ((resp.status === 409 || resp.status === 422) && retriesLeft > 0) {
+    // GitHub в теле ответа говорит, какой sha ожидает: "...does not match {sha}"
+    const errBody = await resp.text();
+    const m = errBody.match(/does not match ([a-f0-9]{6,40})/);
+    if (m) {
+      console.warn('PUT '+path+' '+resp.status+' — got expected sha from error, retry with '+m[1].slice(0,8));
+      return ghPutFile(path, contentStr, m[1], message, retriesLeft - 1);
+    }
+    // Fallback: подождём чуть и сделаем свежий GET (CDN cache invalidation)
+    await new Promise(r => setTimeout(r, 800));
+    console.warn('PUT '+path+' '+resp.status+' — falling back to fresh GET');
     const fresh = await ghGetFile(path);
-    return ghPutFile(path, contentStr, fresh.sha, message, false);
+    return ghPutFile(path, contentStr, fresh.sha, message, retriesLeft - 1);
   }
   if (resp.status === 409) { const e = new Error(await ghErrorMessage(resp, 'sha mismatch')); e.code = 'CONFLICT'; e.path = path; throw e; }
   if (!resp.ok) throw new Error(await ghErrorMessage(resp, 'PUT '+path+' '+resp.status));
