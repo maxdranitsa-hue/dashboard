@@ -2987,8 +2987,9 @@ async function ghGetFile(path) {
   return { exists: true, content, sha: data.sha };
 }
 
-async function ghPutFile(path, contentStr, sha, message) {
+async function ghPutFile(path, contentStr, sha, message, allowSelfHeal) {
   if (!ghPat) throw new Error('no PAT');
+  if (allowSelfHeal === undefined) allowSelfHeal = true;
   const url = 'https://api.github.com/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/'+encodeGhPath(path);
   let b64;
   try { b64 = btoa(unescape(encodeURIComponent(contentStr))); }
@@ -2996,7 +2997,13 @@ async function ghPutFile(path, contentStr, sha, message) {
   const body = { message, content: b64, branch: GH_BRANCH };
   if (sha) body.sha = sha;
   const resp = await fetch(url, { method: 'PUT', headers: Object.assign({'Content-Type':'application/json'}, ghHeaders()), body: JSON.stringify(body) });
-  if (resp.status === 409) { const e = new Error('sha mismatch'); e.code = 'CONFLICT'; e.path = path; throw e; }
+  // 409 / 422 → попробовать вытянуть свежий sha и повторить один раз
+  if ((resp.status === 409 || resp.status === 422) && allowSelfHeal) {
+    console.warn('PUT '+path+' '+resp.status+' — pulling fresh sha and retrying');
+    const fresh = await ghGetFile(path);
+    return ghPutFile(path, contentStr, fresh.sha, message, false);
+  }
+  if (resp.status === 409) { const e = new Error(await ghErrorMessage(resp, 'sha mismatch')); e.code = 'CONFLICT'; e.path = path; throw e; }
   if (!resp.ok) throw new Error(await ghErrorMessage(resp, 'PUT '+path+' '+resp.status));
   const data = await resp.json();
   return data.content.sha;
