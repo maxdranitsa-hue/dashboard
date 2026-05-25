@@ -2987,9 +2987,8 @@ async function ghGetFile(path) {
   return { exists: true, content, sha: data.sha };
 }
 
-async function ghPutFile(path, contentStr, sha, message, retriesLeft) {
+async function ghPutFile(path, contentStr, sha, message) {
   if (!ghPat) throw new Error('no PAT');
-  if (retriesLeft === undefined) retriesLeft = 2;
   const url = 'https://api.github.com/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/'+encodeGhPath(path);
   let b64;
   try { b64 = btoa(unescape(encodeURIComponent(contentStr))); }
@@ -2997,21 +2996,11 @@ async function ghPutFile(path, contentStr, sha, message, retriesLeft) {
   const body = { message, content: b64, branch: GH_BRANCH };
   if (sha) body.sha = sha;
   const resp = await fetch(url, { method: 'PUT', headers: Object.assign({'Content-Type':'application/json'}, ghHeaders()), body: JSON.stringify(body), cache: 'no-store' });
-  if ((resp.status === 409 || resp.status === 422) && retriesLeft > 0) {
-    // GitHub в теле ответа говорит, какой sha ожидает: "...does not match {sha}"
+  if (resp.status === 409 || resp.status === 422) {
     const errBody = await resp.text();
-    const m = errBody.match(/does not match ([a-f0-9]{6,40})/);
-    if (m) {
-      console.warn('PUT '+path+' '+resp.status+' — got expected sha from error, retry with '+m[1].slice(0,8));
-      return ghPutFile(path, contentStr, m[1], message, retriesLeft - 1);
-    }
-    // Fallback: подождём чуть и сделаем свежий GET (CDN cache invalidation)
-    await new Promise(r => setTimeout(r, 800));
-    console.warn('PUT '+path+' '+resp.status+' — falling back to fresh GET');
-    const fresh = await ghGetFile(path);
-    return ghPutFile(path, contentStr, fresh.sha, message, retriesLeft - 1);
+    const e = new Error(errBody && errBody.length < 200 ? (function(){try{return JSON.parse(errBody).message;}catch{return 'sha mismatch';}})() : 'sha mismatch');
+    e.code = 'CONFLICT'; e.path = path; throw e;
   }
-  if (resp.status === 409) { const e = new Error(await ghErrorMessage(resp, 'sha mismatch')); e.code = 'CONFLICT'; e.path = path; throw e; }
   if (!resp.ok) throw new Error(await ghErrorMessage(resp, 'PUT '+path+' '+resp.status));
   const data = await resp.json();
   return data.content.sha;
@@ -3140,82 +3129,86 @@ function generateLeadsMarkdown(leads) {
   return md;
 }
 
-let ghRetryCount = 0;
+async function syncOnce() {
+  // 1. PULL leads.json
+  const leadsRemote = await ghGetFile(GH_LEADS_PATH);
+  let mergedLeads;
+  let leadsSha = null;
+  const localLeads = JSON.parse(localStorage.getItem('leads') || '[]');
+  if (leadsRemote.exists) {
+    const remoteData = JSON.parse(leadsRemote.content);
+    const remoteLeads = remoteData.leads || remoteData;
+    mergedLeads = mergeLeads(remoteLeads, localLeads);
+    leadsSha = leadsRemote.sha;
+  } else {
+    mergedLeads = localLeads;
+  }
+  applyLeads(mergedLeads);
+
+  // 2. PULL dashboard-state.json
+  const stateRemote = await ghGetFile(GH_STATE_PATH);
+  const localState = collectSnapshot();
+  let mergedState;
+  let stateSha = null;
+  if (stateRemote.exists) {
+    const remoteState = JSON.parse(stateRemote.content);
+    mergedState = mergeSnapshots(remoteState, localState);
+    stateSha = stateRemote.sha;
+  } else {
+    mergedState = localState;
+  }
+  applySnapshot(mergedState);
+
+  if (typeof render === 'function') render();
+
+  // 3. PUSH leads.json
+  const leadsPayload = { version: 1, updated_at: new Date().toISOString(), leads: mergedLeads };
+  const newLeadsSha = await ghPutFile(GH_LEADS_PATH, JSON.stringify(leadsPayload, null, 2), leadsSha, 'dashboard: update leads ('+new Date().toISOString().slice(0,16)+')');
+  ghLeadsSha = newLeadsSha;
+  localStorage.setItem('_gh_leads_sha', newLeadsSha);
+
+  // 4. PUSH markdown view (мягкий — конфликт здесь не валит общий синк)
+  try {
+    const mdRemote = await ghGetFile(GH_LEADS_MD_PATH);
+    const md = generateLeadsMarkdown(mergedLeads);
+    const newMdSha = await ghPutFile(GH_LEADS_MD_PATH, md, mdRemote.sha, 'dashboard: update leads.md view');
+    ghLeadsMdSha = newMdSha;
+    localStorage.setItem('_gh_leads_md_sha', newMdSha);
+  } catch (e) { console.warn('markdown view skipped:', e.message); }
+
+  // 5. PUSH dashboard-state.json
+  mergedState._savedAt = Date.now();
+  const newStateSha = await ghPutFile(GH_STATE_PATH, JSON.stringify(mergedState, null, 2), stateSha, 'dashboard: update state ('+new Date().toISOString().slice(0,16)+')');
+  ghStateSha = newStateSha;
+  localStorage.setItem('_gh_state_sha', newStateSha);
+}
+
 async function syncNow() {
   if (!ghPat) return;
   if (ghSyncInFlight) return;
   ghSyncInFlight = true;
   updateSyncUI('Синхронизация…', 'syncing');
+  const MAX_ATTEMPTS = 4;
+  let lastError = null;
   try {
-    // 1. PULL leads.json
-    const leadsRemote = await ghGetFile(GH_LEADS_PATH);
-    let mergedLeads;
-    const localLeads = JSON.parse(localStorage.getItem('leads') || '[]');
-    if (leadsRemote.exists) {
-      const remoteData = JSON.parse(leadsRemote.content);
-      const remoteLeads = remoteData.leads || remoteData;
-      mergedLeads = mergeLeads(remoteLeads, localLeads);
-      ghLeadsSha = leadsRemote.sha;
-    } else {
-      mergedLeads = localLeads;
-      ghLeadsSha = null;
+    for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+      try {
+        await syncOnce();
+        ghLastSync = Date.now();
+        localStorage.setItem('_lastSyncAt', String(ghLastSync));
+        updateSyncUI();
+        return;
+      } catch (e) {
+        lastError = e;
+        if (e.code !== 'CONFLICT' || attempt === MAX_ATTEMPTS) throw e;
+        console.warn('Конфликт на попытке '+attempt+', повторяю через паузу');
+        updateSyncUI('Конфликт — мерджу заново ('+attempt+'/'+MAX_ATTEMPTS+')', 'syncing');
+        // Экспоненциальный backoff — даём GitHub CDN время на инвалидацию
+        await new Promise(r => setTimeout(r, 700 * attempt));
+      }
     }
-    applyLeads(mergedLeads);
-
-    // 2. PULL dashboard-state.json
-    const stateRemote = await ghGetFile(GH_STATE_PATH);
-    const localState = collectSnapshot();
-    let mergedState;
-    if (stateRemote.exists) {
-      const remoteState = JSON.parse(stateRemote.content);
-      mergedState = mergeSnapshots(remoteState, localState);
-      ghStateSha = stateRemote.sha;
-    } else {
-      mergedState = localState;
-      ghStateSha = null;
-    }
-    applySnapshot(mergedState);
-
-    if (typeof render === 'function') render();
-
-    // 3. PUSH leads.json
-    const leadsPayload = { version: 1, updated_at: new Date().toISOString(), leads: mergedLeads };
-    const newLeadsSha = await ghPutFile(GH_LEADS_PATH, JSON.stringify(leadsPayload, null, 2), ghLeadsSha, 'dashboard: update leads ('+new Date().toISOString().slice(0,16)+')');
-    ghLeadsSha = newLeadsSha;
-    localStorage.setItem('_gh_leads_sha', newLeadsSha);
-
-    // 4. PUSH markdown view
-    try {
-      const mdRemote = ghLeadsMdSha ? { sha: ghLeadsMdSha } : await ghGetFile(GH_LEADS_MD_PATH).then(r => ({ sha: r.sha })).catch(()=>({sha:null}));
-      const md = generateLeadsMarkdown(mergedLeads);
-      const newMdSha = await ghPutFile(GH_LEADS_MD_PATH, md, mdRemote.sha, 'dashboard: update leads.md view');
-      ghLeadsMdSha = newMdSha;
-      localStorage.setItem('_gh_leads_md_sha', newMdSha);
-    } catch (e) { console.warn('markdown view skipped:', e.message); }
-
-    // 5. PUSH dashboard-state.json
-    mergedState._savedAt = Date.now();
-    const newStateSha = await ghPutFile(GH_STATE_PATH, JSON.stringify(mergedState, null, 2), ghStateSha, 'dashboard: update state ('+new Date().toISOString().slice(0,16)+')');
-    ghStateSha = newStateSha;
-    localStorage.setItem('_gh_state_sha', newStateSha);
-
-    ghLastSync = Date.now();
-    localStorage.setItem('_lastSyncAt', String(ghLastSync));
-    ghRetryCount = 0;
-    updateSyncUI();
   } catch (e) {
     console.error('sync error', e);
-    if (e.code === 'CONFLICT' && ghRetryCount < 1) {
-      ghRetryCount++;
-      ghLeadsSha = null; ghStateSha = null; ghLeadsMdSha = null;
-      localStorage.removeItem('_gh_leads_sha');
-      localStorage.removeItem('_gh_state_sha');
-      localStorage.removeItem('_gh_leads_md_sha');
-      updateSyncUI('Конфликт sha — обновляю и пробую', 'syncing');
-      ghSyncInFlight = false;
-      return syncNow();
-    }
-    ghRetryCount = 0;
     updateSyncUI('Ошибка: ' + (e.message || e), 'err');
   } finally { ghSyncInFlight = false; }
 }
@@ -3226,6 +3219,15 @@ function scheduleSync() {
   if (ghDebounceTimer) clearTimeout(ghDebounceTimer);
   ghDebounceTimer = setTimeout(() => { ghDebounceTimer = null; syncNow(); }, SYNC_DEBOUNCE_MS);
 }
+
+// Multi-tab coordination: если другая вкладка только что синкнулась — пропускаем
+function acquireTabLock() {
+  const lockUntil = Number(localStorage.getItem('_gh_sync_lock') || 0);
+  if (Date.now() < lockUntil) return false;
+  localStorage.setItem('_gh_sync_lock', String(Date.now() + 30000));
+  return true;
+}
+function releaseTabLock() { localStorage.removeItem('_gh_sync_lock'); }
 
 function connectGDrive() { openPatModal(); }
 function disconnectGDrive() {
