@@ -71,13 +71,11 @@
     padding: 0 10px 28px;
   }
   .brand-logo {
-    width: 32px; height: 32px;
-    border-radius: 9px;
-    background: var(--green-dark);
+    width: 36px; height: 32px;
     display: flex; align-items: center; justify-content: center;
-    color: #fff;
+    color: #DC2626;
   }
-  .brand-logo svg { width: 18px; height: 18px; }
+  .brand-logo svg { width: 32px; height: 16px; }
   .brand-name { font-size: 17px; font-weight: 700; color: var(--text); letter-spacing: -.3px; }
 
   .menu-section-label {
@@ -183,13 +181,18 @@
   .user-avatar {
     width: 44px; height: 44px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #e8f3ea, #d4ecd5);
+    background: radial-gradient(circle at 30% 30%, #1a5a42, #0d3a2c 60%, #062018);
     display: flex; align-items: center; justify-content: center;
-    font-size: 22px;
     flex-shrink: 0;
+    position: relative;
+    box-shadow: 0 0 0 2px rgba(0, 214, 143, 0.18), 0 4px 12px -2px rgba(13, 58, 44, 0.35);
+  }
+  .user-avatar svg {
+    width: 22px; height: 22px;
+    color: #00d68f;
+    filter: drop-shadow(0 0 5px rgba(0, 214, 143, 0.55));
   }
   .user-name { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.2; }
-  .user-email { font-size: 11px; color: var(--text-3); margin-top: 2px; }
 
   /* ============ CONTENT ============ */
   .content { display: flex; flex-direction: column; gap: 14px; }
@@ -627,6 +630,20 @@
   .kanban-col-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; display:flex; align-items:center; gap:6px; }
   .kanban-col-dot { width:8px; height:8px; border-radius:50%; }
   .kanban-col-count { font-size:10px; font-weight:700; background:var(--surface); padding:2px 7px; border-radius:8px; color:var(--text-2); }
+  .kanban-col-head-right { display:flex; align-items:center; gap:6px; }
+  .kanban-col-add {
+    width:22px; height:22px;
+    border-radius:7px;
+    border:none;
+    background:var(--surface);
+    color:var(--text-3);
+    font-size:15px; font-weight:700;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    line-height:1; padding:0;
+    transition: all .15s;
+  }
+  .kanban-col-add:hover { background:var(--green-dark); color:#fff; transform: scale(1.08); }
   .kanban-col.new .kanban-col-dot           { background:#9ca3af; } .kanban-col.new .kanban-col-title           { color:#6b7280; }
   .kanban-col.first_contact .kanban-col-dot { background:var(--blue); } .kanban-col.first_contact .kanban-col-title { color:var(--blue); }
   .kanban-col.in_progress .kanban-col-dot   { background:var(--orange); } .kanban-col.in_progress .kanban-col-title { color:var(--orange); }
@@ -863,7 +880,7 @@
   }
 </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 </head>
 <body>
 
@@ -872,7 +889,7 @@
   <aside class="sidebar">
     <div class="brand">
       <div class="brand-logo">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L4 6v6c0 5.5 3.5 10.3 8 11 4.5-.7 8-5.5 8-11V6l-8-4z"/><path d="M9 12l2 2 4-4"/></svg>
+        <svg viewBox="0 0 24 12" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6c-2-2.67-4-4-6-4a4 4 0 1 0 0 8c2 0 4-1.33 6-4Zm0 0c2 2.67 4 4 6 4a4 4 0 0 0 0-8c-2 0-4 1.33-6 4Z"/></svg>
       </div>
       <div class="brand-name">8Digital</div>
     </div>
@@ -923,10 +940,11 @@
         <span class="dot" id="alertDot" style="display:none"></span>
       </button>
       <div class="user-chip">
-        <div class="user-avatar">😎</div>
+        <div class="user-avatar" title="AI-native">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2c.2 4.6 1.8 6.6 6.5 7.5C18.6 9.6 18.7 9.7 18.7 9.8c-.1.1-.2.2-.2.2-4.7.9-6.3 2.9-6.5 7.5-.2-4.6-1.8-6.6-6.5-7.5C5.4 9.9 5.3 9.8 5.3 9.7c.1-.1.2-.2.2-.2C10.2 8.6 11.8 6.6 12 2Z"/><path d="M18.5 14.5c.1 2.3.9 3.3 3.2 3.7-2.3.4-3.1 1.4-3.2 3.8-.1-2.4-.9-3.4-3.2-3.8 2.3-.4 3.1-1.4 3.2-3.7Z" opacity=".7"/></svg>
+        </div>
         <div>
           <div class="user-name">Макс Драница</div>
-          <div class="user-email">max.dranitsa@gmail.com</div>
         </div>
       </div>
     </header>
@@ -945,7 +963,6 @@
             <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Новый лид
           </button>
-          <button class="btn btn-secondary" onclick="openCalcModal()">Распределение</button>
         </div>
       </header>
 
@@ -1669,6 +1686,67 @@ function seedLeadsIfEmpty() {
   localStorage.setItem('leads_seeded_v2', '1');
 }
 
+// Одноразовый импорт лидов из vault — мерджит к существующим по имени, дубли пропускает
+function importLeadsFromVault() {
+  const FLAG = 'leads_imported_2026_05_25';
+  if (localStorage.getItem(FLAG) === '1') return;
+  const existing = JSON.parse(localStorage.getItem('leads') || '[]');
+  const existingNames = new Set(existing.map(l => (l.name || '').toLowerCase().trim()));
+  // daysAgo — сколько дней назад создан лид (для реалистичной ленты)
+  const vault = [
+    { name:'Тамара',            company:'БНБ-банк',                       channel:'partnership', chek:0,       status:'in_progress',   daysAgo:3,  text:'Обсуждение внедрения 8 Digital платформы и таск-менеджера с ИИ в банк. Встреча 22.05.' },
+    { name:'Роман',             company:'БНБ-банк (IT)',                  channel:'partnership', chek:0,       status:'in_progress',   daysAgo:3,  text:'Параллельный трек с Тамарой — согласование интеграции платформы с IT-отделом. Встреча 22.05.' },
+    { name:'Анна Лифанова',     company:'Медкомпания (питсерия, 10+ филиалов)', channel:'personal',  chek:180000,  status:'first_contact', daysAgo:7,  text:'Индивидуальный коучинг: 1.5 мес, 8 модулей. Падение выручки, ищет навыки ИИ. Встреча 18.05.' },
+    { name:'Александр',         company:'Рига Холидай (коттеджный посёлок)', channel:'personal',  chek:500000,  status:'first_contact', daysAgo:4,  text:'Discovery по AI в управлении посёлком на 1500+ жителей. Готов инвестировать в инфраструктуру. Встреча 21.05.' },
+    { name:'Дмитрий',           company:'Workout школа (Краснодар, 3 филиала)', channel:'outreach',  chek:0,       status:'proposal_sent', daysAgo:8,  text:'Claude Code обучение + чат-бот для родителей. Сами хотят учиться. КП в работе.' },
+    { name:'Вадим',             company:'YouTube дизайн / McDrive',       channel:'partnership', chek:0,       status:'lost',          daysAgo:21, text:'Предложение партнёрства через блогеров. Энергия упала, мягкий отказ. Встреча 04.05.' },
+    { name:'Александр Гриль',   company:'МАП (Московская ассоциация предпринимателей)', channel:'partnership', chek:1000000, status:'in_progress', daysAgo:25, text:'Двойной трек: КП в банки через комитеты + выступление перед 200+ строителями МАП. Ждём безопасников.' },
+    { name:'Владимир',          company:'Sminex (девелопер)',             channel:'outreach',    chek:0,       status:'in_progress',   daysAgo:54, text:'Корп. обучение команды 20+. Case-based тренажёры по ИИ, 6 недель, 8 блоков.' },
+    { name:'Люба Сафронова',    company:'Дизайн-бюро (Ташкент)',          channel:'partnership', chek:1800000, status:'proposal_sent', daysAgo:14, text:'Двухдневный интенсив на 30-50 чел., дизайнеры/архитекторы. Локация готовится.' },
+    { name:'Джабраил',          company:'Kaspersky (маркетинг)',          channel:'personal',    chek:0,       status:'new',           daysAgo:4,  text:'Маркетинг Kaspersky, использует ИИ для генерации изображений. Возможно обучение команды.' },
+    { name:'Грязнов Леонид',    company:'консалтинг',                     channel:'personal',    chek:0,       status:'new',           daysAgo:4,  text:'Контакт 21.05. Возможно обучение команды, нужна холодная презентация.' },
+    { name:'Alexey Kletsko',    company:'Yakov & Partners',               channel:'outreach',    chek:0,       status:'first_contact', daysAgo:10, text:'Director Digital Transformation, ex-McKinsey. DM отправлено — горячий контакт, 7 общих знакомых.' },
+    { name:'Alexander Antonov', company:'Yakov & Partners',               channel:'outreach',    chek:0,       status:'first_contact', daysAgo:10, text:'Золотой лид. Опрос про ИИ в девелопменте, ждёт ответа через его пост с предложением участия.' },
+    { name:'Maksim Bolotskikh', company:'Yakov & Partners',               channel:'outreach',    chek:0,       status:'new',           daysAgo:12, text:'Partner Head of High-tech & AI Practice. Критически важный контакт, в очереди после Kletsko/Antonov.' },
+    { name:'Sergey Kudryashov', company:'Strategy Partners',              channel:'outreach',    chek:0,       status:'new',           daysAgo:12, text:'Partner Digital Transformation. Изучить публичные материалы перед контактом.' },
+    { name:'Марк Розин',        company:'ЭКОПСИ',                         channel:'outreach',    chek:500000,  status:'new',           daysAgo:15, text:'Управляющий партнёр (HR №1). Синергия обучение + оценка. Прямые почты есть на сайте.' },
+    { name:'Павел Безручко',    company:'ЭКОПСИ',                         channel:'outreach',    chek:500000,  status:'new',           daysAgo:15, text:'Управляющий партнёр ЭКОПСИ. Прямой email есть. В очереди для письма.' },
+    { name:'Matt',              company:'Rapid Dev',                      channel:'partnership', chek:0,       status:'negotiation',   daysAgo:55, text:'Партнёрство по платформе 8 Digital. Встреча 31.03, давно не было апдейтов — нужен пинг.' },
+    { name:'Наталья Асанович',  company:'Enin Group',                     channel:'outreach',    chek:0,       status:'in_progress',   daysAgo:30, text:'Discovery AI внедрения, нужен decision-maker. Компания в перестройке.' },
+    { name:'Влад Андросов',     company:'Kano (стоматология)',            channel:'outreach',    chek:150000,  status:'first_contact', daysAgo:40, text:'Сетевой стом-бизнес. AI для оптимизации процессов, нужна концепция внедрения.' },
+    { name:'Артём',             company:'МИС медицина',                   channel:'outreach',    chek:300000,  status:'first_contact', daysAgo:45, text:'Мед. инф. система. AI-внедрение, discovery в обсуждении.' },
+    { name:'Vita Clinic',       company:'(контакт уточнить)',             channel:'outreach',    chek:0,       status:'first_contact', daysAgo:41, text:'Клиника, встреча 14.04. Обсуждение AI в медицине. Статус неясен.' },
+    { name:'Необанк (Минск)',   company:'финтех-стартап',                 channel:'outreach',    chek:500000,  status:'proposal_sent', daysAgo:35, text:'Discovery-проект, AI-платформа для нового функционала.' },
+    { name:'Юлия',              company:'Челябинск',                      channel:'outreach',    chek:0,       status:'first_contact', daysAgo:40, text:'Встреча 15.04, контакт из Челябинска. Статус уточнить.' }
+  ];
+  const added = [];
+  vault.forEach((s, i) => {
+    if (existingNames.has(s.name.toLowerCase().trim())) return;
+    const created = new Date(Date.now() - s.daysAgo * 86400000).toISOString();
+    const dateStr = created.slice(0,10);
+    added.push({
+      id: 'lead_'+dateStr+'_'+String(i+100).padStart(3,'0'),
+      name: s.name,
+      company: s.company,
+      channel: s.channel,
+      potential_chek_rub: s.chek,
+      status: s.status,
+      created_at: created,
+      updated_at: created,
+      status_changed_at: created,
+      closed_at: (s.status === 'won' || s.status === 'lost') ? created : null,
+      next_action: '',
+      next_action_date: null,
+      history: [{ date: created, text: s.text }]
+    });
+  });
+  if (added.length) {
+    localStorage.setItem('leads', JSON.stringify([...existing, ...added]));
+    console.log('Импортировано лидов из vault:', added.length);
+  }
+  localStorage.setItem(FLAG, '1');
+}
+
 function migrateLeadIfNeeded(l) {
   // Старая схема → новая
   if (l.history) return l; // уже мигрирован
@@ -2131,7 +2209,10 @@ function renderLeadsKanban() {
     col.innerHTML =
       '<div class="kanban-col-head">'+
         '<div class="kanban-col-title"><span class="kanban-col-dot"></span>'+status.short+'</div>'+
-        '<div class="kanban-col-count">'+colLeads.length+'</div>'+
+        '<div class="kanban-col-head-right">'+
+          '<button class="kanban-col-add" onclick="event.stopPropagation(); openLeadModalForStatus(\''+status.id+'\')" title="Добавить лида в статус «'+status.name+'»">+</button>'+
+          '<div class="kanban-col-count">'+colLeads.length+'</div>'+
+        '</div>'+
       '</div>'+
       '<div class="kanban-col-body" data-status="'+status.id+'"></div>';
     const body = col.querySelector('.kanban-col-body');
@@ -2248,6 +2329,11 @@ function fmtDateNice(iso) {
   if (days === 1) return 'вчера';
   if (days < 7) return days + ' дн. назад';
   return d.toLocaleDateString('ru-RU', {day:'2-digit', month:'2-digit', year:'2-digit'});
+}
+function openLeadModalForStatus(status) {
+  openLeadModal();
+  const sel = document.getElementById('leadStatus');
+  if (sel) sel.value = status;
 }
 function openLeadModal(id) {
   fillLeadSelects();
@@ -2795,11 +2881,18 @@ function render() {
 }
 
 seedLeadsIfEmpty();
+importLeadsFromVault();
 seedProjectsIfEmpty();
 const savedPage = localStorage.getItem('activeTab') || 'home';
 navTo(['home','leads','today','finance','history','projects'].includes(savedPage) ? savedPage : 'home');
 render();
 setInterval(render, 60000);
+// Fallback: если Sortable грузится дольше первого рендера — перерисуем канбан, как только он появится
+if (typeof Sortable === 'undefined') {
+  window.addEventListener('load', () => {
+    if (typeof Sortable !== 'undefined') renderLeadsKanban();
+  });
+}
 </script>
 </body>
 </html>
