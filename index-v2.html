@@ -1530,7 +1530,8 @@ function freshnessClass(updatedAt) {
   return 'stuck';
 }
 // ===== PROJECTS =====
-function loadProjects() { return JSON.parse(localStorage.getItem('projects') || '[]'); }
+function loadProjects() { return loadProjectsRaw().filter(p => !p.deleted); }
+function loadProjectsRaw() { return JSON.parse(localStorage.getItem('projects') || '[]'); }
 function saveProjects(p) { localStorage.setItem('projects', JSON.stringify(p)); }
 function seedProjectsIfEmpty() {
   if (localStorage.getItem('projects_seeded_v1') === '1') return;
@@ -1676,11 +1677,14 @@ function saveProject() {
 }
 function deleteProjectFromModal() {
   if (!currentProjectId) return;
-  const projects = loadProjects();
+  const projects = loadProjectsRaw();
   const p = projects.find(x => x.id === currentProjectId);
   if (!p) return;
   if (!confirm('Удалить проект «'+p.name+'» и все идеи? Это нельзя отменить.')) return;
-  saveProjects(projects.filter(x => x.id !== currentProjectId));
+  p.deleted = true;
+  p.deleted_at = new Date().toISOString();
+  p.updated_at = new Date().toISOString();
+  saveProjects(projects);
   closeProjectModal();
   renderProjects();
   toast('Проект удалён');
@@ -1926,7 +1930,12 @@ function saveState() { localStorage.setItem(getWeekKey(), JSON.stringify(state.w
 function loadDayByKey(key) { return JSON.parse(localStorage.getItem(key) || 'null'); }
 function loadDeals() { return JSON.parse(localStorage.getItem(getMonthKey()) || '[]'); }
 function saveDeals(d) { localStorage.setItem(getMonthKey(), JSON.stringify(d)); }
+// loadLeads — для UI и логики (фильтрует soft-deleted)
 function loadLeads() {
+  return loadLeadsRaw().filter(l => !l.deleted);
+}
+// loadLeadsRaw — для sync (видит soft-deleted чтобы переслать tombstone-флаг)
+function loadLeadsRaw() {
   const raw = JSON.parse(localStorage.getItem('leads') || '[]');
   let dirty = false;
   const migrated = raw.map(l => {
@@ -2630,11 +2639,15 @@ function saveLead() {
 function closeLeadModal() { document.getElementById('leadModalBg').classList.remove('show'); currentLeadId = null; }
 function deleteLeadFromModal() {
   if (!currentLeadId) return;
-  const leads = loadLeads();
+  const leads = loadLeadsRaw();
   const lead = leads.find(l => l.id === currentLeadId);
   if (!lead) return;
   if (!confirm('Удалить лид «'+lead.name+'» и всю историю? Это нельзя отменить.')) return;
-  saveLeads(leads.filter(l => l.id !== currentLeadId));
+  // Soft-delete: помечаем флагом, чтобы tombstone дошёл до других устройств через sync
+  lead.deleted = true;
+  lead.deleted_at = nowIso();
+  lead.updated_at = nowIso();
+  saveLeads(leads);
   closeLeadModal();
   render();
   toast('Лид удалён');
@@ -3229,7 +3242,9 @@ function applyLeads(leads) {
   finally { ghSuppressAutoSync = false; }
 }
 
-function generateLeadsMarkdown(leads) {
+function generateLeadsMarkdown(allLeads) {
+  // soft-deleted в markdown не показываем
+  const leads = (allLeads || []).filter(l => !l.deleted);
   const STATUS_LABELS = {
     new: 'Новые', first_contact: 'Первый контакт', in_progress: 'В диалоге',
     proposal_sent: 'КП отправлено', negotiation: 'Переговоры', won: 'Won', lost: 'Lost'
