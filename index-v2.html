@@ -2976,8 +2976,9 @@ async function ghErrorMessage(resp, fallback) {
 
 async function ghGetFile(path) {
   if (!ghPat) throw new Error('no PAT');
-  const url = 'https://api.github.com/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/'+encodeGhPath(path)+'?ref='+GH_BRANCH;
-  const resp = await fetch(url, { headers: ghHeaders() });
+  // Cache buster — чтобы прокси и GitHub CDN не отдавали stale-версии
+  const url = 'https://api.github.com/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/'+encodeGhPath(path)+'?ref='+GH_BRANCH+'&_='+Date.now();
+  const resp = await fetch(url, { headers: ghHeaders(), cache: 'no-store' });
   if (resp.status === 404) return { exists: false, content: null, sha: null };
   if (!resp.ok) throw new Error(await ghErrorMessage(resp, 'GET '+path+' '+resp.status));
   const data = await resp.json();
@@ -2998,7 +2999,10 @@ async function ghPutFile(path, contentStr, sha, message) {
   const resp = await fetch(url, { method: 'PUT', headers: Object.assign({'Content-Type':'application/json'}, ghHeaders()), body: JSON.stringify(body), cache: 'no-store' });
   if (resp.status === 409 || resp.status === 422) {
     const errBody = await resp.text();
-    const e = new Error(errBody && errBody.length < 200 ? (function(){try{return JSON.parse(errBody).message;}catch{return 'sha mismatch';}})() : 'sha mismatch');
+    let msg = 'sha mismatch';
+    try { const j = JSON.parse(errBody); if (j.message) msg = j.message; } catch { if (errBody) msg = errBody.slice(0, 180); }
+    console.warn('PUT '+path+' '+resp.status+': '+msg);
+    const e = new Error(msg);
     e.code = 'CONFLICT'; e.path = path; throw e;
   }
   if (!resp.ok) throw new Error(await ghErrorMessage(resp, 'PUT '+path+' '+resp.status));
@@ -3130,8 +3134,10 @@ function generateLeadsMarkdown(leads) {
 }
 
 async function syncOnce() {
+  console.log('[sync] starting');
   // 1. PULL leads.json
   const leadsRemote = await ghGetFile(GH_LEADS_PATH);
+  console.log('[sync] PULL leads sha:', leadsRemote.sha, 'exists:', leadsRemote.exists);
   let mergedLeads;
   let leadsSha = null;
   const localLeads = JSON.parse(localStorage.getItem('leads') || '[]');
@@ -3163,7 +3169,9 @@ async function syncOnce() {
 
   // 3. PUSH leads.json
   const leadsPayload = { version: 1, updated_at: new Date().toISOString(), leads: mergedLeads };
+  console.log('[sync] PUT leads with sha:', leadsSha, 'leads count:', mergedLeads.length);
   const newLeadsSha = await ghPutFile(GH_LEADS_PATH, JSON.stringify(leadsPayload, null, 2), leadsSha, 'dashboard: update leads ('+new Date().toISOString().slice(0,16)+')');
+  console.log('[sync] PUT leads ok, new sha:', newLeadsSha);
   ghLeadsSha = newLeadsSha;
   localStorage.setItem('_gh_leads_sha', newLeadsSha);
 
