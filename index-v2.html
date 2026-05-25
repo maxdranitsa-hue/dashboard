@@ -2958,12 +2958,28 @@ function ghHeaders() {
   };
 }
 
+function encodeGhPath(p) {
+  return p.split('/').map(encodeURIComponent).join('/');
+}
+
+async function ghErrorMessage(resp, fallback) {
+  let body = '';
+  try { body = await resp.text(); } catch {}
+  let msg = fallback;
+  try {
+    const j = JSON.parse(body);
+    if (j && j.message) msg += ' — ' + j.message;
+    if (j && j.errors && j.errors.length) msg += ' [' + j.errors.map(x => x.message || JSON.stringify(x)).join('; ') + ']';
+  } catch { if (body) msg += ' — ' + body.slice(0, 200); }
+  return msg;
+}
+
 async function ghGetFile(path) {
   if (!ghPat) throw new Error('no PAT');
-  const url = 'https://api.github.com/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/'+encodeURIComponent(path)+'?ref='+GH_BRANCH;
+  const url = 'https://api.github.com/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/'+encodeGhPath(path)+'?ref='+GH_BRANCH;
   const resp = await fetch(url, { headers: ghHeaders() });
   if (resp.status === 404) return { exists: false, content: null, sha: null };
-  if (!resp.ok) throw new Error('GET '+path+' failed: '+resp.status);
+  if (!resp.ok) throw new Error(await ghErrorMessage(resp, 'GET '+path+' '+resp.status));
   const data = await resp.json();
   let content = '';
   try { content = decodeURIComponent(escape(atob(data.content.replace(/\s/g,'')))); }
@@ -2973,15 +2989,15 @@ async function ghGetFile(path) {
 
 async function ghPutFile(path, contentStr, sha, message) {
   if (!ghPat) throw new Error('no PAT');
-  const url = 'https://api.github.com/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/'+encodeURIComponent(path);
+  const url = 'https://api.github.com/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/'+encodeGhPath(path);
   let b64;
   try { b64 = btoa(unescape(encodeURIComponent(contentStr))); }
   catch { b64 = btoa(contentStr); }
   const body = { message, content: b64, branch: GH_BRANCH };
   if (sha) body.sha = sha;
   const resp = await fetch(url, { method: 'PUT', headers: Object.assign({'Content-Type':'application/json'}, ghHeaders()), body: JSON.stringify(body) });
-  if (resp.status === 409 || resp.status === 422) { const e = new Error('conflict'); e.code = 'CONFLICT'; e.path = path; throw e; }
-  if (!resp.ok) throw new Error('PUT '+path+' failed: '+resp.status);
+  if (resp.status === 409) { const e = new Error('sha mismatch'); e.code = 'CONFLICT'; e.path = path; throw e; }
+  if (!resp.ok) throw new Error(await ghErrorMessage(resp, 'PUT '+path+' '+resp.status));
   const data = await resp.json();
   return data.content.sha;
 }
@@ -3109,6 +3125,7 @@ function generateLeadsMarkdown(leads) {
   return md;
 }
 
+let ghRetryCount = 0;
 async function syncNow() {
   if (!ghPat) return;
   if (ghSyncInFlight) return;
@@ -3169,19 +3186,22 @@ async function syncNow() {
 
     ghLastSync = Date.now();
     localStorage.setItem('_lastSyncAt', String(ghLastSync));
+    ghRetryCount = 0;
     updateSyncUI();
   } catch (e) {
     console.error('sync error', e);
-    if (e.code === 'CONFLICT') {
+    if (e.code === 'CONFLICT' && ghRetryCount < 1) {
+      ghRetryCount++;
       ghLeadsSha = null; ghStateSha = null; ghLeadsMdSha = null;
       localStorage.removeItem('_gh_leads_sha');
       localStorage.removeItem('_gh_state_sha');
       localStorage.removeItem('_gh_leads_md_sha');
-      updateSyncUI('Конфликт — попробую заново', 'err');
-      setTimeout(() => syncNow(), 1500);
-    } else {
-      updateSyncUI('Ошибка: ' + e.message, 'err');
+      updateSyncUI('Конфликт sha — обновляю и пробую', 'syncing');
+      ghSyncInFlight = false;
+      return syncNow();
     }
+    ghRetryCount = 0;
+    updateSyncUI('Ошибка: ' + (e.message || e), 'err');
   } finally { ghSyncInFlight = false; }
 }
 
