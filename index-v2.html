@@ -729,6 +729,51 @@
   .check-sub { font-size: 11px; color: var(--text-3); margin-top: 2px; }
 
   .log-list { display: flex; flex-direction: column; gap: 8px; }
+
+  /* ===== Туч-трекер (касания дня) — индиго ===== */
+  .touch-day-label { font-size: 11px; color: var(--text-3); font-weight: 600; text-transform: uppercase; letter-spacing: .8px; }
+  .touch-tracker {
+    display: flex; align-items: center; gap: 18px;
+    padding: 14px;
+    background: linear-gradient(135deg, rgba(99,102,241,.06), rgba(99,102,241,.02));
+    border-radius: 14px;
+    margin-bottom: 14px;
+  }
+  .touch-ring-wrap { position: relative; width: 96px; height: 96px; flex-shrink: 0; }
+  .touch-ring { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .touch-ring-bg { fill: none; stroke: rgba(99,102,241,.15); stroke-width: 8; }
+  .touch-ring-fill {
+    fill: none;
+    stroke: #6366f1;
+    stroke-width: 8;
+    stroke-linecap: round;
+    transition: stroke-dashoffset .55s cubic-bezier(.4,0,.2,1), stroke .25s;
+    filter: drop-shadow(0 0 6px rgba(99,102,241,.35));
+  }
+  .touch-ring-content {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    pointer-events: none;
+  }
+  .touch-ring-num { font-size: 28px; font-weight: 800; color: #4338ca; line-height: 1; letter-spacing: -.5px; }
+  .touch-ring-target { font-size: 10px; color: var(--text-3); font-weight: 600; margin-top: 3px; text-transform: uppercase; letter-spacing: .6px; }
+  .touch-tracker.done .touch-ring-fill { stroke: #10b981; filter: drop-shadow(0 0 8px rgba(16,185,129,.45)); animation: touchPulse 2.4s ease-in-out infinite; }
+  .touch-tracker.done .touch-ring-num { color: #047857; }
+  .touch-tracker.done { background: linear-gradient(135deg, rgba(16,185,129,.09), rgba(16,185,129,.03)); }
+  @keyframes touchPulse { 0%,100% { stroke-width: 8 } 50% { stroke-width: 10 } }
+  .touch-tracker-info { flex: 1; min-width: 0; }
+  .touch-tracker-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .touch-tracker-sub { font-size: 12px; color: var(--text-2); margin-bottom: 10px; }
+  .touch-pills { display: flex; gap: 5px; flex-wrap: wrap; }
+  .touch-pill {
+    width: 18px; height: 6px; border-radius: 3px;
+    background: rgba(99,102,241,.16);
+    transition: background .25s, transform .25s;
+  }
+  .touch-pill.filled { background: #6366f1; }
+  .touch-pill.bonus { background: #10b981; }
+  .touch-pill.just-added { animation: pillPop .4s ease-out; }
+  @keyframes pillPop { 0% { transform: scale(.4); } 60% { transform: scale(1.2); } 100% { transform: scale(1); } }
   .log-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--bg); border-radius: 10px; font-size: 13px; gap: 10px; }
   .log-item-text { flex: 1; min-width: 0; }
   .log-item-text-main { color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -1242,7 +1287,24 @@
               </ul>
             </div>
             <div class="card">
-              <div class="card-head"><div class="card-title">Журнал касаний</div></div>
+              <div class="card-head"><div class="card-title">Журнал касаний</div><div class="touch-day-label" id="touchDayLabel">сегодня</div></div>
+              <div class="touch-tracker">
+                <div class="touch-ring-wrap">
+                  <svg class="touch-ring" viewBox="0 0 110 110" aria-hidden="true">
+                    <circle class="touch-ring-bg" cx="55" cy="55" r="48"/>
+                    <circle class="touch-ring-fill" id="touchRingFill" cx="55" cy="55" r="48" stroke-dasharray="301.6" stroke-dashoffset="301.6"/>
+                  </svg>
+                  <div class="touch-ring-content">
+                    <div class="touch-ring-num" id="touchRingNum">0</div>
+                    <div class="touch-ring-target">из 7</div>
+                  </div>
+                </div>
+                <div class="touch-tracker-info">
+                  <div class="touch-tracker-title" id="touchTrackerTitle">Каждое касание приближает</div>
+                  <div class="touch-tracker-sub" id="touchTrackerSub">Норма: 7 первых контактов в день</div>
+                  <div class="touch-pills" id="touchPills"></div>
+                </div>
+              </div>
               <div class="log-list" id="touchLog"></div>
               <div class="quick-input">
                 <input id="touchInput" placeholder="Иван С. — предложил разбор" onkeydown="if(event.key==='Enter')saveTouchLog()">
@@ -2704,6 +2766,46 @@ function renderLogs() {
   const cEl = document.getElementById('callLog');
   if (tEl) tEl.innerHTML = renderOne(state.day.touchLog, 'touch');
   if (cEl) cEl.innerHTML = renderOne(state.day.callLog, 'call');
+  renderTouchTracker();
+}
+
+const TOUCH_GOAL = 7;
+let _prevTouchCount = -1;
+function renderTouchTracker() {
+  const n = (state.day && state.day.touches) || 0;
+  const ringNum = document.getElementById('touchRingNum');
+  const ringFill = document.getElementById('touchRingFill');
+  const tracker = document.querySelector('.touch-tracker');
+  const title = document.getElementById('touchTrackerTitle');
+  const sub = document.getElementById('touchTrackerSub');
+  const pillsEl = document.getElementById('touchPills');
+  if (!ringNum || !ringFill) return;
+  ringNum.textContent = n;
+  const c = 2 * Math.PI * 48;
+  const pct = Math.min(1, n / TOUCH_GOAL);
+  ringFill.setAttribute('stroke-dashoffset', c * (1 - pct));
+  if (tracker) tracker.classList.toggle('done', n >= TOUCH_GOAL);
+  if (title) {
+    if (n === 0) title.textContent = 'Каждое касание приближает';
+    else if (n < TOUCH_GOAL) title.textContent = (TOUCH_GOAL - n) + ' до нормы дня';
+    else if (n === TOUCH_GOAL) title.textContent = 'Норма дня закрыта 🔥';
+    else title.textContent = '+' + (n - TOUCH_GOAL) + ' сверх нормы';
+  }
+  if (sub) {
+    if (n >= TOUCH_GOAL) sub.textContent = 'Каждое следующее касание — задел на завтра';
+    else sub.textContent = 'Норма: ' + TOUCH_GOAL + ' первых контактов в день';
+  }
+  // Pills
+  if (pillsEl) {
+    const totalPills = Math.max(TOUCH_GOAL, n);
+    const isAddition = n > _prevTouchCount && _prevTouchCount >= 0;
+    pillsEl.innerHTML = Array.from({ length: totalPills }).map((_, i) => {
+      const cls = i < n ? (i < TOUCH_GOAL ? 'filled' : 'bonus') : '';
+      const animated = (isAddition && i === n - 1) ? ' just-added' : '';
+      return '<div class="touch-pill ' + cls + animated + '"></div>';
+    }).join('');
+  }
+  _prevTouchCount = n;
 }
 
 // ===== DEALS (Финансы — карточка с быстрой продажей и summary) =====
