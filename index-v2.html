@@ -1130,7 +1130,7 @@
 
           <div class="metric-card hero clickable" onclick="navTo('finance')" title="К Финансам">
             <div class="hero-left">
-              <div class="hero-label">Сделки мая</div>
+              <div class="hero-label" id="heroMonthLabel">Сделки месяца</div>
               <div class="hero-value" id="metricRevenueK">0 ₽</div>
               <div class="hero-meta">
                 <span class="metric-trend-chip" id="metricRevenueChip">старт</span>
@@ -1192,7 +1192,7 @@
             <!-- Project Progress (donut) -->
             <div class="card donut-card">
               <div class="card-head" style="width:100%">
-                <div class="card-title">Прогресс мая</div>
+                <div class="card-title" id="donutMonthTitle">Прогресс месяца</div>
               </div>
               <div class="donut-wrap">
                 <svg class="donut-svg" viewBox="0 0 220 130">
@@ -2096,6 +2096,9 @@ function getAvgCycleDays() {
 function renderMetrics() {
   // Выручка месяца = сумма won-лидов с closed_at в текущем месяце
   const total = getCurrentMonthRevenue();
+  const monthGen = MONTHS_RU[new Date().getMonth()];
+  const heroLabel = document.getElementById('heroMonthLabel');
+  if (heroLabel) heroLabel.textContent = 'Сделки ' + monthGen;
   document.getElementById('metricRevenueK').textContent = fmtMoneyRubShort(total);
   setChip(document.getElementById('metricRevenueChip'), total, getPrevMonthDealsTotal());
   const pct = Math.min(100, (total/GOAL_RUB)*100);
@@ -2298,9 +2301,12 @@ function renderActiveKp() {
   }).join('');
 }
 
-// ===== DONUT (Прогресс мая) =====
+// ===== DONUT (Прогресс месяца) =====
 function renderDonut() {
   const total = getCurrentMonthRevenue();
+  const monthGen = MONTHS_RU[new Date().getMonth()];
+  const title = document.getElementById('donutMonthTitle');
+  if (title) title.textContent = 'Прогресс ' + monthGen;
   const pct = Math.min(100, (total/GOAL_RUB)*100);
   const len = 283;
   const offset = len * (1 - pct/100);
@@ -2809,7 +2815,6 @@ function renderTouchTracker() {
 }
 
 // ===== DEALS (Финансы — карточка с быстрой продажей и summary) =====
-const RU_MONTHS = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
 function addDeal() {
   const name = document.getElementById('dealNameInput').value.trim();
   const amount = parseFloat(document.getElementById('dealAmountInput').value);
@@ -2842,7 +2847,7 @@ function renderDeals() {
   // Заголовок «Выручка <месяца>»
   const now = new Date();
   const title = document.getElementById('financeMonthTitle');
-  if (title) title.textContent = 'Выручка ' + RU_MONTHS[now.getMonth()];
+  if (title) title.textContent = 'Выручка ' + MONTHS_RU[now.getMonth()];
   // Summary
   const total = getCurrentMonthRevenue();
   const pct = Math.min(100, (total/GOAL_RUB)*100);
@@ -3124,7 +3129,7 @@ function renderClients() {
       '<div style="font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px">Архив прошлых месяцев</div>'+
       groups.map(g => {
         const total = g.leads.reduce((s,l) => s + (l.potential_chek_rub||0), 0);
-        const label = RU_MONTHS[g.month].charAt(0).toUpperCase() + RU_MONTHS[g.month].slice(1) + ' ' + g.year;
+        const label = MONTHS_RU[g.month].charAt(0).toUpperCase() + MONTHS_RU[g.month].slice(1) + ' ' + g.year;
         const sortedLeads = g.leads.sort((a,b) => new Date(b.closed_at) - new Date(a.closed_at));
         return '<details class="archive-month">'+
           '<summary>'+
