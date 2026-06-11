@@ -714,6 +714,53 @@
   .lead-card-days { font-size:10px; color:var(--text-3); font-weight:600; }
   .lead-card-days.warn { color:var(--orange); }
   .lead-card-days.bad { color:#dc2626; }
+
+  /* ===== ВЫПУСКНИКИ (свимлейны: потоки × стадии) ===== */
+  .swim-wrap { overflow-x:auto; padding-bottom:6px; }
+  .swim-inner { min-width:1040px; }
+  .swim-stages { display:grid; grid-template-columns:repeat(5, minmax(190px,1fr)); gap:10px; padding:0 4px 10px; position:sticky; top:0; background:var(--surface); z-index:5; }
+  .swim-stage-head { display:flex; align-items:center; gap:7px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--text-2); padding:4px 6px; }
+  .swim-stage-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .swim-stage-head.cold     .swim-stage-dot { background:#9ca3af; } .swim-stage-head.cold     { color:#6b7280; }
+  .swim-stage-head.written  .swim-stage-dot { background:var(--blue); } .swim-stage-head.written  { color:var(--blue); }
+  .swim-stage-head.replied  .swim-stage-dot { background:var(--orange); } .swim-stage-head.replied  { color:#b45309; }
+  .swim-stage-head.inviting .swim-stage-dot { background:#a855f7; } .swim-stage-head.inviting { color:#7c3aed; }
+  .swim-stage-head.declined .swim-stage-dot { background:#dc2626; } .swim-stage-head.declined { color:#dc2626; }
+
+  .swim-lane { border:1px solid var(--border-2); border-radius:var(--r); margin-bottom:10px; overflow:hidden; background:var(--surface); }
+  .swim-lane-head { display:flex; align-items:center; gap:12px; padding:12px 15px; cursor:pointer; user-select:none; transition:background .12s; }
+  .swim-lane-head:hover { background:var(--bg); }
+  .swim-lane-caret { font-size:11px; color:var(--text-3); transition:transform .15s; flex-shrink:0; width:10px; }
+  .swim-lane.open .swim-lane-caret { transform:rotate(90deg); }
+  .swim-lane-name { font-size:14px; font-weight:700; color:var(--text); flex:1; }
+  .swim-lane-stat { font-size:12px; color:var(--text-2); font-weight:600; white-space:nowrap; }
+  .swim-lane-bar { width:90px; height:6px; border-radius:4px; background:var(--bg); overflow:hidden; flex-shrink:0; }
+  .swim-lane-bar-fill { height:100%; background:var(--green-mid); border-radius:4px; transition:width .3s; }
+  .swim-lane-body { display:none; grid-template-columns:repeat(5, minmax(190px,1fr)); gap:10px; padding:0 4px 10px; border-top:1px solid var(--border); }
+  .swim-lane.open .swim-lane-body { display:grid; }
+  .swim-cell { background:var(--bg); border-radius:var(--r-sm); min-height:54px; padding:8px; margin-top:10px; }
+
+  .alum-card { background:var(--surface); border:1px solid var(--border-2); border-left:3px solid var(--text-3); border-radius:var(--r-sm); padding:9px 10px; margin-bottom:8px; cursor:grab; transition:box-shadow .12s; }
+  .alum-card:last-child { margin-bottom:0; }
+  .alum-card:hover { box-shadow:var(--shadow-lg); }
+  .alum-card:active { cursor:grabbing; }
+  .alum-card.cold { border-left-color:#9ca3af; } .alum-card.written { border-left-color:var(--blue); }
+  .alum-card.replied { border-left-color:var(--orange); } .alum-card.inviting { border-left-color:#a855f7; }
+  .alum-card.declined { border-left-color:#dc2626; }
+  .alum-card-name { font-size:12px; font-weight:700; color:var(--text); line-height:1.3; display:flex; align-items:center; gap:6px; }
+  .alum-card-user { font-size:10px; margin-top:2px; }
+  .alum-card-user a { color:var(--blue); text-decoration:none; }
+  .alum-card-user a:hover { text-decoration:underline; }
+  .alum-card-user .muted { color:var(--text-3); }
+  .alum-card-note { font-size:10px; color:var(--text-2); margin-top:5px; line-height:1.35; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .alum-card-touch { font-size:9px; color:var(--text-3); font-weight:600; margin-top:5px; }
+  .alum-card-touch.bad { color:#dc2626; } .alum-card-touch.warn { color:var(--orange); }
+  .alum-conv-badge { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.4px; color:var(--green-dark); background:var(--green-light); padding:2px 6px; border-radius:6px; white-space:nowrap; cursor:pointer; }
+  .swim-cell-empty { font-size:10px; color:var(--text-3); text-align:center; padding:6px; font-style:italic; opacity:.6; }
+  .swim-lane-add { padding:8px 15px 12px; }
+  .swim-lane-add button { font-size:12px; font-weight:600; color:var(--green-dark); background:transparent; border:1px dashed var(--border-2); border-radius:8px; padding:6px 12px; cursor:pointer; transition:background .12s; }
+  .swim-lane-add button:hover { background:var(--green-bg-soft); }
+  .alumni-empty-state { font-size:13px; color:var(--text-3); text-align:center; padding:40px 16px; font-style:italic; }
   .sortable-ghost { opacity:.4; }
   .sortable-drag { box-shadow: 0 10px 30px rgba(0,0,0,.18); }
 
@@ -1013,6 +1060,11 @@
       <span class="menu-item-label">Лиды</span>
       <span class="menu-badge" id="navLeadsBadge">0</span>
     </div>
+    <div class="menu-item" data-page="alumni" onclick="navTo('alumni')">
+      <svg class="menu-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"/></svg>
+      <span class="menu-item-label">Выпускники</span>
+      <span class="menu-badge" id="navAlumniBadge">0</span>
+    </div>
     <div class="menu-item" data-page="today" onclick="navTo('today')">
       <svg class="menu-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
       <span class="menu-item-label">Сегодня</span>
@@ -1272,6 +1324,24 @@
         </div>
       </section>
 
+      <!-- ===== PAGE: ALUMNI (Выпускники) ===== -->
+      <section class="page" data-page="alumni">
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title">Выпускники интенсивов</div>
+            <button class="btn btn-primary" onclick="openAlumModal()">+ Выпускник</button>
+          </div>
+          <div class="leads-toolbar">
+            <div class="leads-search">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input id="alumniSearchInput" placeholder="Поиск по имени, @username, заметке…" oninput="renderAlumni()">
+            </div>
+            <button class="leads-toggle-stuck" id="alumniExpandToggle" onclick="toggleAllAlumGroups()">Свернуть все</button>
+          </div>
+          <div class="swim-wrap"><div class="swim-inner" id="alumniBoard"></div></div>
+        </div>
+      </section>
+
       <!-- ===== PAGE: TODAY ===== -->
       <section class="page" data-page="today">
         <div class="dashboard-grid" style="grid-template-columns: 1fr 1fr;">
@@ -1456,6 +1526,71 @@
   </div>
 </div>
 
+<!-- MODAL: ALUMNI (Выпускник) -->
+<div class="modal-bg" id="alumModalBg" onclick="if(event.target===this)closeAlumModal()">
+  <div class="modal compact">
+    <input type="hidden" id="alumModalId">
+    <div class="lead-modal-head">
+      <div class="lead-modal-title-block">
+        <input type="text" id="alumName" class="lead-modal-name" style="border:none;padding:0;background:transparent;width:100%;outline:none" placeholder="Имя">
+        <input type="text" id="alumUsername" class="lead-modal-company" style="border:none;padding:0;background:transparent;width:100%;outline:none;margin-top:3px" placeholder="@username (опционально)">
+      </div>
+      <button class="lead-modal-close" onclick="closeAlumModal()" title="Закрыть">✕</button>
+    </div>
+
+    <div class="lead-fields-grid">
+      <div class="lead-field-mini">
+        <label>Источник (откуда взялся)</label>
+        <input type="text" id="alumGroup" list="alumGroupList" placeholder="Напр. Интенсив Сколково">
+        <datalist id="alumGroupList"></datalist>
+      </div>
+      <div class="lead-field-mini">
+        <label>Стадия</label>
+        <select id="alumStatus">
+          <option value="cold">Новые</option>
+          <option value="written">Написал</option>
+          <option value="replied">Ответил</option>
+          <option value="inviting">Зову</option>
+          <option value="declined">Отказ</option>
+        </select>
+      </div>
+      <div class="lead-field-mini full">
+        <label>Короткая заметка</label>
+        <input type="text" id="alumNote" placeholder="Контекст: чем занимается, статус одной строкой…">
+      </div>
+    </div>
+
+    <div class="lead-meta-row" id="alumMetaRow" style="display:none">
+      <span><b>Добавлен:</b> <span id="alumMetaCreated">—</span></span>
+      <span><b>Последнее касание:</b> <span id="alumMetaTouch">—</span></span>
+    </div>
+
+    <div class="lead-history-header">
+      <div class="lead-history-title">История касаний</div>
+      <button class="lead-history-add-btn" onclick="toggleAlumHistoryForm()">+ Запись</button>
+    </div>
+    <div class="lead-history-form" id="alumHistoryForm">
+      <textarea id="alumHistoryText" placeholder="Что написал, что ответил, о чём договорились. Дата проставится сама."></textarea>
+      <div class="lead-history-form-actions">
+        <button class="modal-btn cancel" onclick="toggleAlumHistoryForm(false)">Отмена</button>
+        <button class="modal-btn primary" onclick="addAlumHistoryEntry()">Сохранить запись</button>
+      </div>
+    </div>
+    <div class="lead-history-list" id="alumHistoryList"></div>
+
+    <div class="lead-modal-actions">
+      <div class="lead-modal-actions-left">
+        <button class="danger" id="alumDeleteBtn" onclick="deleteAlumFromModal()" style="display:none">Удалить</button>
+        <button class="modal-btn" id="alumConvertBtn" onclick="convertAlumFromModal()" style="display:none;border:1px solid var(--green-light-2);color:var(--green-dark)">→ в Лиды</button>
+      </div>
+      <div class="lead-modal-actions-right">
+        <button class="modal-btn cancel" onclick="closeAlumModal()">Закрыть</button>
+        <button class="modal-btn primary" onclick="saveAlum()">Сохранить</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL: PROJECT -->
 <div class="modal-bg" id="projectModalBg" onclick="if(event.target===this)closeProjectModal()">
   <div class="modal compact">
@@ -1560,7 +1695,8 @@ const LEAD_CHANNELS = [
   { id:'telegram',    name:'Telegram'              },
   { id:'outreach',    name:'Холодный аутрич'       },
   { id:'referral',    name:'Рекомендация клиента'  },
-  { id:'other',       name:'Другое'                }
+  { id:'other',       name:'Другое'                },
+  { id:'alumni',      name:'Выпускник интенсива'   }
 ];
 const PROJECTS_SEED = [
   { id:'madvpn',    name:'MADVPN',           emoji:'🛡️', sub:'VPN-сервис' },
@@ -2008,6 +2144,21 @@ function loadLeadsRaw() {
   return migrated;
 }
 function saveLeads(l) { localStorage.setItem('leads', JSON.stringify(l)); }
+
+// ===== ВЫПУСКНИКИ =====
+const ALUMNI_STATUSES = [
+  { id:'cold',     name:'Новые',   short:'Новые',   cls:'cold'     },
+  { id:'written',  name:'Написал', short:'Написал', cls:'written'  },
+  { id:'replied',  name:'Ответил', short:'Ответил', cls:'replied'  },
+  { id:'inviting', name:'Зову',    short:'Зову',    cls:'inviting' },
+  { id:'declined', name:'Отказ',   short:'Отказ',   cls:'declined' }
+];
+function alumStatusById(id) { return ALUMNI_STATUSES.find(s => s.id === id) || ALUMNI_STATUSES[0]; }
+function loadAlumniRaw() { return JSON.parse(localStorage.getItem('alumni') || '[]'); }
+function loadAlumni() { return loadAlumniRaw().filter(a => !a.deleted); }
+function saveAlumni(a) { localStorage.setItem('alumni', JSON.stringify(a)); }
+function genAlumId() { return 'alum_' + nowIso().slice(0,10) + '_' + String(Math.floor(Math.random()*9000)+1000); }
+
 function loadHistory() { return JSON.parse(localStorage.getItem('history') || '[]'); }
 function saveHistoryData(h) { localStorage.setItem('history', JSON.stringify(h)); }
 
@@ -2030,6 +2181,7 @@ function navTo(page) {
   const titles = {
     home: { t:'Главная', s:'План, выполнение, фокус — на одном экране.' },
     leads: { t:'Лиды', s:'CRM, канбан и движение по воронке.' },
+    alumni: { t:'Выпускники', s:'База участников интенсивов. Резервуар касаний, не воронка.' },
     today: { t:'Сегодня', s:'Чек-лист, касания и встречи дня.' },
     finance: { t:'Финансы', s:'Сделки месяца, клиенты, распределение прибыли.' },
     projects: { t:'Проекты', s:'Идеи и заметки по твоим проектам.' },
@@ -3173,6 +3325,369 @@ document.addEventListener('keydown', e => {
   }
 });
 
+// ===== ВЫПУСКНИКИ: канбан-доска =====
+let currentAlumId = null;
+
+function alumTouchInfo(a) {
+  if (!a.last_touch_at) return { text:'без касаний', cls:'' };
+  const days = daysSince(a.last_touch_at);
+  const cls = days > 14 ? 'bad' : days > 7 ? 'warn' : '';
+  const text = days === 0 ? 'сегодня' : days === 1 ? '1 день назад' : days < 5 ? days + ' дня назад' : days + ' дней назад';
+  return { text, cls };
+}
+function alumUserLink(a) {
+  if (!a.username) return '<span class="alum-card-user"><span class="muted">@ не указан</span></span>';
+  const u = a.username.replace(/^@/, '');
+  return '<span class="alum-card-user"><a href="https://t.me/'+encodeURIComponent(u)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">@'+escapeHtml(u)+'</a></span>';
+}
+function alumLastNote(a) {
+  if (a.history && a.history.length) return a.history[0].text;
+  return a.note || '';
+}
+
+let alumClosedGroups = new Set();
+function alumGroupKey(a) { return (a.group || '').trim() || '__none__'; }
+function alumGroupLabel(key) { return key === '__none__' ? 'Без источника' : key; }
+
+function renderAlumni() {
+  const board = document.getElementById('alumniBoard');
+  if (!board) return;
+  const all = loadAlumni();
+
+  // Бейдж в меню — общее число в базе
+  const badge = document.getElementById('navAlumniBadge');
+  if (badge) badge.textContent = all.length;
+
+  // Datalist источников для модалки
+  const sources = [...new Set(all.map(a => (a.group||'').trim()).filter(Boolean))].sort((x,y)=>x.localeCompare(y,'ru'));
+  const dl = document.getElementById('alumGroupList');
+  if (dl) dl.innerHTML = sources.map(g => '<option value="'+escapeHtml(g)+'">').join('');
+
+  if (!all.length) {
+    board.innerHTML = '<div class="alumni-empty-state">Пусто. Добавь первого выпускника через «+ Выпускник» — укажи поток (Январь, Сколково…), он станет сворачиваемой группой.</div>';
+    return;
+  }
+
+  // Поиск
+  const q = (document.getElementById('alumniSearchInput')?.value || '').toLowerCase().trim();
+  const filtering = !!q;
+  let list = all.slice();
+  if (q) list = list.filter(a => (a.name+' '+(a.username||'')+' '+(a.note||'')+' '+(a.group||'')+' '+((a.history||[]).map(h=>h.text).join(' '))).toLowerCase().includes(q));
+
+  // Группировка по потоку
+  const groups = {};
+  list.forEach(a => { const k = alumGroupKey(a); (groups[k] = groups[k] || []).push(a); });
+  const keys = Object.keys(groups).sort((x,y) => {
+    if (x === '__none__') return 1; if (y === '__none__') return -1;
+    return x.localeCompare(y, 'ru');
+  });
+
+  if (!keys.length) {
+    board.innerHTML = '<div class="alumni-empty-state">Никого не нашлось по фильтрам.</div>';
+    return;
+  }
+
+  // Шапка со стадиями (общие колонки канбана)
+  const stagesHead = '<div class="swim-stages">' + ALUMNI_STATUSES.map(s =>
+    '<div class="swim-stage-head '+s.cls+'"><span class="swim-stage-dot"></span>'+s.short+'</div>'
+  ).join('') + '</div>';
+
+  const lanesHtml = keys.map(key => {
+    // Прогресс считаем по всему потоку (не по фильтру) — честная картинка
+    const groupAll = all.filter(a => alumGroupKey(a) === key);
+    const total = groupAll.length;
+    const touched = groupAll.filter(a => (a.status||'cold') !== 'cold').length;
+    const pct = total ? Math.round(touched/total*100) : 0;
+    const isOpen = !alumClosedGroups.has(key) || filtering;
+    const addSrc = key === '__none__' ? '' : key;
+
+    // 5 ячеек-стадий внутри дорожки
+    const cells = ALUMNI_STATUSES.map(s => {
+      const cellItems = groups[key].filter(a => (a.status||'cold') === s.id)
+        .sort((a,b) => new Date(b.last_touch_at||b.updated_at||0) - new Date(a.last_touch_at||a.updated_at||0));
+      const cards = cellItems.length
+        ? cellItems.map(a => alumCardHtml(a)).join('')
+        : '<div class="swim-cell-empty">—</div>';
+      return '<div class="swim-cell" data-status="'+s.id+'" data-lane="'+escapeHtml(key)+'">'+cards+'</div>';
+    }).join('');
+
+    return '<div class="swim-lane'+(isOpen?' open':'')+'">'
+      + '<div class="swim-lane-head" data-group-key="'+escapeHtml(key)+'">'
+      +   '<span class="swim-lane-caret">▶</span>'
+      +   '<span class="swim-lane-name">'+escapeHtml(alumGroupLabel(key))+'</span>'
+      +   '<span class="swim-lane-stat">'+touched+' / '+total+'</span>'
+      +   '<span class="swim-lane-bar"><span class="swim-lane-bar-fill" style="width:'+pct+'%"></span></span>'
+      + '</div>'
+      + '<div class="swim-lane-body">'+cells+'</div>'
+      + '<div class="swim-lane-add"><button data-add-src="'+escapeHtml(addSrc)+'">+ Добавить в «'+escapeHtml(alumGroupLabel(key))+'»</button></div>'
+      + '</div>';
+  }).join('');
+
+  board.innerHTML = stagesHead + lanesHtml;
+
+  // Раскрытие/сворачивание дорожки
+  board.querySelectorAll('.swim-lane-head').forEach(h => {
+    h.addEventListener('click', () => toggleAlumGroup(h.dataset.groupKey));
+  });
+  // Открыть карточку (но не при клике по ссылке или во время перетаскивания)
+  board.querySelectorAll('.alum-card').forEach(card => {
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      if (card.dataset.dragging === '1') { card.dataset.dragging = ''; return; }
+      openAlumModal(card.dataset.alumId);
+    });
+  });
+  board.querySelectorAll('.alum-conv-badge').forEach(b => {
+    b.addEventListener('click', (e) => { e.stopPropagation(); openAlumLead(b.dataset.leadOf); });
+  });
+  board.querySelectorAll('.swim-lane-add button').forEach(btn => {
+    btn.addEventListener('click', () => openAlumModalForGroup(btn.dataset.addSrc || ''));
+  });
+
+  // Перетаскивание карточек по стадиям внутри своей дорожки (поток не меняется)
+  if (typeof Sortable !== 'undefined') {
+    board.querySelectorAll('.swim-lane').forEach(lane => {
+      const laneKey = lane.querySelector('.swim-lane-head')?.dataset.groupKey || '';
+      lane.querySelectorAll('.swim-cell').forEach(cell => {
+        Sortable.create(cell, {
+          group: 'alumlane_' + laneKey,
+          animation: 150,
+          ghostClass: 'sortable-ghost',
+          dragClass: 'sortable-drag',
+          onStart: (evt) => { evt.item.dataset.dragging = '1'; },
+          onEnd: (evt) => {
+            const id = evt.item.dataset.alumId;
+            const newStatus = evt.to.dataset.status;
+            const oldStatus = evt.from.dataset.status;
+            if (newStatus !== oldStatus) setAlumStatus(id, newStatus);
+          }
+        });
+      });
+    });
+  }
+}
+
+function alumCardHtml(a) {
+  const st = alumStatusById(a.status || 'cold');
+  const touch = alumTouchInfo(a);
+  const conv = a.converted ? '<span class="alum-conv-badge" data-lead-of="'+escapeHtml(a.id)+'" title="Открыть в Лидах">в лидах ↗</span>' : '';
+  const u = a.username ? a.username.replace(/^@/, '') : '';
+  const userPart = u
+    ? '<a href="https://t.me/'+encodeURIComponent(u)+'" target="_blank" rel="noopener">@'+escapeHtml(u)+'</a>'
+    : '<span class="muted">@ не указан</span>';
+  const note = alumLastNote(a) ? '<div class="alum-card-note">'+escapeHtml(alumLastNote(a))+'</div>' : '';
+  return '<div class="alum-card '+st.id+'" data-alum-id="'+escapeHtml(a.id)+'">'
+    + '<div class="alum-card-name">'+escapeHtml(a.name)+conv+'</div>'
+    + '<div class="alum-card-user">'+userPart+'</div>'
+    + note
+    + '<div class="alum-card-touch '+touch.cls+'">'+touch.text+'</div>'
+    + '</div>';
+}
+
+function toggleAlumGroup(key) {
+  if (alumClosedGroups.has(key)) alumClosedGroups.delete(key);
+  else alumClosedGroups.add(key);
+  renderAlumni();
+}
+
+function toggleAllAlumGroups() {
+  const allKeys = [...new Set(loadAlumni().map(a => alumGroupKey(a)))];
+  const allOpen = alumClosedGroups.size === 0;
+  if (allOpen) { allKeys.forEach(k => alumClosedGroups.add(k)); }
+  else { alumClosedGroups.clear(); }
+  const btn = document.getElementById('alumniExpandToggle');
+  if (btn) btn.textContent = allOpen ? 'Развернуть все' : 'Свернуть все';
+  renderAlumni();
+}
+
+function setAlumStatus(id, newStatus) {
+  const list = loadAlumni();
+  const a = list.find(x => x.id === id);
+  if (!a) return;
+  a.status = newStatus;
+  a.last_touch_at = nowIso();
+  a.updated_at = nowIso();
+  saveAlumni(list);
+  render();
+  toast('→ ' + alumStatusById(newStatus).name);
+}
+
+function openAlumModalForGroup(source) {
+  openAlumModal();
+  const inp = document.getElementById('alumGroup');
+  if (inp) inp.value = source || '';
+}
+
+function openAlumModal(id) {
+  const list = loadAlumni();
+  const a = id ? list.find(x => x.id === id) : null;
+  currentAlumId = a ? a.id : null;
+  document.getElementById('alumModalId').value = a ? a.id : '';
+  document.getElementById('alumName').value = a ? a.name : '';
+  document.getElementById('alumUsername').value = a ? (a.username || '') : '';
+  document.getElementById('alumGroup').value = a ? (a.group || '') : '';
+  document.getElementById('alumStatus').value = a ? (a.status || 'cold') : 'cold';
+  document.getElementById('alumNote').value = a ? (a.note || '') : '';
+  const metaRow = document.getElementById('alumMetaRow');
+  const convBtn = document.getElementById('alumConvertBtn');
+  if (a) {
+    metaRow.style.display = 'flex';
+    document.getElementById('alumMetaCreated').textContent = fmtDateNice(a.created_at);
+    document.getElementById('alumMetaTouch').textContent = a.last_touch_at ? fmtDateNice(a.last_touch_at) : '—';
+    document.getElementById('alumDeleteBtn').style.display = '';
+    convBtn.style.display = a.converted ? 'none' : '';
+    convBtn.textContent = '→ в Лиды';
+  } else {
+    metaRow.style.display = 'none';
+    document.getElementById('alumDeleteBtn').style.display = 'none';
+    convBtn.style.display = 'none';
+  }
+  toggleAlumHistoryForm(false);
+  renderAlumHistoryList(a);
+  document.getElementById('alumModalBg').classList.add('show');
+  setTimeout(() => { if (!a) document.getElementById('alumName').focus(); }, 50);
+}
+
+function renderAlumHistoryList(a) {
+  const el = document.getElementById('alumHistoryList');
+  const history = (a && a.history) || [];
+  if (!history.length) {
+    el.innerHTML = '<div class="lead-history-empty">Пока нет записей. Жми «+ Запись» после первого касания.</div>';
+    return;
+  }
+  el.innerHTML = history.map(h => {
+    const d = new Date(h.date);
+    const dateStr = d.toLocaleDateString('ru-RU') + ' · ' + d.toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'});
+    return '<div class="lead-history-item"><div class="lead-history-date">'+dateStr+'</div><div class="lead-history-text">'+escapeHtml(h.text)+'</div></div>';
+  }).join('');
+}
+
+function toggleAlumHistoryForm(force) {
+  const form = document.getElementById('alumHistoryForm');
+  const show = force === undefined ? !form.classList.contains('show') : force;
+  form.classList.toggle('show', show);
+  if (show) {
+    document.getElementById('alumHistoryText').value = '';
+    setTimeout(() => document.getElementById('alumHistoryText').focus(), 30);
+  }
+}
+
+function addAlumHistoryEntry() {
+  const text = document.getElementById('alumHistoryText').value.trim();
+  if (!text) { toggleAlumHistoryForm(false); return; }
+  // Новый выпускник — сначала сохраним
+  if (!currentAlumId) {
+    if (!saveAlumInternal(false)) return;
+  }
+  const list = loadAlumni();
+  const a = list.find(x => x.id === currentAlumId);
+  if (!a) return;
+  a.history = a.history || [];
+  a.history.unshift({ date: nowIso(), text });
+  a.last_touch_at = nowIso();
+  a.updated_at = nowIso();
+  saveAlumni(list);
+  toggleAlumHistoryForm(false);
+  renderAlumHistoryList(a);
+  document.getElementById('alumMetaTouch').textContent = fmtDateNice(a.last_touch_at);
+  render();
+  toast('Касание записано');
+}
+
+function saveAlumInternal(closeAfter) {
+  const name = document.getElementById('alumName').value.trim();
+  if (!name) { alert('Имя обязательно'); return false; }
+  const username = document.getElementById('alumUsername').value.trim().replace(/^@/, '');
+  const group = document.getElementById('alumGroup').value.trim();
+  const status = document.getElementById('alumStatus').value;
+  const note = document.getElementById('alumNote').value.trim();
+  const list = loadAlumni();
+  const now = nowIso();
+  if (currentAlumId) {
+    const a = list.find(x => x.id === currentAlumId);
+    if (!a) return false;
+    const statusChanged = (a.status || 'cold') !== status;
+    a.name = name; a.username = username; a.group = group; a.note = note;
+    if (statusChanged) { a.status = status; a.last_touch_at = now; }
+    a.updated_at = now;
+    saveAlumni(list);
+  } else {
+    const newAlum = {
+      id: genAlumId(), name, username, group, status, note,
+      converted: false, lead_id: null,
+      created_at: now, updated_at: now,
+      last_touch_at: status !== 'cold' ? now : null,
+      history: []
+    };
+    list.push(newAlum);
+    currentAlumId = newAlum.id;
+    document.getElementById('alumModalId').value = newAlum.id;
+    saveAlumni(list);
+  }
+  if (closeAfter) closeAlumModal();
+  render();
+  return true;
+}
+
+function saveAlum() { if (saveAlumInternal(true)) toast('Сохранено'); }
+
+function closeAlumModal() { document.getElementById('alumModalBg').classList.remove('show'); currentAlumId = null; }
+
+function deleteAlumFromModal() {
+  const id = document.getElementById('alumModalId').value;
+  if (!id) return;
+  if (!confirm('Удалить выпускника из базы?')) return;
+  const list = loadAlumniRaw();
+  const a = list.find(x => x.id === id);
+  if (a) { a.deleted = true; a.updated_at = nowIso(); saveAlumni(list); }
+  closeAlumModal();
+  render();
+  toast('Удалён');
+}
+
+function convertAlumFromModal() {
+  if (!currentAlumId) return;
+  convertAlumToLead(currentAlumId);
+  closeAlumModal();
+}
+
+// «→ в Лиды»: создаём лид в активной воронке, выпускник остаётся в базе с пометкой
+function convertAlumToLead(id) {
+  const list = loadAlumni();
+  const a = list.find(x => x.id === id);
+  if (!a || a.converted) return;
+  const now = nowIso();
+  const leads = loadLeads();
+  const histLines = (a.history||[]).map(h => '— ' + h.text).join('\n');
+  const histText = 'Из базы выпускников' + (a.group ? ' · '+a.group : '') + (a.username ? ' · @'+a.username.replace(/^@/,'') : '')
+    + (a.note ? '. '+a.note : '') + (histLines ? '\nКасания:\n'+histLines : '');
+  const newLead = {
+    id: genLeadId(),
+    name: a.name,
+    company: a.group || '',
+    channel: 'alumni',
+    potential_chek_rub: 0,
+    status: 'first_contact',
+    created_at: now, updated_at: now, status_changed_at: now, closed_at: null,
+    next_action: 'Связаться, прощупать задачу', next_action_date: null,
+    history: [{ date: now, text: histText }]
+  };
+  leads.push(newLead);
+  saveLeads(leads);
+  a.converted = true; a.lead_id = newLead.id;
+  if ((a.status || 'cold') === 'cold') a.status = 'written';
+  a.last_touch_at = now; a.updated_at = now;
+  saveAlumni(list);
+  render();
+  toast('Заведён в Лиды →');
+}
+
+function openAlumLead(id) {
+  const a = loadAlumni().find(x => x.id === id);
+  navTo('leads');
+  if (a && a.lead_id) setTimeout(() => openLeadModal(a.lead_id), 120);
+}
+
 function render() {
   renderMetrics();
   renderWeekBars();
@@ -3188,6 +3703,7 @@ function render() {
   renderHistory();
   renderCalcRecent();
   renderLeadsKanban();
+  renderAlumni();
   renderProjects();
   renderAlert();
 }
@@ -3301,7 +3817,7 @@ function mergeSnapshots(remote, local) {
         if (!seen.has(sig)) { seen.add(sig); merged.push(d); }
       }
       out[k] = merged;
-    } else if (k === 'projects' && Array.isArray(rv) && Array.isArray(lv)) {
+    } else if ((k === 'projects' || k === 'alumni') && Array.isArray(rv) && Array.isArray(lv)) {
       const byId = new Map();
       for (const p of rv.concat(lv)) {
         const prev = byId.get(p.id);
