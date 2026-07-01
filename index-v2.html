@@ -1416,7 +1416,8 @@
           <div class="card-head"><div class="card-title" id="financeMonthTitle">Выручка месяца</div></div>
           <div class="quick-input">
             <input id="dealNameInput" placeholder="Клиент / название" style="flex:2">
-            <input id="dealAmountInput" type="number" placeholder="Сумма ₽" style="max-width:160px">
+            <input id="dealAmountInput" type="number" placeholder="Сумма ₽" style="max-width:140px">
+            <input id="dealDateInput" type="date" style="max-width:150px" title="Дата поступления">
             <button class="btn btn-primary" onclick="addDeal()">+ Быстрая продажа</button>
           </div>
           <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
@@ -3010,9 +3011,13 @@ function renderTouchTracker() {
 function addDeal() {
   const name = document.getElementById('dealNameInput').value.trim();
   const amount = parseFloat(document.getElementById('dealAmountInput').value);
+  const dateStr = (document.getElementById('dealDateInput').value || '').trim();
   if (!amount || amount <= 0) { alert('Введи сумму'); return; }
   if (!name) { alert('Введи имя клиента'); return; }
   const now = nowIso();
+  // closed_at = выбранная дата в 12:00 (чтобы попадало в тот же день независимо от таймзоны). Если дата не выбрана — сейчас.
+  const closedAt = dateStr ? new Date(dateStr + 'T12:00:00').toISOString() : now;
+  const dateLabel = new Date(closedAt).toLocaleDateString('ru-RU');
   const newLead = {
     id: genLeadId(),
     name,
@@ -3020,26 +3025,35 @@ function addDeal() {
     channel: 'other',
     potential_chek_rub: amount,
     status: 'won',
-    created_at: now,
+    created_at: closedAt,
     updated_at: now,
-    status_changed_at: now,
-    closed_at: now,
+    status_changed_at: closedAt,
+    closed_at: closedAt,
     next_action: '',
     next_action_date: null,
-    history: [{ date: now, text: 'Быстрая продажа: '+fmtMoneyRub(amount) }]
+    history: [{ date: now, text: 'Быстрая продажа: '+fmtMoneyRub(amount)+' (поступление: '+dateLabel+')' }]
   };
   const leads = loadLeads();
   leads.push(newLead);
   saveLeads(leads);
   document.getElementById('dealNameInput').value = '';
   document.getElementById('dealAmountInput').value = '';
-  render(); toast('🎉 Продажа добавлена');
+  document.getElementById('dealDateInput').value = todayLocalIsoDate();
+  render(); toast('🎉 Продажа добавлена ('+dateLabel+')');
+}
+function todayLocalIsoDate() {
+  const d = new Date();
+  const p = n => String(n).padStart(2,'0');
+  return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());
 }
 function renderDeals() {
   // Заголовок «Выручка <месяца>»
   const now = new Date();
   const title = document.getElementById('financeMonthTitle');
   if (title) title.textContent = 'Выручка ' + MONTHS_RU[now.getMonth()];
+  // Дата по умолчанию — сегодня
+  const dateInp = document.getElementById('dealDateInput');
+  if (dateInp && !dateInp.value) dateInp.value = todayLocalIsoDate();
   // Summary
   const total = getCurrentMonthRevenue();
   const pct = Math.min(100, (total/GOAL_RUB)*100);
