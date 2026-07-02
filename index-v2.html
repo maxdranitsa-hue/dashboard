@@ -665,8 +665,8 @@
   .kanban { display:grid; grid-template-columns:repeat(7, 240px); gap:12px; overflow-x:auto; padding-bottom:8px; }
   .kanban-col { background:var(--bg); border-radius:var(--r); padding:12px 10px; min-height:300px; display:flex; flex-direction:column; }
   .kanban-col-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; padding:0 4px; }
-  .kanban-col-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; display:flex; align-items:center; gap:6px; }
-  .kanban-col-dot { width:8px; height:8px; border-radius:50%; }
+  .kanban-col-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; display:flex; align-items:center; gap:6px; color:var(--_lead-color, var(--text-2)); }
+  .kanban-col-dot { width:8px; height:8px; border-radius:50%; background:var(--_lead-color, #9ca3af); }
   .kanban-col-count { font-size:10px; font-weight:700; background:var(--surface); padding:2px 7px; border-radius:8px; color:var(--text-2); }
   .kanban-col-head-right { display:flex; align-items:center; gap:6px; }
   .kanban-col-add {
@@ -682,13 +682,6 @@
     transition: all .15s;
   }
   .kanban-col-add:hover { background:var(--green-dark); color:#fff; transform: scale(1.08); }
-  .kanban-col.new .kanban-col-dot           { background:#9ca3af; } .kanban-col.new .kanban-col-title           { color:#6b7280; }
-  .kanban-col.first_contact .kanban-col-dot { background:var(--blue); } .kanban-col.first_contact .kanban-col-title { color:var(--blue); }
-  .kanban-col.in_progress .kanban-col-dot   { background:var(--orange); } .kanban-col.in_progress .kanban-col-title { color:var(--orange); }
-  .kanban-col.proposal_sent .kanban-col-dot { background:#a855f7; } .kanban-col.proposal_sent .kanban-col-title { color:#a855f7; }
-  .kanban-col.negotiation .kanban-col-dot   { background:#0ea5e9; } .kanban-col.negotiation .kanban-col-title { color:#0ea5e9; }
-  .kanban-col.won .kanban-col-dot           { background:var(--green-mid); } .kanban-col.won .kanban-col-title { color:var(--green-dark); }
-  .kanban-col.lost .kanban-col-dot          { background:#dc2626; } .kanban-col.lost .kanban-col-title { color:#dc2626; }
   .kanban-col-body { flex:1; min-height:50px; }
   .kanban-col-empty { font-size:11px; color:var(--text-3); text-align:center; padding:14px 4px; font-style:italic; opacity:.6; }
 
@@ -1308,7 +1301,10 @@
         <div class="card">
           <div class="card-head">
             <div class="card-title">CRM лидов</div>
-            <button class="btn btn-primary" onclick="openLeadModal()">+ Новый лид</button>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-secondary" onclick="openLeadStatusesModal()" title="Управление колонками">⚙ Колонки</button>
+              <button class="btn btn-primary" onclick="openLeadModal()">+ Новый лид</button>
+            </div>
           </div>
           <div class="leads-toolbar">
             <div class="leads-search">
@@ -1617,6 +1613,26 @@
   </div>
 </div>
 
+<!-- MODAL: LEAD COLUMNS MANAGER -->
+<div class="modal-bg" id="leadStatusesModalBg" onclick="if(event.target===this)closeLeadStatusesModal()">
+  <div class="modal" style="max-width:620px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+      <div>
+        <h3 style="margin:0;font-size:18px;font-weight:700">Колонки CRM лидов</h3>
+        <div style="font-size:12px;color:var(--text-2);margin-top:4px;line-height:1.5">Перетягивай ⋮⋮ для смены порядка. <b>Тип</b> определяет бизнес-логику:<br>• <b>В работе</b> — активная воронка. <b>Победа</b> — попадает в Купившие клиенты и Финансы. <b>Отказ</b> — закрытый лид без выручки.</div>
+      </div>
+      <button onclick="closeLeadStatusesModal()" style="background:var(--bg);border:none;border-radius:50%;width:32px;height:32px;cursor:pointer;color:var(--text-2);font-size:18px;line-height:1">✕</button>
+    </div>
+    <div id="leadStatusesList" style="margin-top:14px;display:flex;flex-direction:column;gap:8px"></div>
+    <button onclick="addLeadStatus()" style="width:100%;margin-top:10px;padding:11px;background:var(--bg);border:1px dashed var(--border-2);border-radius:10px;color:var(--text-2);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer">+ Добавить колонку</button>
+    <div style="display:flex;gap:10px;margin-top:18px;justify-content:flex-end">
+      <button class="modal-btn cancel" onclick="resetLeadStatusesToDefault()" style="margin-right:auto">Сбросить к стандарту</button>
+      <button class="modal-btn cancel" onclick="closeLeadStatusesModal()">Отмена</button>
+      <button class="modal-btn primary" onclick="saveLeadStatusesFromModal()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL: PROJECT -->
 <div class="modal-bg" id="projectModalBg" onclick="if(event.target===this)closeProjectModal()">
   <div class="modal compact">
@@ -1704,15 +1720,33 @@ const MONTHS_RU = ['января','февраля','марта','апреля','
 const MONTHS_FULL = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
 const DAYS_FULL = ['воскресенье','понедельник','вторник','среда','четверг','пятница','суббота'];
 const DAYS_SHORT = ['В','П','В','С','Ч','П','С'];
-const LEAD_STATUSES = [
-  { id:'new',           name:'Новый',          short:'Новые',          cls:'new'           },
-  { id:'first_contact', name:'Первый контакт', short:'Первый контакт', cls:'first_contact' },
-  { id:'in_progress',   name:'В диалоге',      short:'В диалоге',      cls:'in_progress'   },
-  { id:'proposal_sent', name:'КП отправлено',  short:'КП отправлено',  cls:'proposal_sent' },
-  { id:'negotiation',   name:'Переговоры',     short:'Переговоры',     cls:'negotiation'   },
-  { id:'won',           name:'Закрыто (win)',  short:'Won',            cls:'won'           },
-  { id:'lost',          name:'Закрыто (lost)', short:'Lost',           cls:'lost'          }
+// Дефолтные колонки лидов. При первом запуске сохраняются в localStorage.
+// kind: 'active' — активная воронка; 'won' — победа (запускает win-flow, попадает в финансы); 'lost' — отказ/закрыто.
+const DEFAULT_LEAD_STATUSES = [
+  { id:'new',           name:'Новый',          short:'Новые',          color:'#9ca3af', kind:'active' },
+  { id:'first_contact', name:'Первый контакт', short:'Первый контакт', color:'#3b82f6', kind:'active' },
+  { id:'in_progress',   name:'В диалоге',      short:'В диалоге',      color:'#f97316', kind:'active' },
+  { id:'proposal_sent', name:'КП отправлено',  short:'КП отправлено',  color:'#a855f7', kind:'active' },
+  { id:'negotiation',   name:'Переговоры',     short:'Переговоры',     color:'#0ea5e9', kind:'active' },
+  { id:'won',           name:'Закрыто (win)',  short:'Won',            color:'#10b981', kind:'won'    },
+  { id:'lost',          name:'Закрыто (lost)', short:'Lost',           color:'#dc2626', kind:'lost'   }
 ];
+function loadLeadStatuses() {
+  try {
+    const raw = JSON.parse(localStorage.getItem('lead_statuses') || 'null');
+    if (Array.isArray(raw) && raw.length) {
+      return raw.map(s => Object.assign({ color:'#9ca3af', kind:'active' }, s));
+    }
+  } catch {}
+  return DEFAULT_LEAD_STATUSES.map(s => Object.assign({}, s));
+}
+function saveLeadStatuses(arr) { localStorage.setItem('lead_statuses', JSON.stringify(arr)); }
+let LEAD_STATUSES = loadLeadStatuses();
+function leadStatusKind(id) { const s = LEAD_STATUSES.find(x => x.id === id); return s ? s.kind : 'active'; }
+function firstStatusIdOfKind(kind) { const s = LEAD_STATUSES.find(x => x.kind === kind); return s ? s.id : null; }
+function leadIsWon(l)  { return leadStatusKind(l && l.status) === 'won'; }
+function leadIsLost(l) { return leadStatusKind(l && l.status) === 'lost'; }
+function leadIsClosed(l) { const k = leadStatusKind(l && l.status); return k === 'won' || k === 'lost'; }
 const LEAD_CHANNELS = [
   { id:'personal',    name:'Личный контакт'        },
   { id:'partnership', name:'Через партнёра'        },
@@ -2239,7 +2273,7 @@ function navTo(page) {
 // Источник правды для выручки месяца — won-лиды с closed_at в нужном месяце
 function getMonthRevenueFromLeads(year, month) {
   return loadLeads()
-    .filter(l => l.status === 'won' && l.closed_at)
+    .filter(l => leadIsWon(l) && l.closed_at)
     .filter(l => { const d = new Date(l.closed_at); return d.getFullYear() === year && d.getMonth() === month; })
     .reduce((a, l) => a + (l.potential_chek_rub || 0), 0);
 }
@@ -2277,7 +2311,7 @@ function setChip(el, cur, prev, opts) {
 }
 
 function getAvgCycleDays() {
-  const won = loadLeads().filter(l => l.status === 'won' && l.closed_at && l.created_at);
+  const won = loadLeads().filter(l => leadIsWon(l) && l.closed_at && l.created_at);
   if (!won.length) return null;
   const cycles = won.map(l => Math.max(1, Math.floor((new Date(l.closed_at) - new Date(l.created_at))/86400000)));
   cycles.sort((a,b) => a-b);
@@ -2306,12 +2340,12 @@ function renderMetrics() {
   const ringPct = document.getElementById('metricRevenueRingPct');
   if (ringPct) ringPct.textContent = Math.round(pct) + '%';
 
-  // Лиды по новой схеме
+  // Лиды по новой схеме — считаем по kind, а не по конкретным id (колонки настраиваемые)
   const leads = loadLeads();
-  const ACTIVE_STATUSES = ['new','first_contact','in_progress','proposal_sent','negotiation'];
-  const active = leads.filter(l => ACTIVE_STATUSES.includes(l.status)).length;
-  const closed = leads.filter(l => l.status === 'won').length;
-  const wait = leads.filter(l => l.status === 'proposal_sent' || l.status === 'negotiation').length;
+  const active = leads.filter(l => leadStatusKind(l.status) === 'active').length;
+  const closed = leads.filter(l => leadIsWon(l)).length;
+  // «Ждут ответа» — активные лиды с потенциальным чеком (ставка на столе)
+  const wait = leads.filter(l => leadStatusKind(l.status) === 'active' && (l.potential_chek_rub || 0) > 0).length;
 
   document.getElementById('metricClosed').textContent = closed;
   const closedChip = document.getElementById('metricClosedChip');
@@ -2534,11 +2568,21 @@ function renderStreak() {
 let leadsFilterStuckOn = false;
 let leadsStatusGroup = 'all'; // all | active | wait | closed
 
+// Динамические группы — читают ID из LEAD_STATUSES по kind
+function statusGroupFor(groupKey) {
+  const activeIds = LEAD_STATUSES.filter(s => s.kind === 'active').map(s => s.id);
+  const wonIds = LEAD_STATUSES.filter(s => s.kind === 'won').map(s => s.id);
+  if (groupKey === 'all') return null;
+  if (groupKey === 'active') return activeIds;
+  if (groupKey === 'wait') return activeIds; // все активные с ставками (доп. фильтр в UI)
+  if (groupKey === 'closed') return wonIds;
+  return null;
+}
 const STATUS_GROUPS = {
-  all:    { label: 'Все статусы',         statuses: null },
-  active: { label: 'Только активные',     statuses: ['new','first_contact','in_progress','proposal_sent','negotiation'] },
-  wait:   { label: 'Только «ждут ответа»', statuses: ['proposal_sent','negotiation'] },
-  closed: { label: 'Только закрытые (win)', statuses: ['won'] }
+  all:    { label: 'Все статусы',           get statuses() { return null; } },
+  active: { label: 'Только активные',       get statuses() { return statusGroupFor('active'); } },
+  wait:   { label: 'Только «ждут ответа»',  get statuses() { return statusGroupFor('wait'); } },
+  closed: { label: 'Только закрытые (win)', get statuses() { return statusGroupFor('closed'); } }
 };
 
 function openLeadsWithFilter(group) {
@@ -2622,16 +2666,17 @@ function renderLeadsKanban() {
   LEAD_STATUSES.forEach((status) => {
     if (visibleStatuses && !visibleStatuses.includes(status.id)) return;
     const col = document.createElement('div');
-    col.className = 'kanban-col ' + status.cls;
+    col.className = 'kanban-col';
+    col.style.setProperty('--_lead-color', status.color || '#9ca3af');
     col.dataset.status = status.id;
     const colLeads = leads
       .filter(l => l.status === status.id)
       .sort((a,b) => new Date(b.updated_at) - new Date(a.updated_at));
     col.innerHTML =
       '<div class="kanban-col-head">'+
-        '<div class="kanban-col-title"><span class="kanban-col-dot"></span>'+status.short+'</div>'+
+        '<div class="kanban-col-title"><span class="kanban-col-dot"></span>'+escapeHtml(status.short)+'</div>'+
         '<div class="kanban-col-head-right">'+
-          '<button class="kanban-col-add" onclick="event.stopPropagation(); openLeadModalForStatus(\''+status.id+'\')" title="Добавить лида в статус «'+status.name+'»">+</button>'+
+          '<button class="kanban-col-add" onclick="event.stopPropagation(); openLeadModalForStatus(\''+status.id+'\')" title="Добавить лида в статус «'+escapeHtml(status.name)+'»">+</button>'+
           '<div class="kanban-col-count">'+colLeads.length+'</div>'+
         '</div>'+
       '</div>'+
@@ -2683,33 +2728,35 @@ function handleLeadStatusChange(leadId, newStatus, oldStatus) {
   const lead = leads.find(l => l.id === leadId);
   if (!lead) return;
   const newName = leadStatusById(newStatus).name;
-  if (newStatus === 'won') {
-    // Win — нужно спросить сумму, иначе сделка не попадёт в Финансы
-    handleWinFlow(lead, leads);
-  } else if (newStatus === 'lost') {
-    lead.status = 'lost';
+  const kind = leadStatusKind(newStatus);
+  if (kind === 'won') {
+    handleWinFlow(lead, leads, newStatus);
+  } else if (kind === 'lost') {
+    lead.status = newStatus;
     lead.status_changed_at = nowIso();
     lead.updated_at = nowIso();
     lead.closed_at = nowIso();
     saveLeads(leads);
     render();
-    toast('Лид закрыт (lost). Причину можно дописать в «+ Запись»');
+    toast('Лид закрыт ('+newName+'). Причину можно дописать в «+ Запись»');
   } else {
     lead.status = newStatus;
     lead.status_changed_at = nowIso();
     lead.updated_at = nowIso();
+    // если переходим ИЗ won/lost обратно в active — сбрасываем closed_at
+    if (leadIsClosed({ status: oldStatus }) && !leadIsClosed(lead)) lead.closed_at = null;
     saveLeads(leads);
     render();
     toast('→ ' + newName);
   }
 }
-function handleWinFlow(lead, leads) {
+function handleWinFlow(lead, leads, newStatus) {
   const defaultSum = lead.potential_chek_rub ? Math.round(lead.potential_chek_rub) : '';
   const sumStr = prompt('Финальная сумма продажи в ₽:', defaultSum);
   if (sumStr === null) { renderLeadsKanban(); return; }
   const sum = parseFloat(sumStr.replace(/\s/g, '').replace(',', '.'));
   if (!sum || sum <= 0) { alert('Сумма должна быть положительным числом'); renderLeadsKanban(); return; }
-  lead.status = 'won';
+  lead.status = newStatus || firstStatusIdOfKind('won') || 'won';
   lead.status_changed_at = nowIso();
   lead.updated_at = nowIso();
   lead.closed_at = nowIso();
@@ -2839,10 +2886,10 @@ function saveLeadInternal(closeModal) {
 
   if (existing) {
     const statusChanged = existing.status !== newStatus;
-    if (statusChanged && newStatus === 'won') {
-      // Спросим сумму, добавим в Сделки
-      handleWinFlow(existing, leads);
-      // handleWinFlow вызовет render и saveLeads — обновим простые поля сами
+    const newKind = leadStatusKind(newStatus);
+    const oldKind = leadStatusKind(existing.status);
+    if (statusChanged && newKind === 'won') {
+      handleWinFlow(existing, leads, newStatus);
       existing.name = name;
       existing.company = document.getElementById('leadCompany').value.trim();
       existing.channel = document.getElementById('leadChannel').value;
@@ -2853,12 +2900,12 @@ function saveLeadInternal(closeModal) {
       render();
       return true;
     }
-    if (statusChanged && newStatus === 'lost') {
+    if (statusChanged && newKind === 'lost') {
       existing.status_changed_at = nowIso();
       existing.closed_at = nowIso();
     } else if (statusChanged) {
       existing.status_changed_at = nowIso();
-      if (existing.status === 'won' || existing.status === 'lost') existing.closed_at = null;
+      if (oldKind === 'won' || oldKind === 'lost') existing.closed_at = null;
     }
     existing.name = name;
     existing.company = document.getElementById('leadCompany').value.trim();
@@ -2881,7 +2928,7 @@ function saveLeadInternal(closeModal) {
       created_at: now,
       updated_at: now,
       status_changed_at: now,
-      closed_at: newStatus === 'won' || newStatus === 'lost' ? now : null,
+      closed_at: leadStatusKind(newStatus) !== 'active' ? now : null,
       next_action: document.getElementById('leadAction').value.trim(),
       next_action_date: document.getElementById('leadDeadline').value || null,
       history: []
@@ -3024,7 +3071,7 @@ function addDeal() {
     company: '',
     channel: 'other',
     potential_chek_rub: amount,
-    status: 'won',
+    status: firstStatusIdOfKind('won') || 'won',
     created_at: closedAt,
     updated_at: now,
     status_changed_at: closedAt,
@@ -3288,7 +3335,7 @@ function renderCalcHistory() {
   if (h.length > 10) list.innerHTML += '<div class="calc-history-empty">Показаны 10 из '+h.length+'</div>';
 }
 function renderClients() {
-  const won = loadLeads().filter(l => l.status === 'won' && l.closed_at);
+  const won = loadLeads().filter(l => leadIsWon(l) && l.closed_at);
   const el = document.getElementById('clientsList');
   const archiveEl = document.getElementById('clientsArchive');
   const summary = document.getElementById('clientsSummary');
@@ -3821,6 +3868,120 @@ function saveAlumStatusesFromModal() {
   toast(migrated ? 'Колонки сохранены. Перенесено выпускников: ' + migrated : 'Колонки сохранены');
 }
 
+// ===== УПРАВЛЕНИЕ КОЛОНКАМИ ЛИДОВ =====
+const LEAD_KIND_OPTIONS = [
+  { value:'active',  label:'В работе' },
+  { value:'won',     label:'Победа'   },
+  { value:'lost',    label:'Отказ'    }
+];
+let _leadStatusesDraft = null;
+let _leadStatusesSortable = null;
+function genLeadStatusId() { return 'ls_' + Math.random().toString(36).slice(2, 8); }
+function openLeadStatusesModal() {
+  _leadStatusesDraft = LEAD_STATUSES.map(s => Object.assign({}, s));
+  renderLeadStatusesList();
+  document.getElementById('leadStatusesModalBg').classList.add('show');
+}
+function closeLeadStatusesModal() {
+  document.getElementById('leadStatusesModalBg').classList.remove('show');
+  _leadStatusesDraft = null;
+  if (_leadStatusesSortable) { try { _leadStatusesSortable.destroy(); } catch {} _leadStatusesSortable = null; }
+}
+function renderLeadStatusesList() {
+  const list = document.getElementById('leadStatusesList');
+  if (!list || !_leadStatusesDraft) return;
+  list.innerHTML = _leadStatusesDraft.map((s, i) => {
+    const kindOpts = LEAD_KIND_OPTIONS.map(k =>
+      '<option value="'+k.value+'"'+(s.kind === k.value ? ' selected' : '')+'>'+k.label+'</option>'
+    ).join('');
+    return '<div class="alum-status-row" data-idx="'+i+'">'+
+      '<span class="alum-status-handle" title="Перетащить">⋮⋮</span>'+
+      '<label class="alum-status-color" style="background:'+s.color+'" title="Сменить цвет">'+
+        '<input type="color" value="'+s.color+'" oninput="updateLeadStatus('+i+', \'color\', this.value); this.parentNode.style.background=this.value">'+
+      '</label>'+
+      '<input class="alum-status-name" type="text" value="'+escapeHtml(s.name)+'" placeholder="Название" oninput="updateLeadStatus('+i+', \'name\', this.value)">'+
+      '<select class="alum-status-kind" onchange="updateLeadStatus('+i+', \'kind\', this.value)">'+kindOpts+'</select>'+
+      '<button class="alum-status-del" onclick="removeLeadStatusDraft('+i+')" title="Удалить колонку">✕</button>'+
+    '</div>';
+  }).join('');
+  if (_leadStatusesSortable) { try { _leadStatusesSortable.destroy(); } catch {} _leadStatusesSortable = null; }
+  if (typeof Sortable !== 'undefined') {
+    _leadStatusesSortable = Sortable.create(list, {
+      handle: '.alum-status-handle',
+      animation: 150,
+      ghostClass: 'sortable-ghost',
+      dragClass: 'sortable-drag',
+      onEnd: (evt) => {
+        if (evt.oldIndex === evt.newIndex) return;
+        const moved = _leadStatusesDraft.splice(evt.oldIndex, 1)[0];
+        _leadStatusesDraft.splice(evt.newIndex, 0, moved);
+        renderLeadStatusesList();
+      }
+    });
+  }
+}
+function updateLeadStatus(i, key, val) {
+  if (!_leadStatusesDraft || !_leadStatusesDraft[i]) return;
+  _leadStatusesDraft[i][key] = val;
+  if (key === 'name') _leadStatusesDraft[i].short = val;
+}
+function addLeadStatus() {
+  if (!_leadStatusesDraft) return;
+  const palette = ['#3b82f6','#f97316','#a855f7','#10b981','#eab308','#ec4899','#0ea5e9','#6366f1','#dc2626','#9ca3af'];
+  const used = new Set(_leadStatusesDraft.map(s => s.color));
+  const color = palette.find(c => !used.has(c)) || palette[Math.floor(Math.random()*palette.length)];
+  _leadStatusesDraft.push({ id: genLeadStatusId(), name: 'Новая колонка', short: 'Новая', color, kind: 'active' });
+  renderLeadStatusesList();
+  setTimeout(() => {
+    const rows = document.querySelectorAll('#leadStatusesList .alum-status-row');
+    const last = rows[rows.length - 1];
+    if (last) { const inp = last.querySelector('.alum-status-name'); if (inp) { inp.focus(); inp.select(); } }
+  }, 30);
+}
+function removeLeadStatusDraft(i) {
+  if (!_leadStatusesDraft || _leadStatusesDraft.length <= 1) {
+    alert('Нужна хотя бы одна колонка.'); return;
+  }
+  _leadStatusesDraft.splice(i, 1);
+  renderLeadStatusesList();
+}
+function resetLeadStatusesToDefault() {
+  if (!confirm('Сбросить колонки к стандартному набору? Существующие лиды с пропавшими статусами уйдут в первую колонку.')) return;
+  _leadStatusesDraft = DEFAULT_LEAD_STATUSES.map(s => Object.assign({}, s));
+  renderLeadStatusesList();
+}
+function saveLeadStatusesFromModal() {
+  if (!_leadStatusesDraft || !_leadStatusesDraft.length) return;
+  for (const s of _leadStatusesDraft) {
+    const n = (s.name || '').trim();
+    if (!n) { alert('У всех колонок должно быть имя.'); return; }
+    s.name = n; s.short = n.length > 18 ? n.slice(0,17)+'…' : n;
+  }
+  // Предупреждение: если нет ни одной 'won' — финансы обнулятся; если нет 'lost' — тоже норм, но лучше предупредить
+  const hasWon = _leadStatusesDraft.some(s => s.kind === 'won');
+  if (!hasWon) {
+    if (!confirm('Внимание: у тебя не осталось колонки типа «Победа». Финансы (Купившие клиенты, прогресс к цели) перестанут заполняться. Продолжить?')) return;
+  }
+  // Миграция лидов из удалённых колонок в первую
+  const newIds = new Set(_leadStatusesDraft.map(s => s.id));
+  const firstId = _leadStatusesDraft[0].id;
+  const leads = loadLeadsRaw();
+  let migrated = 0;
+  for (const l of leads) {
+    if (l.status && !newIds.has(l.status)) {
+      l.status = firstId;
+      l.updated_at = nowIso();
+      migrated++;
+    }
+  }
+  if (migrated) saveLeads(leads);
+  LEAD_STATUSES = _leadStatusesDraft.slice();
+  saveLeadStatuses(LEAD_STATUSES);
+  closeLeadStatusesModal();
+  render();
+  toast(migrated ? 'Колонки сохранены. Перенесено лидов: ' + migrated : 'Колонки сохранены');
+}
+
 function convertAlumFromModal() {
   if (!currentAlumId) return;
   convertAlumToLead(currentAlumId);
@@ -4045,24 +4206,21 @@ function applyLeads(leads) {
 function generateLeadsMarkdown(allLeads) {
   // soft-deleted в markdown не показываем
   const leads = (allLeads || []).filter(l => !l.deleted);
-  const STATUS_LABELS = {
-    new: 'Новые', first_contact: 'Первый контакт', in_progress: 'В диалоге',
-    proposal_sent: 'КП отправлено', negotiation: 'Переговоры', won: 'Won', lost: 'Lost'
-  };
   const CHANNEL_LABELS = {
     personal:'личный', partnership:'партнёр', speaking:'спикерство', youtube:'YouTube',
     telegram:'Telegram', outreach:'аутрич', referral:'рекомендация', other:'другое'
   };
-  const ORDER = ['new','first_contact','in_progress','proposal_sent','negotiation','won','lost'];
+  // Порядок — актуальный порядок пользовательских колонок
+  const ORDER = LEAD_STATUSES.map(s => s.id);
   const now = new Date().toISOString();
-  const active = leads.filter(l => l.status !== 'won' && l.status !== 'lost').length;
+  const active = leads.filter(l => leadStatusKind(l.status) === 'active').length;
   const wonMonth = leads.filter(l => {
-    if (l.status !== 'won' || !l.closed_at) return false;
-    const d = new Date(l.closed_at), now = new Date();
-    return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+    if (!leadIsWon(l) || !l.closed_at) return false;
+    const d = new Date(l.closed_at), n = new Date();
+    return d.getFullYear() === n.getFullYear() && d.getMonth() === n.getMonth();
   });
   const wonSum = wonMonth.reduce((a,l)=>a+(l.potential_chek_rub||0),0);
-  const stuck = leads.filter(l => l.status !== 'won' && l.status !== 'lost' && (Date.now() - new Date(l.updated_at).getTime()) > 7*86400000).length;
+  const stuck = leads.filter(l => leadStatusKind(l.status) === 'active' && (Date.now() - new Date(l.updated_at).getTime()) > 7*86400000).length;
   let md = '---\ntype: leads-db-view\nupdated: '+now+'\ngenerated_from: '+GH_LEADS_PATH+'\n---\n\n';
   md += '# Лиды — текущее состояние\n\n';
   md += '> Эта страница сгенерирована автоматически из `'+GH_LEADS_PATH+'`. Для редактирования открой дашборд.\n\n';
@@ -4073,7 +4231,8 @@ function generateLeadsMarkdown(allLeads) {
   for (const status of ORDER) {
     const group = leads.filter(l => l.status === status);
     if (!group.length) continue;
-    md += '## '+STATUS_LABELS[status]+' ('+group.length+')\n\n';
+    const statusName = (leadStatusById(status) || {}).name || status;
+    md += '## '+statusName+' ('+group.length+')\n\n';
     group.sort((a,b) => new Date(b.updated_at) - new Date(a.updated_at));
     for (const l of group) {
       md += '### '+l.name+(l.company ? ' — '+l.company : '')+'\n';
