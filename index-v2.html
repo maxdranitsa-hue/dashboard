@@ -1577,7 +1577,7 @@
           <div class="card-head">
             <div class="card-title">Радар нетворкинга</div>
             <div style="display:flex;gap:8px">
-              <button class="btn btn-secondary" onclick="refreshEventsFeed()" id="eventsRefreshBtn" title="Подтянуть свежий events.json из GitHub">↻ Обновить</button>
+              <button class="btn btn-secondary" onclick="refreshEventsLive()" id="eventsRefreshBtn" title="Найти свежие события через n8n + Claude (~10-30 сек)">↻ Обновить</button>
               <button class="btn btn-primary" onclick="openEventModal()">+ Событие</button>
             </div>
           </div>
@@ -4712,6 +4712,30 @@ async function refreshEventsFeed() {
   renderEvents();
 }
 
+// Живой поиск событий через n8n (кнопка «Обновить») → Claude web search → events.json
+const EVENTS_WEBHOOK = 'https://primary-production-7202.up.railway.app/webhook/events-radar';
+async function refreshEventsLive() {
+  const btn = document.getElementById('eventsRefreshBtn');
+  if (btn) { btn.textContent = 'ищу…'; btn.disabled = true; }
+  try {
+    const r = await fetch(EVENTS_WEBHOOK, { cache: 'no-store' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const data = await r.json();
+    if (data && Array.isArray(data.events) && data.events.length) {
+      localStorage.setItem('_eventsFeedCache', JSON.stringify({ updated: data.updated || todayStr(), source: 'auto', events: data.events }));
+      if (btn) btn.textContent = '✓ ' + data.events.length;
+    } else {
+      if (btn) btn.textContent = 'пусто';
+    }
+  } catch (e) {
+    console.warn('events live refresh failed', e);
+    if (btn) btn.textContent = 'ошибка';
+  }
+  if (btn) btn.disabled = false;
+  setTimeout(() => { if (btn) btn.textContent = '↻ Обновить'; }, 2500);
+  renderEvents();
+}
+
 let eventsView = (localStorage.getItem('eventsView') === 'list') ? 'list' : 'calendar';
 let evCalY = null, evCalM = null;
 
@@ -5450,8 +5474,8 @@ const savedPage = localStorage.getItem('activeTab') || 'home';
 navTo(['home','leads','alumni','waitlists','today','finance','history','projects','events'].includes(savedPage) ? savedPage : 'home');
 render();
 setInterval(render, 60000);
-// Подтянуть свежую ленту событий из GitHub (если синк подключён)
-if (typeof ghPat !== 'undefined' && ghPat) { setTimeout(refreshEventsFeed, 1500); }
+// Первый заход без кэша — подтянуть курируемую ленту из GitHub; дальше обновляет кнопка (живой поиск)
+if (typeof ghPat !== 'undefined' && ghPat && !localStorage.getItem('_eventsFeedCache')) { setTimeout(refreshEventsFeed, 1500); }
 // Fallback: если Sortable грузится дольше первого рендера — перерисуем канбан, как только он появится
 if (typeof Sortable === 'undefined') {
   window.addEventListener('load', () => {
