@@ -4934,9 +4934,9 @@ function openEventModal(id) {
   g('evUrl').value = e ? e.url||'' : '';
   g('evWhy').value = e ? e.why||'' : '';
   g('evDeleteBtn').style.display = e ? '' : 'none';
-  bg.classList.add('active');
+  bg.classList.add('show');
 }
-function closeEventModal() { const bg = document.getElementById('eventModalBg'); if (bg) bg.classList.remove('active'); }
+function closeEventModal() { const bg = document.getElementById('eventModalBg'); if (bg) bg.classList.remove('show'); }
 function saveEvent() {
   const g = (i) => document.getElementById(i);
   const title = g('evTitle').value.trim();
@@ -5004,9 +5004,9 @@ function openEventDetail(id) {
       ${e.url?`<a class="modal-btn primary" href="${escapeHtml(e.url)}" target="_blank" rel="noopener" style="text-decoration:none">Открыть сайт ↗</a>`:''}
     </div>
   </div>`;
-  bg.classList.add('active');
+  bg.classList.add('show');
 }
-function closeEventDetail() { const bg = document.getElementById('eventDetailBg'); if (bg) bg.classList.remove('active'); }
+function closeEventDetail() { const bg = document.getElementById('eventDetailBg'); if (bg) bg.classList.remove('show'); }
 
 // ==============================================================
 // GitHub Sync — leads.json в vault/data + markdown view в vault/projects
