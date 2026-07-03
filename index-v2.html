@@ -264,6 +264,41 @@
   .page { display:none; }
   .page.active { display: flex; flex-direction:column; gap:14px; }
 
+  /* ===== События ===== */
+  .events-toolbar { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+  .events-select { padding:7px 10px; border:1px solid var(--border-2); border-radius:var(--r-sm); background:var(--surface); color:var(--text); font-size:13px; cursor:pointer; }
+  .events-past-toggle { display:flex; align-items:center; gap:6px; font-size:13px; color:var(--text-2); cursor:pointer; }
+  .events-updated { margin-left:auto; font-size:12px; color:var(--text-3); }
+  .events-feed { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:12px; }
+  .ev-card { border:1px solid var(--border); border-radius:var(--r); background:var(--surface); padding:14px; display:flex; flex-direction:column; gap:9px; box-shadow:var(--shadow); position:relative; }
+  .ev-card.ev-past { opacity:.55; }
+  .ev-card.ev-soon { border-color:var(--green-light-2); }
+  .ev-top { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .ev-cat { font-size:11px; font-weight:600; padding:3px 8px; border-radius:999px; }
+  .ev-cat-club { background:var(--green-bg-soft); color:var(--green-mid); }
+  .ev-cat-industry { background:var(--blue-bg); color:var(--blue); }
+  .ev-cat-breakfast { background:var(--orange-bg); color:var(--orange); }
+  .ev-cat-conf { background:var(--purple-bg); color:var(--purple); }
+  .ev-cat-mega { background:#e5e7eb; color:#374151; }
+  .ev-score { font-size:11px; font-weight:700; padding:3px 7px; border-radius:999px; background:var(--green-dark); color:#fff; }
+  .ev-date { margin-left:auto; font-size:12px; font-weight:600; color:var(--text-2); }
+  .ev-title { font-size:15px; font-weight:600; color:var(--text); line-height:1.25; }
+  .ev-meta { font-size:12px; color:var(--text-2); line-height:1.5; }
+  .ev-meta b { color:var(--text); font-weight:600; }
+  .ev-why { font-size:12px; color:var(--text-2); font-style:italic; line-height:1.45; border-left:2px solid var(--border-2); padding-left:8px; }
+  .ev-foot { display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-top:2px; padding-top:9px; border-top:1px solid var(--border); }
+  .ev-st { font-size:11px; font-weight:600; padding:4px 9px; border-radius:999px; border:1px solid var(--border-2); background:var(--surface); color:var(--text-2); cursor:pointer; }
+  .ev-st:hover { border-color:var(--green-mid); color:var(--green-mid); }
+  .ev-st.on-plan { background:var(--blue-bg); border-color:var(--blue); color:var(--blue); }
+  .ev-st.on-go { background:var(--green-dark); border-color:var(--green-dark); color:#fff; }
+  .ev-st.on-done { background:#e5e7eb; border-color:#9ca3af; color:#374151; }
+  .ev-st.on-skip { background:var(--red-bg); border-color:var(--red); color:var(--red); }
+  .ev-link { margin-left:auto; font-size:12px; font-weight:600; color:var(--green-mid); text-decoration:none; }
+  .ev-link:hover { text-decoration:underline; }
+  .ev-edit { font-size:12px; color:var(--text-3); cursor:pointer; background:none; border:none; padding:2px 4px; }
+  .ev-edit:hover { color:var(--text); }
+  .ev-group-label { grid-column:1/-1; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.5px; color:var(--text-3); margin:6px 0 -2px; }
+
   /* ============ METRICS ROW ============ */
   .metrics-row {
     display: grid;
@@ -1118,6 +1153,11 @@
       <svg class="menu-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
       <span class="menu-item-label">Проекты</span>
     </div>
+    <div class="menu-item" data-page="events" onclick="navTo('events')">
+      <svg class="menu-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2v4M7 2v4M3 10h18"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M8 15l2.5 2.5L16 12"/></svg>
+      <span class="menu-item-label">События</span>
+      <span class="menu-badge" id="navEventsBadge">0</span>
+    </div>
     <div class="menu-item" data-page="history" onclick="navTo('history')">
       <svg class="menu-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
       <span class="menu-item-label">История</span>
@@ -1504,6 +1544,41 @@
             <button class="btn btn-primary" onclick="openProjectModal()">+ Новый проект</button>
           </div>
           <div id="projectsList" class="projects-grid"></div>
+        </div>
+      </section>
+
+      <!-- ===== PAGE: EVENTS (События) ===== -->
+      <section class="page" data-page="events">
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title">Радар нетворкинга</div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-secondary" onclick="refreshEventsFeed()" id="eventsRefreshBtn" title="Подтянуть свежий events.json из GitHub">↻ Обновить</button>
+              <button class="btn btn-primary" onclick="openEventModal()">+ Событие</button>
+            </div>
+          </div>
+          <div style="font-size:13px;color:var(--text-2);margin:0 0 14px;line-height:1.5">Куда идти за лидами на интенсив. Курируемая лента + твои события. Ставь статус — <b>Планирую / Иду / Был</b>. Оценка (⚡1–10) = плотность ЛПР × процессная боль × доступность.</div>
+          <div class="events-toolbar" id="eventsToolbar">
+            <select id="eventsFilterCat" class="events-select" onchange="renderEvents()">
+              <option value="">Все категории</option>
+              <option value="club">Клубы</option>
+              <option value="industry">Отраслевые</option>
+              <option value="breakfast">Завтраки</option>
+              <option value="conf">ИИ / Tech</option>
+              <option value="mega">Мега-форумы</option>
+            </select>
+            <select id="eventsFilterStatus" class="events-select" onchange="renderEvents()">
+              <option value="">Любой статус</option>
+              <option value="plan">Планирую</option>
+              <option value="go">Иду</option>
+              <option value="done">Был</option>
+              <option value="skip">Скип</option>
+              <option value="none">Без статуса</option>
+            </select>
+            <label class="events-past-toggle"><input type="checkbox" id="eventsShowPast" onchange="renderEvents()"> прошедшие</label>
+            <span class="events-updated" id="eventsUpdated"></span>
+          </div>
+          <div id="eventsFeed" class="events-feed"></div>
         </div>
       </section>
 
@@ -2437,6 +2512,7 @@ function navTo(page) {
     today: { t:'Сегодня', s:'Чек-лист, касания и встречи дня.' },
     finance: { t:'Финансы', s:'Сделки месяца, клиенты, распределение прибыли.' },
     projects: { t:'Проекты', s:'Идеи и заметки по твоим проектам.' },
+    events: { t:'События', s:'Радар нетворкинга: куда идти за лидами на интенсив.' },
     history: { t:'История', s:'Прошлые дни и резервные копии.' }
   };
   const info = titles[page] || titles.home;
@@ -4541,7 +4617,230 @@ function render() {
   renderAlumni();
   renderWaitlists();
   renderProjects();
+  renderEvents();
   renderAlert();
+}
+
+// ==============================================================
+// СОБЫТИЯ (Радар нетворкинга)
+// ==============================================================
+const EVENT_CATS = {
+  club:      'Клуб',
+  industry:  'Отраслевое',
+  breakfast: 'Завтрак',
+  conf:      'ИИ/Tech',
+  mega:      'Мега-форум'
+};
+const EVENT_STATUSES = { plan:'Планирую', go:'Иду', done:'Был', skip:'Скип' };
+
+// Fallback-лента (работает без сети/PAT). Курируемая версия живёт в second-brain: vault/data/events.json
+const EVENTS_SEED = [
+  { id:'atlanty-2026-07-23-stavki', title:'Атланты (открытое): «Искусство больших ставок», Туголуков', category:'club', date:'2026-07-23', time:'18:00', endDate:'', city:'Москва', venue:'Клуб «Атланты»', price:'гостю — уточнить', url:'https://atlanty.ru/calendar/', audience:'Собственники, топ-менеджеры (60М–5Млрд ₽)', role:'гость', score:9, why:'Идеальная ЦА, открыто для гостей — касание без членства. Регистрация заранее.' },
+  { id:'atlanty-2026-07-29-razvlecheniya', title:'Атланты (открытое): «Рынок развлечений на триллион», Филипук', category:'club', date:'2026-07-29', time:'18:00', endDate:'', city:'Москва', venue:'Клуб «Атланты»', price:'гостю — уточнить', url:'https://atlanty.ru/calendar/', audience:'Собственники, топ-менеджеры', role:'гость', score:9, why:'Вторая точка касания в июле — добить контакты в звонки.' },
+  { id:'it-business-breakfast-2026-07-14', title:'IT Business Breakfast: технологии для роста бизнеса', category:'breakfast', date:'2026-07-14', time:'09:00', endDate:'', city:'Москва', venue:'уточнить', price:'~5 000 ₽', url:'https://all-events.ru/events/calendar/city-is-moskva/type-is-biznes-zavtrak/', audience:'Предприниматели, собственники, эксперты', role:'гость', score:7, why:'Ближайший к ИИ деловой завтрак, камерный формат — легко знакомиться.' },
+  { id:'processtech-2026-09-18', title:'Форум ProcessTech — автоматизация бизнес-процессов', category:'industry', date:'2026-09-18', time:'10:00', endDate:'2026-09-19', city:'Москва', venue:'Event-центр РБК', price:'бесплатно', url:'https://all-events.ru/events/calendar/city-is-moskva/tags-is-iskusstvennyi_intellekt/', audience:'Те, кто автоматизирует процессы — прямые кандидаты на ИИ', role:'спикер (подать заявку)', score:8, why:'Бесплатно, аудитория с процессной болью. Подать доклад про ИИ-автоматизацию.' },
+  { id:'business-force-forum-2026-09-22', title:'Business Force Forum 2026', category:'mega', date:'2026-09-22', time:'10:00', endDate:'', city:'Москва', venue:'Бизнес.Техноград, ВДНХ', price:'~9 900 ₽', url:'https://all-events.ru/events/calendar/city-is-moskva/tags-is-iskusstvennyi_intellekt/', audience:'Предприниматели, руководители', role:'гость / проверить спикерство', score:7, why:'Крупный осенний форум. Билет заранее дешевле.' },
+  { id:'global-tech-forum-2026-10-16', title:'GLOBAL TECH FORUM', category:'conf', date:'2026-10-16', time:'09:00', endDate:'', city:'Москва', venue:'Кластер «Ломоносов», Раменский бул., 1', price:'уточнить', url:'https://globaltechforum.ru/', audience:'Tech-аудитория, бизнес', role:'спикер (форма открыта)', score:8, why:'Открытый набор спикеров = бесплатная сцена перед ЛПР. Подать заявку до середины июля.' },
+  { id:'aisummit-2026-11-27', title:'AISUMMIT «Искусственный интеллект для бизнеса» (V)', category:'conf', date:'2026-11-27', time:'10:00', endDate:'', city:'Москва', venue:'уточнить', price:'уточнить', url:'https://aisummit.ru/', audience:'Бизнес, внедряющий ИИ', role:'спикер (форма открыта)', score:8, why:'Открытая форма «Стать спикером». Подавать за 3-4 месяца — то есть сейчас.' }
+];
+
+function todayStr() { const d = new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function loadEventsFeed() { try { const c = JSON.parse(localStorage.getItem('_eventsFeedCache')); if (c && Array.isArray(c.events)) return c; } catch {} return { updated:'', events:EVENTS_SEED }; }
+function loadLocalEvents() { try { return JSON.parse(localStorage.getItem('eventsLocal')) || []; } catch { return []; } }
+function saveLocalEvents(arr) { localStorage.setItem('eventsLocal', JSON.stringify(arr)); if (typeof scheduleSync === 'function') scheduleSync(); }
+function loadEventStatuses() { try { return JSON.parse(localStorage.getItem('eventStatuses')) || {}; } catch { return {}; } }
+function saveEventStatuses(o) { localStorage.setItem('eventStatuses', JSON.stringify(o)); if (typeof scheduleSync === 'function') scheduleSync(); }
+
+function getAllEvents() {
+  const feed = loadEventsFeed().events || [];
+  const local = loadLocalEvents();
+  const map = {};
+  feed.forEach(e => { if (e && e.id) map[e.id] = Object.assign({}, e, { _src:'feed' }); });
+  local.forEach(e => { if (e && e.id) map[e.id] = Object.assign({}, e, { _src:'local' }); }); // локальные перекрывают ленту
+  return Object.values(map);
+}
+function eventEndKey(e) { return (e.endDate && e.endDate.length ? e.endDate : e.date) || '9999-99-99'; }
+
+async function refreshEventsFeed() {
+  const btn = document.getElementById('eventsRefreshBtn');
+  if (typeof ghGetFile !== 'function' || !ghPat) {
+    if (btn) { btn.textContent = 'нет GitHub-синка'; setTimeout(()=>btn.textContent='↻ Обновить', 2500); }
+    renderEvents(); return;
+  }
+  if (btn) btn.textContent = '…';
+  try {
+    const f = await ghGetFile('vault/data/events.json');
+    if (f.exists && f.content) {
+      const parsed = JSON.parse(f.content);
+      if (parsed && Array.isArray(parsed.events)) localStorage.setItem('_eventsFeedCache', JSON.stringify(parsed));
+    }
+    if (btn) btn.textContent = '✓';
+  } catch (e) {
+    console.warn('events feed refresh failed', e);
+    if (btn) btn.textContent = 'ошибка';
+  }
+  setTimeout(()=>{ if (btn) btn.textContent='↻ Обновить'; }, 2000);
+  renderEvents();
+}
+
+function renderEvents() {
+  const feedEl = document.getElementById('eventsFeed');
+  if (!feedEl) return;
+  const catF = (document.getElementById('eventsFilterCat')||{}).value || '';
+  const stF  = (document.getElementById('eventsFilterStatus')||{}).value || '';
+  const showPast = (document.getElementById('eventsShowPast')||{}).checked || false;
+  const statuses = loadEventStatuses();
+  const today = todayStr();
+
+  let list = getAllEvents();
+  if (catF) list = list.filter(e => e.category === catF);
+  if (stF) list = list.filter(e => stF === 'none' ? !statuses[e.id] : statuses[e.id] === stF);
+
+  const upcoming = list.filter(e => eventEndKey(e) >= today).sort((a,b)=> (a.date||'').localeCompare(b.date||''));
+  const past     = list.filter(e => eventEndKey(e) <  today).sort((a,b)=> (b.date||'').localeCompare(a.date||''));
+
+  // Бейдж в меню — живой радар: предстоящие, не «был»/«скип»
+  const badge = document.getElementById('navEventsBadge');
+  if (badge) { const n = getAllEvents().filter(e => eventEndKey(e) >= today && !['done','skip'].includes(statuses[e.id])).length; badge.textContent = n; badge.style.display = n ? '' : 'none'; }
+
+  const up = document.getElementById('eventsUpdated');
+  if (up) { const f = loadEventsFeed(); up.textContent = f.updated ? ('лента от ' + f.updated) : 'лента: встроенная'; }
+
+  let html = '';
+  const card = (e) => {
+    const st = statuses[e.id] || '';
+    const isPast = eventEndKey(e) < today;
+    const soon = !isPast && daysUntil(e.date) <= 7;
+    const dateLabel = fmtEventDate(e);
+    const stBtns = Object.keys(EVENT_STATUSES).map(k =>
+      `<button class="ev-st ${st===k?'on-'+k:''}" onclick="setEventStatus('${e.id}','${k}')">${EVENT_STATUSES[k]}</button>`
+    ).join('');
+    const editBtn = e._src === 'local' ? `<button class="ev-edit" onclick="openEventModal('${e.id}')" title="Редактировать">✎</button>` : '';
+    return `<div class="ev-card ${isPast?'ev-past':''} ${soon?'ev-soon':''}">
+      <div class="ev-top">
+        <span class="ev-cat ev-cat-${e.category}">${EVENT_CATS[e.category]||e.category}</span>
+        <span class="ev-score" title="Оценка доступа к ЛПР">⚡${e.score||'?'}</span>
+        <span class="ev-date">${dateLabel}</span>
+      </div>
+      <div class="ev-title">${escapeHtml(e.title||'')}</div>
+      <div class="ev-meta">${e.venue?('<b>'+escapeHtml(e.venue)+'</b> · '):''}${escapeHtml(e.price||'')}${e.role?(' · '+escapeHtml(e.role)):''}<br>${escapeHtml(e.audience||'')}</div>
+      ${e.why?`<div class="ev-why">${escapeHtml(e.why)}</div>`:''}
+      <div class="ev-foot">${stBtns}${editBtn}${e.url?`<a class="ev-link" href="${escapeHtml(e.url)}" target="_blank" rel="noopener">Открыть ↗</a>`:''}</div>
+    </div>`;
+  };
+
+  if (!upcoming.length && !(showPast && past.length)) {
+    feedEl.innerHTML = '<div class="card-empty">Нет событий под фильтр. Жми «+ Событие» или «↻ Обновить».</div>';
+    return;
+  }
+  if (upcoming.length) { html += '<div class="ev-group-label">Предстоящие</div>' + upcoming.map(card).join(''); }
+  if (showPast && past.length) { html += '<div class="ev-group-label">Прошедшие</div>' + past.map(card).join(''); }
+  feedEl.innerHTML = html;
+}
+
+function daysUntil(dateStr) { if (!dateStr) return 999; const d = new Date(dateStr+'T00:00:00'); const t = new Date(todayStr()+'T00:00:00'); return Math.round((d-t)/86400000); }
+function fmtEventDate(e) {
+  const M = ['янв','фев','мар','апр','мая','июн','июл','авг','сен','окт','ноя','дек'];
+  const p = (s) => { const d = new Date(s+'T00:00:00'); return d.getDate()+' '+M[d.getMonth()]; };
+  if (!e.date) return '';
+  let s = p(e.date);
+  if (e.endDate && e.endDate.length) s += '–'+p(e.endDate);
+  if (e.time) s += ', '+e.time;
+  const du = daysUntil(e.date);
+  if (du === 0) s += ' · сегодня'; else if (du > 0 && du <= 14) s += ' · через '+du+'д';
+  return s;
+}
+function setEventStatus(id, status) {
+  const st = loadEventStatuses();
+  st[id] = st[id] === status ? '' : status;
+  if (!st[id]) delete st[id];
+  saveEventStatuses(st);
+  renderEvents();
+}
+
+function openEventModal(id) {
+  let bg = document.getElementById('eventModalBg');
+  if (!bg) {
+    bg = document.createElement('div');
+    bg.className = 'modal-bg'; bg.id = 'eventModalBg';
+    bg.onclick = (ev) => { if (ev.target === bg) closeEventModal(); };
+    bg.innerHTML = `<div class="modal compact">
+      <input type="hidden" id="evModalId">
+      <div class="lead-modal-head">
+        <div class="lead-modal-title-block">
+          <input type="text" id="evTitle" class="lead-modal-name" style="border:none;padding:0;background:transparent;width:100%;outline:none" placeholder="Название события">
+        </div>
+        <button class="lead-modal-close" onclick="closeEventModal()" title="Закрыть">✕</button>
+      </div>
+      <div class="lead-fields-grid">
+        <div class="lead-field-mini"><label>Категория</label><select id="evCat">
+          <option value="club">Клуб</option><option value="industry">Отраслевое</option><option value="breakfast">Завтрак</option><option value="conf">ИИ/Tech</option><option value="mega">Мега-форум</option></select></div>
+        <div class="lead-field-mini"><label>Оценка ⚡ (1–10)</label><input type="number" id="evScore" min="1" max="10" placeholder="7"></div>
+        <div class="lead-field-mini"><label>Дата</label><input type="date" id="evDate"></div>
+        <div class="lead-field-mini"><label>Дата конца (опц.)</label><input type="date" id="evEnd"></div>
+        <div class="lead-field-mini"><label>Время</label><input type="text" id="evTime" placeholder="18:00"></div>
+        <div class="lead-field-mini"><label>Цена</label><input type="text" id="evPrice" placeholder="бесплатно / 5 000 ₽"></div>
+        <div class="lead-field-mini full"><label>Площадка</label><input type="text" id="evVenue" placeholder="Москва, площадка"></div>
+        <div class="lead-field-mini full"><label>Аудитория</label><input type="text" id="evAudience" placeholder="собственники, топы…"></div>
+        <div class="lead-field-mini"><label>Роль</label><input type="text" id="evRole" placeholder="гость / спикер"></div>
+        <div class="lead-field-mini"><label>Ссылка</label><input type="text" id="evUrl" placeholder="https://…"></div>
+        <div class="lead-field-mini full"><label>Зачем идти</label><input type="text" id="evWhy" placeholder="одной строкой: что там взять"></div>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:space-between;margin-top:16px">
+        <button class="modal-btn cancel" id="evDeleteBtn" onclick="deleteEvent()" style="color:var(--red)">Удалить</button>
+        <div style="display:flex;gap:8px">
+          <button class="modal-btn cancel" onclick="closeEventModal()">Отмена</button>
+          <button class="modal-btn primary" onclick="saveEvent()">Сохранить</button>
+        </div>
+      </div>
+    </div>`;
+    document.body.appendChild(bg);
+  }
+  const g = (i) => document.getElementById(i);
+  const local = loadLocalEvents();
+  const e = id ? local.find(x => x.id === id) : null;
+  g('evModalId').value = e ? e.id : '';
+  g('evTitle').value = e ? e.title||'' : '';
+  g('evCat').value = e ? e.category||'club' : 'club';
+  g('evScore').value = e ? e.score||'' : '';
+  g('evDate').value = e ? e.date||'' : '';
+  g('evEnd').value = e ? e.endDate||'' : '';
+  g('evTime').value = e ? e.time||'' : '';
+  g('evPrice').value = e ? e.price||'' : '';
+  g('evVenue').value = e ? e.venue||'' : '';
+  g('evAudience').value = e ? e.audience||'' : '';
+  g('evRole').value = e ? e.role||'' : '';
+  g('evUrl').value = e ? e.url||'' : '';
+  g('evWhy').value = e ? e.why||'' : '';
+  g('evDeleteBtn').style.display = e ? '' : 'none';
+  bg.classList.add('active');
+}
+function closeEventModal() { const bg = document.getElementById('eventModalBg'); if (bg) bg.classList.remove('active'); }
+function saveEvent() {
+  const g = (i) => document.getElementById(i);
+  const title = g('evTitle').value.trim();
+  if (!title) { g('evTitle').focus(); return; }
+  const local = loadLocalEvents();
+  let id = g('evModalId').value;
+  const obj = {
+    id: id || ('local-' + title.toLowerCase().replace(/[^a-zа-я0-9]+/gi,'-').slice(0,32) + '-' + Date.now().toString(36)),
+    title, category: g('evCat').value, score: Number(g('evScore').value)||undefined,
+    date: g('evDate').value, endDate: g('evEnd').value, time: g('evTime').value,
+    price: g('evPrice').value, venue: g('evVenue').value, audience: g('evAudience').value,
+    role: g('evRole').value, url: g('evUrl').value, why: g('evWhy').value
+  };
+  const idx = local.findIndex(x => x.id === obj.id);
+  if (idx >= 0) local[idx] = obj; else local.push(obj);
+  saveLocalEvents(local);
+  closeEventModal(); renderEvents();
+}
+function deleteEvent() {
+  const id = document.getElementById('evModalId').value;
+  if (!id) { closeEventModal(); return; }
+  if (!confirm('Удалить событие?')) return;
+  saveLocalEvents(loadLocalEvents().filter(x => x.id !== id));
+  const st = loadEventStatuses(); if (st[id]) { delete st[id]; saveEventStatuses(st); }
+  closeEventModal(); renderEvents();
 }
 
 // ==============================================================
@@ -4983,9 +5282,11 @@ importLeadsFromVault();
 migrateDealsToLeads();
 seedProjectsIfEmpty();
 const savedPage = localStorage.getItem('activeTab') || 'home';
-navTo(['home','leads','today','finance','history','projects'].includes(savedPage) ? savedPage : 'home');
+navTo(['home','leads','alumni','waitlists','today','finance','history','projects','events'].includes(savedPage) ? savedPage : 'home');
 render();
 setInterval(render, 60000);
+// Подтянуть свежую ленту событий из GitHub (если синк подключён)
+if (typeof ghPat !== 'undefined' && ghPat) { setTimeout(refreshEventsFeed, 1500); }
 // Fallback: если Sortable грузится дольше первого рендера — перерисуем канбан, как только он появится
 if (typeof Sortable === 'undefined') {
   window.addEventListener('load', () => {
