@@ -1577,7 +1577,7 @@
           <div class="card-head">
             <div class="card-title">Радар нетворкинга</div>
             <div style="display:flex;gap:8px">
-              <button class="btn btn-secondary" onclick="refreshEventsLive()" id="eventsRefreshBtn" title="Найти свежие события через n8n + Claude (~10-30 сек)">↻ Обновить</button>
+              <button class="btn btn-secondary" onclick="refreshEventsLive()" id="eventsRefreshBtn" title="Глубокий поиск событий через n8n + Claude (~3-4 мин, не закрывай вкладку)">↻ Обновить</button>
               <button class="btn btn-primary" onclick="openEventModal()">+ Событие</button>
             </div>
           </div>
@@ -4712,27 +4712,43 @@ async function refreshEventsFeed() {
   renderEvents();
 }
 
-// Живой поиск событий через n8n (кнопка «Обновить») → Claude web search → events.json
-const EVENTS_WEBHOOK = 'https://primary-production-7202.up.railway.app/webhook/events-radar';
+// Глубокий async-поиск через n8n: запустить фоновый прогон → поллить результат
+const EVENTS_RUN = 'https://primary-production-7202.up.railway.app/webhook/events-deep-run';
+const EVENTS_RESULT = 'https://primary-production-7202.up.railway.app/webhook/events-deep-result';
+const sleepMs = (ms) => new Promise(r => setTimeout(r, ms));
 async function refreshEventsLive() {
   const btn = document.getElementById('eventsRefreshBtn');
-  if (btn) { btn.textContent = 'ищу…'; btn.disabled = true; }
+  const setBtn = (t) => { if (btn) btn.textContent = t; };
+  if (btn) btn.disabled = true;
   try {
-    const r = await fetch(EVENTS_WEBHOOK, { cache: 'no-store' });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    const data = await r.json();
-    if (data && Array.isArray(data.events) && data.events.length) {
-      localStorage.setItem('_eventsFeedCache', JSON.stringify({ updated: data.updated || todayStr(), source: 'auto', events: data.events }));
-      if (btn) btn.textContent = '✓ ' + data.events.length;
+    // Запомнить прошлый результат, чтобы отличить свежий
+    let prevFin = null;
+    try { const d0 = await (await fetch(EVENTS_RESULT, { cache: 'no-store' })).json(); prevFin = d0.finishedAt || null; } catch {}
+    setBtn('запускаю…');
+    await fetch(EVENTS_RUN, { cache: 'no-store' });
+    const t0 = Date.now();
+    let got = null;
+    while (Date.now() - t0 < 330000) { // до 5.5 мин
+      await sleepMs(15000);
+      setBtn('ищу… ' + Math.round((Date.now() - t0) / 1000) + 'с');
+      let d;
+      try { d = await (await fetch(EVENTS_RESULT, { cache: 'no-store' })).json(); } catch { continue; }
+      if (d && d.finishedAt && d.finishedAt !== prevFin) { got = d; break; }
+    }
+    if (got && Array.isArray(got.events) && got.events.length) {
+      localStorage.setItem('_eventsFeedCache', JSON.stringify({ updated: got.updated || todayStr(), source: 'auto-deep', events: got.events }));
+      setBtn('✓ ' + got.events.length);
+    } else if (got) {
+      setBtn('пусто');
     } else {
-      if (btn) btn.textContent = 'пусто';
+      setBtn('долго — зайди позже');
     }
   } catch (e) {
-    console.warn('events live refresh failed', e);
-    if (btn) btn.textContent = 'ошибка';
+    console.warn('deep events refresh failed', e);
+    setBtn('ошибка');
   }
   if (btn) btn.disabled = false;
-  setTimeout(() => { if (btn) btn.textContent = '↻ Обновить'; }, 2500);
+  setTimeout(() => setBtn('↻ Обновить'), 3500);
   renderEvents();
 }
 
