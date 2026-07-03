@@ -298,6 +298,30 @@
   .ev-edit { font-size:12px; color:var(--text-3); cursor:pointer; background:none; border:none; padding:2px 4px; }
   .ev-edit:hover { color:var(--text); }
   .ev-group-label { grid-column:1/-1; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.5px; color:var(--text-3); margin:6px 0 -2px; }
+  /* view toggle */
+  .events-viewtoggle { display:inline-flex; border:1px solid var(--border-2); border-radius:var(--r-sm); overflow:hidden; }
+  .ev-view-btn { border:none; background:var(--surface); color:var(--text-2); font-size:13px; padding:7px 12px; cursor:pointer; }
+  .ev-view-btn.active { background:var(--green-dark); color:#fff; }
+  /* calendar */
+  .events-cal { display:none; }
+  .events-cal.on { display:block; }
+  .evc-head { display:flex; align-items:center; justify-content:center; gap:16px; margin-bottom:12px; }
+  .evc-title { font-size:16px; font-weight:700; color:var(--text); min-width:150px; text-align:center; text-transform:capitalize; }
+  .evc-nav { width:32px; height:32px; border:1px solid var(--border-2); border-radius:var(--r-sm); background:var(--surface); color:var(--text); cursor:pointer; font-size:16px; line-height:1; }
+  .evc-nav:hover { border-color:var(--green-mid); color:var(--green-mid); }
+  .evc-today-btn { font-size:12px; padding:6px 12px; border:1px solid var(--border-2); border-radius:var(--r-sm); background:var(--surface); color:var(--text-2); cursor:pointer; }
+  .evc-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
+  .evc-dow { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.5px; color:var(--text-3); text-align:center; padding:4px 0; }
+  .evc-cell { min-height:88px; border:1px solid var(--border); border-radius:var(--r-sm); background:var(--surface); padding:5px; display:flex; flex-direction:column; gap:3px; overflow:hidden; }
+  .evc-cell.other { background:var(--bg); opacity:.5; }
+  .evc-cell.today { border-color:var(--green-mid); box-shadow:inset 0 0 0 1px var(--green-mid); }
+  .evc-daynum { font-size:12px; font-weight:600; color:var(--text-2); align-self:flex-end; }
+  .evc-cell.today .evc-daynum { color:var(--green-mid); }
+  .evc-chip { font-size:10px; font-weight:600; padding:2px 5px; border-radius:5px; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1.3; }
+  .evc-chip.done { opacity:.5; text-decoration:line-through; }
+  .evc-chip.skip { opacity:.4; }
+  .evc-more { font-size:10px; color:var(--text-3); padding-left:2px; cursor:pointer; }
+  @media (max-width:640px){ .evc-cell { min-height:60px; } .evc-chip { font-size:9px; } }
 
   /* ============ METRICS ROW ============ */
   .metrics-row {
@@ -1559,6 +1583,10 @@
           </div>
           <div style="font-size:13px;color:var(--text-2);margin:0 0 14px;line-height:1.5">Куда идти за лидами на интенсив. Курируемая лента + твои события. Ставь статус — <b>Планирую / Иду / Был</b>. Оценка (⚡1–10) = плотность ЛПР × процессная боль × доступность.</div>
           <div class="events-toolbar" id="eventsToolbar">
+            <div class="events-viewtoggle">
+              <button id="evViewCal" class="ev-view-btn active" onclick="setEventsView('calendar')">📅 Календарь</button>
+              <button id="evViewList" class="ev-view-btn" onclick="setEventsView('list')">☰ Список</button>
+            </div>
             <select id="eventsFilterCat" class="events-select" onchange="renderEvents()">
               <option value="">Все категории</option>
               <option value="club">Клубы</option>
@@ -1575,9 +1603,10 @@
               <option value="skip">Скип</option>
               <option value="none">Без статуса</option>
             </select>
-            <label class="events-past-toggle"><input type="checkbox" id="eventsShowPast" onchange="renderEvents()"> прошедшие</label>
+            <label class="events-past-toggle" id="eventsShowPastLabel"><input type="checkbox" id="eventsShowPast" onchange="renderEvents()"> прошедшие</label>
             <span class="events-updated" id="eventsUpdated"></span>
           </div>
+          <div id="eventsCalendar" class="events-cal"></div>
           <div id="eventsFeed" class="events-feed"></div>
         </div>
       </section>
@@ -4683,35 +4712,63 @@ async function refreshEventsFeed() {
   renderEvents();
 }
 
-function renderEvents() {
-  const feedEl = document.getElementById('eventsFeed');
-  if (!feedEl) return;
+let eventsView = (localStorage.getItem('eventsView') === 'list') ? 'list' : 'calendar';
+let evCalY = null, evCalM = null;
+
+function setEventsView(v) {
+  eventsView = (v === 'list') ? 'list' : 'calendar';
+  localStorage.setItem('eventsView', eventsView);
+  renderEvents();
+}
+
+function eventsFiltered() {
   const catF = (document.getElementById('eventsFilterCat')||{}).value || '';
   const stF  = (document.getElementById('eventsFilterStatus')||{}).value || '';
-  const showPast = (document.getElementById('eventsShowPast')||{}).checked || false;
   const statuses = loadEventStatuses();
-  const today = todayStr();
-
   let list = getAllEvents();
   if (catF) list = list.filter(e => e.category === catF);
   if (stF) list = list.filter(e => stF === 'none' ? !statuses[e.id] : statuses[e.id] === stF);
+  return list;
+}
 
-  const upcoming = list.filter(e => eventEndKey(e) >= today).sort((a,b)=> (a.date||'').localeCompare(b.date||''));
-  const past     = list.filter(e => eventEndKey(e) <  today).sort((a,b)=> (b.date||'').localeCompare(a.date||''));
+function renderEvents() {
+  const feedEl = document.getElementById('eventsFeed');
+  const calEl = document.getElementById('eventsCalendar');
+  if (!feedEl || !calEl) return;
+  const statuses = loadEventStatuses();
+  const today = todayStr();
 
   // Бейдж в меню — живой радар: предстоящие, не «был»/«скип»
   const badge = document.getElementById('navEventsBadge');
   if (badge) { const n = getAllEvents().filter(e => eventEndKey(e) >= today && !['done','skip'].includes(statuses[e.id])).length; badge.textContent = n; badge.style.display = n ? '' : 'none'; }
-
   const up = document.getElementById('eventsUpdated');
   if (up) { const f = loadEventsFeed(); up.textContent = f.updated ? ('лента от ' + f.updated) : 'лента: встроенная'; }
 
-  let html = '';
+  // Синхронизация вида
+  const bCal = document.getElementById('evViewCal'), bList = document.getElementById('evViewList');
+  if (bCal) bCal.classList.toggle('active', eventsView === 'calendar');
+  if (bList) bList.classList.toggle('active', eventsView === 'list');
+  const pastLbl = document.getElementById('eventsShowPastLabel');
+  if (pastLbl) pastLbl.style.display = eventsView === 'list' ? '' : 'none';
+  calEl.classList.toggle('on', eventsView === 'calendar');
+  feedEl.style.display = eventsView === 'calendar' ? 'none' : '';
+
+  if (eventsView === 'calendar') renderEventsCalendar(); else renderEventsList();
+}
+
+function renderEventsList() {
+  const feedEl = document.getElementById('eventsFeed');
+  const showPast = (document.getElementById('eventsShowPast')||{}).checked || false;
+  const statuses = loadEventStatuses();
+  const today = todayStr();
+  const list = eventsFiltered();
+  const upcoming = list.filter(e => eventEndKey(e) >= today).sort((a,b)=> (a.date||'').localeCompare(b.date||''));
+  const past     = list.filter(e => eventEndKey(e) <  today).sort((a,b)=> (b.date||'').localeCompare(a.date||''));
+
   const card = (e) => {
     const st = statuses[e.id] || '';
     const isPast = eventEndKey(e) < today;
     const soon = !isPast && daysUntil(e.date) <= 7;
-    const dateLabel = fmtEventDate(e);
     const stBtns = Object.keys(EVENT_STATUSES).map(k =>
       `<button class="ev-st ${st===k?'on-'+k:''}" onclick="setEventStatus('${e.id}','${k}')">${EVENT_STATUSES[k]}</button>`
     ).join('');
@@ -4720,7 +4777,7 @@ function renderEvents() {
       <div class="ev-top">
         <span class="ev-cat ev-cat-${e.category}">${EVENT_CATS[e.category]||e.category}</span>
         <span class="ev-score" title="Оценка доступа к ЛПР">⚡${e.score||'?'}</span>
-        <span class="ev-date">${dateLabel}</span>
+        <span class="ev-date">${fmtEventDate(e)}</span>
       </div>
       <div class="ev-title">${escapeHtml(e.title||'')}</div>
       <div class="ev-meta">${e.venue?('<b>'+escapeHtml(e.venue)+'</b> · '):''}${escapeHtml(e.price||'')}${e.role?(' · '+escapeHtml(e.role)):''}<br>${escapeHtml(e.audience||'')}</div>
@@ -4733,10 +4790,74 @@ function renderEvents() {
     feedEl.innerHTML = '<div class="card-empty">Нет событий под фильтр. Жми «+ Событие» или «↻ Обновить».</div>';
     return;
   }
+  let html = '';
   if (upcoming.length) { html += '<div class="ev-group-label">Предстоящие</div>' + upcoming.map(card).join(''); }
   if (showPast && past.length) { html += '<div class="ev-group-label">Прошедшие</div>' + past.map(card).join(''); }
   feedEl.innerHTML = html;
 }
+
+const EVC_MONTHS = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+const EVC_DOW = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+function evcPad(n){ return String(n).padStart(2,'0'); }
+function evcKey(y,m,d){ return y+'-'+evcPad(m+1)+'-'+evcPad(d); }
+
+function renderEventsCalendar() {
+  const calEl = document.getElementById('eventsCalendar');
+  const today = todayStr();
+  if (evCalY === null) { const n = new Date(today+'T00:00:00'); evCalY = n.getFullYear(); evCalM = n.getMonth(); }
+  const statuses = loadEventStatuses();
+  const list = eventsFiltered();
+
+  // Разложить события по дням (учёт многодневных)
+  const byDay = {};
+  list.forEach(e => {
+    if (!e.date) return;
+    const en = (e.endDate && e.endDate.length) ? e.endDate : e.date;
+    let d = new Date(e.date+'T00:00:00'); const end = new Date(en+'T00:00:00');
+    let guard = 0;
+    while (d <= end && guard < 62) { const k = evcKey(d.getFullYear(), d.getMonth(), d.getDate()); (byDay[k] = byDay[k] || []).push(e); d.setDate(d.getDate()+1); guard++; }
+  });
+
+  const first = new Date(evCalY, evCalM, 1);
+  const startOffset = (first.getDay()+6)%7; // 0 = понедельник
+  const daysInMonth = new Date(evCalY, evCalM+1, 0).getDate();
+
+  let cells = '';
+  for (let i = 0; i < 42; i++) {
+    const dayNum = i - startOffset + 1;
+    let cy = evCalY, cm = evCalM, cd = dayNum, other = false;
+    if (dayNum < 1) { const pm = new Date(evCalY, evCalM, 0); cd = pm.getDate()+dayNum; cy = pm.getFullYear(); cm = pm.getMonth(); other = true; }
+    else if (dayNum > daysInMonth) { const nm = new Date(evCalY, evCalM+1, 1); cd = dayNum - daysInMonth; cy = nm.getFullYear(); cm = nm.getMonth(); other = true; }
+    const key = evcKey(cy, cm, cd);
+    const isToday = key === today;
+    const evs = (byDay[key] || []).slice().sort((a,b)=>(b.score||0)-(a.score||0));
+    const shown = evs.slice(0,3);
+    const chips = shown.map(e => {
+      const st = statuses[e.id] || '';
+      const short = (e.title||'').replace(/^Атланты[^:]*:/,'Атланты:').slice(0,22);
+      return `<div class="evc-chip ev-cat-${e.category} ${st==='done'?'done':''} ${st==='skip'?'skip':''}" title="${escapeHtml(e.title||'')}" onclick="openEventDetail('${e.id}')">⚡${e.score||'?'} ${escapeHtml(short)}</div>`;
+    }).join('');
+    const more = evs.length > 3 ? `<div class="evc-more" onclick="setEventsView('list')">+${evs.length-3} ещё</div>` : '';
+    cells += `<div class="evc-cell ${other?'other':''} ${isToday?'today':''}"><span class="evc-daynum">${cd}</span>${chips}${more}</div>`;
+  }
+
+  calEl.innerHTML =
+    '<div class="evc-head">' +
+      '<button class="evc-nav" onclick="evCalShift(-1)">‹</button>' +
+      '<div class="evc-title">' + EVC_MONTHS[evCalM] + ' ' + evCalY + '</div>' +
+      '<button class="evc-nav" onclick="evCalShift(1)">›</button>' +
+      '<button class="evc-today-btn" onclick="evCalToday()">сегодня</button>' +
+    '</div>' +
+    '<div class="evc-grid">' + EVC_DOW.map(d=>'<div class="evc-dow">'+d+'</div>').join('') + cells + '</div>';
+}
+function evCalShift(delta) {
+  if (evCalY === null) { const n = new Date(todayStr()+'T00:00:00'); evCalY = n.getFullYear(); evCalM = n.getMonth(); }
+  evCalM += delta;
+  if (evCalM < 0) { evCalM = 11; evCalY--; }
+  if (evCalM > 11) { evCalM = 0; evCalY++; }
+  renderEventsCalendar();
+}
+function evCalToday() { const n = new Date(todayStr()+'T00:00:00'); evCalY = n.getFullYear(); evCalM = n.getMonth(); renderEventsCalendar(); }
 
 function daysUntil(dateStr) { if (!dateStr) return 999; const d = new Date(dateStr+'T00:00:00'); const t = new Date(todayStr()+'T00:00:00'); return Math.round((d-t)/86400000); }
 function fmtEventDate(e) {
@@ -4842,6 +4963,50 @@ function deleteEvent() {
   const st = loadEventStatuses(); if (st[id]) { delete st[id]; saveEventStatuses(st); }
   closeEventModal(); renderEvents();
 }
+
+function openEventDetail(id) {
+  const e = getAllEvents().find(x => x.id === id);
+  if (!e) return;
+  let bg = document.getElementById('eventDetailBg');
+  if (!bg) {
+    bg = document.createElement('div');
+    bg.className = 'modal-bg'; bg.id = 'eventDetailBg';
+    bg.onclick = (ev) => { if (ev.target === bg) closeEventDetail(); };
+    document.body.appendChild(bg);
+  }
+  const st = (loadEventStatuses())[e.id] || '';
+  const stBtns = Object.keys(EVENT_STATUSES).map(k =>
+    `<button class="ev-st ${st===k?'on-'+k:''}" onclick="setEventStatus('${e.id}','${k}'); openEventDetail('${e.id}')">${EVENT_STATUSES[k]}</button>`
+  ).join('');
+  const editBtn = e._src === 'local' ? `<button class="modal-btn cancel" onclick="closeEventDetail(); openEventModal('${e.id}')">Редактировать</button>` : '';
+  bg.innerHTML = `<div class="modal compact">
+    <div class="lead-modal-head">
+      <div class="lead-modal-title-block">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <span class="ev-cat ev-cat-${e.category}">${EVENT_CATS[e.category]||e.category}</span>
+          <span class="ev-score">⚡${e.score||'?'}</span>
+          <span style="font-size:13px;font-weight:600;color:var(--text-2)">${fmtEventDate(e)}</span>
+        </div>
+        <div style="font-size:17px;font-weight:700;margin-top:8px;line-height:1.25">${escapeHtml(e.title||'')}</div>
+      </div>
+      <button class="lead-modal-close" onclick="closeEventDetail()" title="Закрыть">✕</button>
+    </div>
+    <div class="ev-meta" style="margin:4px 0 10px;line-height:1.9">
+      ${e.venue?('<div>📍 <b>'+escapeHtml(e.venue)+'</b></div>'):''}
+      ${e.price?('<div>💵 '+escapeHtml(e.price)+'</div>'):''}
+      ${e.role?('<div>🎤 '+escapeHtml(e.role)+'</div>'):''}
+      ${e.audience?('<div>👥 '+escapeHtml(e.audience)+'</div>'):''}
+    </div>
+    ${e.why?`<div class="ev-why" style="margin-bottom:12px">${escapeHtml(e.why)}</div>`:''}
+    <div class="ev-foot" style="border:none;padding:0">${stBtns}</div>
+    <div style="display:flex;gap:8px;justify-content:space-between;align-items:center;margin-top:16px">
+      <div>${editBtn}</div>
+      ${e.url?`<a class="modal-btn primary" href="${escapeHtml(e.url)}" target="_blank" rel="noopener" style="text-decoration:none">Открыть сайт ↗</a>`:''}
+    </div>
+  </div>`;
+  bg.classList.add('active');
+}
+function closeEventDetail() { const bg = document.getElementById('eventDetailBg'); if (bg) bg.classList.remove('active'); }
 
 // ==============================================================
 // GitHub Sync — leads.json в vault/data + markdown view в vault/projects
