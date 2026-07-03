@@ -272,6 +272,8 @@
   .events-feed { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:12px; }
   .ev-card { border:1px solid var(--border); border-radius:var(--r); background:var(--surface); padding:14px; display:flex; flex-direction:column; gap:9px; box-shadow:var(--shadow); position:relative; }
   .ev-card.ev-past { opacity:.55; }
+  .ev-card.ev-review { border:1px dashed var(--border-2); box-shadow:none; }
+  .ev-review-nodate { font-size:12px; font-weight:600; color:#b7791f; }
   .ev-card.ev-soon { border-color:var(--green-light-2); }
   .ev-top { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
   .ev-cat { font-size:11px; font-weight:600; padding:3px 8px; border-radius:999px; }
@@ -1608,6 +1610,7 @@
           </div>
           <div id="eventsCalendar" class="events-cal"></div>
           <div id="eventsFeed" class="events-feed"></div>
+          <div id="eventsReview"></div>
         </div>
       </section>
 
@@ -4690,6 +4693,37 @@ function getAllEvents() {
 }
 function eventEndKey(e) { return (e.endDate && e.endDate.length ? e.endDate : e.date) || '9999-99-99'; }
 
+// ---- Undated: площадки без точной даты, ждут ручного да/нет ----
+function loadUndated() { try { const c = JSON.parse(localStorage.getItem('_eventsFeedCache')); return (c && Array.isArray(c.undated)) ? c.undated : []; } catch { return []; } }
+function loadUndatedReviewed() { try { return JSON.parse(localStorage.getItem('eventsUndatedReviewed')) || []; } catch { return []; } }
+function saveUndatedReviewed(a) { localStorage.setItem('eventsUndatedReviewed', JSON.stringify(a)); if (typeof scheduleSync === 'function') scheduleSync(); }
+function dismissUndated(id) { const r = loadUndatedReviewed(); if (!r.includes(id)) { r.push(id); saveUndatedReviewed(r); } renderEvents(); }
+function promoteUndated(id) { const u = loadUndated().find(x => x.id === id); dismissUndated(id); openEventModal(null, u || {}); }
+function renderEventsReview() {
+  const el = document.getElementById('eventsReview');
+  if (!el) return;
+  const reviewed = loadUndatedReviewed();
+  const list = loadUndated().filter(u => u && u.id && !reviewed.includes(u.id));
+  if (!list.length) { el.innerHTML = ''; el.style.display = 'none'; return; }
+  el.style.display = '';
+  const card = (u) => `<div class="ev-card ev-review">
+    <div class="ev-top">
+      <span class="ev-cat ev-cat-${u.category}">${EVENT_CATS[u.category]||u.category}</span>
+      ${u.score?`<span class="ev-score" title="Оценка доступа к ЛПР">⚡${u.score}</span>`:''}
+      <span class="ev-review-nodate">без точной даты</span>
+    </div>
+    <div class="ev-title">${escapeHtml(u.title||'')}</div>
+    <div class="ev-meta">${escapeHtml(u.audience||'')}</div>
+    ${u.why?`<div class="ev-why">${escapeHtml(u.why)}</div>`:''}
+    <div class="ev-foot">
+      <button class="ev-st on-go" onclick="promoteUndated('${u.id}')" title="Найти дату и добавить в события">✓ В события</button>
+      <button class="ev-st" onclick="dismissUndated('${u.id}')" title="Убрать из проверки">✕ Скрыть</button>
+      ${u.url?`<a class="ev-link" href="${escapeHtml(u.url)}" target="_blank" rel="noopener">Открыть ↗</a>`:''}
+    </div>
+  </div>`;
+  el.innerHTML = `<div class="ev-group-label" style="margin-top:22px">На проверку — площадки без точной даты (${list.length}) <span style="font-weight:400;color:var(--text-3);font-size:12px">· «В события» откроет карточку — поставь дату и сохрани</span></div><div class="events-feed">${list.map(card).join('')}</div>`;
+}
+
 async function refreshEventsFeed() {
   const btn = document.getElementById('eventsRefreshBtn');
   if (typeof ghGetFile !== 'function' || !ghPat) {
@@ -4794,6 +4828,7 @@ function renderEvents() {
   feedEl.style.display = eventsView === 'calendar' ? 'none' : '';
 
   if (eventsView === 'calendar') renderEventsCalendar(); else renderEventsList();
+  renderEventsReview();
 }
 
 function renderEventsList() {
@@ -4919,7 +4954,7 @@ function setEventStatus(id, status) {
   renderEvents();
 }
 
-function openEventModal(id) {
+function openEventModal(id, prefill) {
   let bg = document.getElementById('eventModalBg');
   if (!bg) {
     bg = document.createElement('div');
@@ -4974,6 +5009,18 @@ function openEventModal(id) {
   g('evUrl').value = e ? e.url||'' : '';
   g('evWhy').value = e ? e.why||'' : '';
   g('evDeleteBtn').style.display = e ? '' : 'none';
+  // Предзаполнение из «На проверку» (undated): все поля кроме даты — её ставит Максим вручную
+  if (!e && prefill) {
+    g('evTitle').value = prefill.title || '';
+    g('evCat').value = prefill.category || 'club';
+    g('evScore').value = prefill.score || '';
+    g('evAudience').value = prefill.audience || '';
+    g('evVenue').value = prefill.venue || '';
+    g('evUrl').value = prefill.url || '';
+    g('evWhy').value = prefill.why || '';
+    g('evDate').value = '';
+    setTimeout(() => g('evDate').focus(), 60);
+  }
   bg.classList.add('show');
 }
 function closeEventModal() { const bg = document.getElementById('eventModalBg'); if (bg) bg.classList.remove('show'); }
