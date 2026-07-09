@@ -1051,9 +1051,14 @@
   .lead-history-add-btn:hover { background:var(--green-darker); }
   .lead-history-list { display:flex; flex-direction:column; gap:8px; margin-bottom:14px; }
   .lead-history-empty { font-size:12px; color:var(--text-3); padding:10px; text-align:center; font-style:italic; background:var(--bg); border-radius:8px; }
-  .lead-history-item { background:var(--bg); border-radius:8px; padding:9px 12px; font-size:13px; line-height:1.45; }
-  .lead-history-date { font-size:10px; color:var(--text-3); font-weight:600; margin-bottom:3px; text-transform:uppercase; letter-spacing:.3px; }
+  .lead-history-item { position:relative; background:var(--bg); border-radius:8px; padding:9px 12px; font-size:13px; line-height:1.45; }
+  .lead-history-date { font-size:10px; color:var(--text-3); font-weight:600; margin-bottom:3px; text-transform:uppercase; letter-spacing:.3px; padding-right:24px; }
   .lead-history-text { color:var(--text); white-space:pre-wrap; word-break:break-word; }
+  .lead-history-edit { position:absolute; top:6px; right:7px; background:none; border:none; color:var(--text-3); cursor:pointer; font-size:12px; line-height:1; padding:3px 6px; border-radius:5px; }
+  .lead-history-edit:hover { color:var(--green-dark); background:var(--green-bg-soft); }
+  .lead-history-item.editing { background:var(--green-bg-soft); }
+  .lead-history-editdate { width:100%; border:1.5px solid var(--border-2); border-radius:6px; padding:6px 8px; font-family:inherit; font-size:12px; margin-bottom:6px; background:#fff; color:var(--text); }
+  .lead-history-edittext { width:100%; min-height:56px; border:1.5px solid var(--border-2); border-radius:6px; padding:8px 10px; font-family:inherit; font-size:13px; outline:none; resize:vertical; background:#fff; }
   .lead-history-form { background:var(--green-bg-soft); border-radius:8px; padding:10px; margin-bottom:10px; display:none; }
   .lead-history-form.show { display:block; }
   .lead-history-form textarea { width:100%; min-height:60px; border:1.5px solid var(--border-2); border-radius:6px; padding:8px 10px; font-family:inherit; font-size:13px; outline:none; resize:vertical; background:#fff; }
@@ -3225,6 +3230,7 @@ function openLeadModal(id) {
     document.getElementById('leadDeleteBtn').style.display = 'none';
   }
   toggleHistoryForm(false);
+  histEdit = { ctx:null, idx:-1 };
   renderHistoryList(lead);
   renderLeadInterestChips();
   renderLeadWaitlistChips();
@@ -3238,11 +3244,7 @@ function renderHistoryList(lead) {
     el.innerHTML = '<div class="lead-history-empty">Пока нет записей. Добавь первую через «+ Запись».</div>';
     return;
   }
-  el.innerHTML = history.map(h => {
-    const d = new Date(h.date);
-    const dateStr = d.toLocaleDateString('ru-RU') + ' · ' + d.toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'});
-    return '<div class="lead-history-item"><div class="lead-history-date">'+dateStr+'</div><div class="lead-history-text">'+escapeHtml(h.text)+'</div></div>';
-  }).join('');
+  el.innerHTML = history.map((h,i) => histItemHtml(h, i, 'lead')).join('');
 }
 function toggleHistoryForm(force) {
   const form = document.getElementById('leadHistoryForm');
@@ -4056,6 +4058,7 @@ function openAlumModal(id) {
     convBtn.style.display = 'none';
   }
   toggleAlumHistoryForm(false);
+  histEdit = { ctx:null, idx:-1 };
   renderAlumHistoryList(a);
   document.getElementById('alumModalBg').classList.add('show');
   setTimeout(() => { if (!a) document.getElementById('alumName').focus(); }, 50);
@@ -4068,11 +4071,7 @@ function renderAlumHistoryList(a) {
     el.innerHTML = '<div class="lead-history-empty">Пока нет записей. Жми «+ Запись» после первого касания.</div>';
     return;
   }
-  el.innerHTML = history.map(h => {
-    const d = new Date(h.date);
-    const dateStr = d.toLocaleDateString('ru-RU') + ' · ' + d.toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'});
-    return '<div class="lead-history-item"><div class="lead-history-date">'+dateStr+'</div><div class="lead-history-text">'+escapeHtml(h.text)+'</div></div>';
-  }).join('');
+  el.innerHTML = history.map((h,i) => histItemHtml(h, i, 'alum')).join('');
 }
 
 function toggleAlumHistoryForm(force) {
@@ -4105,6 +4104,64 @@ function addAlumHistoryEntry() {
   document.getElementById('alumMetaTouch').textContent = fmtDateNice(a.last_touch_at);
   render();
   toast('Касание записано');
+}
+
+// ===== Редактирование записей истории (лиды + выпускники) =====
+let histEdit = { ctx:null, idx:-1 };
+function isoToLocalInput(iso) { const d = new Date(iso); if (isNaN(d)) return ''; const local = new Date(d.getTime() - d.getTimezoneOffset()*60000); return local.toISOString().slice(0,16); }
+function localInputToIso(v) { const d = new Date(v); return isNaN(d) ? nowIso() : d.toISOString(); }
+function histItemHtml(h, i, ctx) {
+  const d = new Date(h.date);
+  const dateStr = d.toLocaleDateString('ru-RU') + ' · ' + d.toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'});
+  if (histEdit.ctx === ctx && histEdit.idx === i) {
+    return '<div class="lead-history-item editing">'
+      + '<input type="datetime-local" id="histEditDate" class="lead-history-editdate" value="'+isoToLocalInput(h.date)+'">'
+      + '<textarea id="histEditText" class="lead-history-edittext">'+escapeHtml(h.text)+'</textarea>'
+      + '<div class="lead-history-form-actions">'
+      +   '<button class="modal-btn cancel" onclick="cancelHistEdit()">Отмена</button>'
+      +   '<button class="modal-btn primary" onclick="saveHistEdit(\''+ctx+'\','+i+')">Сохранить</button>'
+      + '</div></div>';
+  }
+  return '<div class="lead-history-item">'
+    + '<button class="lead-history-edit" title="Редактировать" onclick="startHistEdit(\''+ctx+'\','+i+')">✎</button>'
+    + '<div class="lead-history-date">'+dateStr+'</div>'
+    + '<div class="lead-history-text">'+escapeHtml(h.text)+'</div></div>';
+}
+function rerenderHist(ctx) {
+  if (ctx === 'lead') { const l = loadLeads().find(x => x.id === currentLeadId); renderHistoryList(l); }
+  else { const a = loadAlumni().find(x => x.id === currentAlumId); renderAlumHistoryList(a); }
+}
+function startHistEdit(ctx, idx) {
+  histEdit = { ctx, idx };
+  rerenderHist(ctx);
+  setTimeout(() => { const t = document.getElementById('histEditText'); if (t) { t.focus(); t.setSelectionRange(t.value.length, t.value.length); } }, 30);
+}
+function cancelHistEdit() { const ctx = histEdit.ctx; histEdit = { ctx:null, idx:-1 }; if (ctx) rerenderHist(ctx); }
+function saveHistEdit(ctx, idx) {
+  const textEl = document.getElementById('histEditText');
+  const dateEl = document.getElementById('histEditDate');
+  if (!textEl) return;
+  const text = textEl.value.trim();
+  if (!text) { textEl.focus(); return; }
+  const iso = dateEl && dateEl.value ? localInputToIso(dateEl.value) : null;
+  if (ctx === 'lead') {
+    const leads = loadLeads(); const lead = leads.find(l => l.id === currentLeadId);
+    if (!lead || !lead.history || !lead.history[idx]) return;
+    lead.history[idx].text = text; if (iso) lead.history[idx].date = iso;
+    lead.updated_at = nowIso(); saveLeads(leads);
+    histEdit = { ctx:null, idx:-1 }; renderHistoryList(lead);
+    const mu = document.getElementById('leadMetaUpdated'); if (mu) mu.textContent = fmtDateNice(lead.updated_at);
+  } else {
+    const list = loadAlumni(); const a = list.find(x => x.id === currentAlumId);
+    if (!a || !a.history || !a.history[idx]) return;
+    a.history[idx].text = text; if (iso) a.history[idx].date = iso;
+    a.last_touch_at = a.history.reduce((mx, h) => (h.date > mx ? h.date : mx), a.history[0].date);
+    a.updated_at = nowIso(); saveAlumni(list);
+    histEdit = { ctx:null, idx:-1 }; renderAlumHistoryList(a);
+    const mt = document.getElementById('alumMetaTouch'); if (mt) mt.textContent = fmtDateNice(a.last_touch_at);
+  }
+  render();
+  toast('Запись обновлена');
 }
 
 function saveAlumInternal(closeAfter) {
