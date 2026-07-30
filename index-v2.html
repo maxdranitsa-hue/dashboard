@@ -1054,9 +1054,11 @@
   .lead-history-item { position:relative; background:var(--bg); border-radius:8px; padding:9px 12px; font-size:13px; line-height:1.45; }
   .lead-history-date { font-size:10px; color:var(--text-3); font-weight:600; margin-bottom:3px; text-transform:uppercase; letter-spacing:.3px; padding-right:24px; }
   .lead-history-text { color:var(--text); white-space:pre-wrap; word-break:break-word; }
-  .lead-history-edit { position:absolute; top:6px; right:7px; background:none; border:none; color:var(--text-3); cursor:pointer; font-size:12px; line-height:1; padding:3px 6px; border-radius:5px; }
-  .lead-history-edit:hover { color:var(--green-dark); background:var(--green-bg-soft); }
-  .lead-history-item.editing { background:var(--green-bg-soft); }
+  .lead-history-edit { position:absolute; top:6px; right:8px; color:var(--text-2); font-size:14px; line-height:1; pointer-events:none; }
+  .lead-history-item:not(.editing) { cursor:pointer; transition:background .12s; }
+  .lead-history-item:not(.editing):hover { background:var(--green-bg-soft); }
+  .lead-history-item:not(.editing):hover .lead-history-edit { color:var(--green-dark); }
+  .lead-history-item.editing { background:var(--green-bg-soft); cursor:default; }
   .lead-history-editdate { width:100%; border:1.5px solid var(--border-2); border-radius:6px; padding:6px 8px; font-family:inherit; font-size:12px; margin-bottom:6px; background:#fff; color:var(--text); }
   .lead-history-edittext { width:100%; min-height:56px; border:1.5px solid var(--border-2); border-radius:6px; padding:8px 10px; font-family:inherit; font-size:13px; outline:none; resize:vertical; background:#fff; }
   .lead-history-form { background:var(--green-bg-soft); border-radius:8px; padding:10px; margin-bottom:10px; display:none; }
@@ -4122,8 +4124,8 @@ function histItemHtml(h, i, ctx) {
       +   '<button class="modal-btn primary" onclick="saveHistEdit(\''+ctx+'\','+i+')">Сохранить</button>'
       + '</div></div>';
   }
-  return '<div class="lead-history-item">'
-    + '<button class="lead-history-edit" title="Редактировать" onclick="startHistEdit(\''+ctx+'\','+i+')">✎</button>'
+  return '<div class="lead-history-item" title="Нажми, чтобы редактировать" onclick="startHistEdit(\''+ctx+'\','+i+')">'
+    + '<span class="lead-history-edit" aria-hidden="true">✎</span>'
     + '<div class="lead-history-date">'+dateStr+'</div>'
     + '<div class="lead-history-text">'+escapeHtml(h.text)+'</div></div>';
 }
