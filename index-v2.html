@@ -1014,6 +1014,10 @@
   .lead-icon-tg { color:#26A5E4; }
   .lead-icon-ph { color:var(--green-dark); }
   .lead-icon-co { color:var(--text-3); }
+  .lead-copy-btn { flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; padding:0; border:none; background:transparent; color:var(--text-3); cursor:pointer; border-radius:6px; }
+  .lead-copy-btn svg { width:15px; height:15px; }
+  .lead-copy-btn:hover { background:var(--green-bg-soft); color:var(--green-dark); }
+  .lead-copy-btn.copied { color:var(--green-dark); }
   .lead-meta-row { display:flex; gap:14px; flex-wrap:wrap; font-size:11px; color:var(--text-3); padding-top:10px; border-top:1px solid var(--border); margin-bottom:14px; }
   .lead-meta-row span b { color:var(--text-2); font-weight:600; }
   .lead-tags-section { margin-bottom:14px; }
@@ -1659,18 +1663,14 @@
 
     <!-- Контакты -->
     <div class="lead-fields-grid" style="margin-bottom:14px">
-      <div class="lead-field-mini full">
-        <label>Компания</label>
-        <div class="lead-icon-input">
-          <svg class="lead-icon-co" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-          <input type="text" id="leadCompany" placeholder="Компания (опционально)" autocomplete="off">
-        </div>
-      </div>
       <div class="lead-field-mini">
         <label>Telegram</label>
         <div class="lead-icon-input">
           <svg class="lead-icon-tg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
           <input type="text" id="leadTelegram" placeholder="@username" autocomplete="off">
+          <button type="button" class="lead-copy-btn" onclick="copyLeadField('leadTelegram')" title="Скопировать ник">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
         </div>
       </div>
       <div class="lead-field-mini">
@@ -1680,13 +1680,20 @@
           <input type="tel" id="leadPhone" placeholder="+7 900 000-00-00" inputmode="tel" autocomplete="off">
         </div>
       </div>
+      <div class="lead-field-mini full">
+        <label>Компания</label>
+        <div class="lead-icon-input">
+          <svg class="lead-icon-co" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          <input type="text" id="leadCompany" placeholder="Компания (опционально)" autocomplete="off">
+        </div>
+      </div>
     </div>
 
     <!-- Воронка -->
     <div class="lead-fields-grid">
-      <div class="lead-field-mini">
-        <label>Канал</label>
-        <select id="leadChannel"></select>
+      <div class="lead-field-mini full">
+        <label>Откуда пришёл (можно с комментарием)</label>
+        <input type="text" id="leadChannel" placeholder="Напр.: личный контакт · реф от Иванова · с вебинара 12.06">
       </div>
       <div class="lead-field-mini">
         <label>Статус</label>
@@ -1696,13 +1703,13 @@
         <label>Чек (₽)</label>
         <input type="number" id="leadChek" placeholder="0">
       </div>
-      <div class="lead-field-mini">
-        <label>Дедлайн next action</label>
-        <input type="date" id="leadDeadline">
-      </div>
       <div class="lead-field-mini full">
         <label>Next action</label>
         <input type="text" id="leadAction" placeholder="Что дальше: позвонить, КП, пинг…">
+      </div>
+      <div class="lead-field-mini">
+        <label>Дата next action</label>
+        <input type="date" id="leadDeadline">
       </div>
     </div>
 
@@ -2089,6 +2096,21 @@ const PROJECTS_SEED = [
 ];
 function leadStatusById(id) { return LEAD_STATUSES.find(s => s.id === id) || LEAD_STATUSES[0]; }
 function leadChannelById(id) { return LEAD_CHANNELS.find(c => c.id === id) || LEAD_CHANNELS[7]; }
+// Канал теперь свободный текст: для старых кодов показываем читаемое имя, иначе — как есть
+function channelDisplay(ch) { if (!ch) return ''; const c = LEAD_CHANNELS.find(x => x.id === ch); return c ? c.name : ch; }
+// Быстрое копирование значения поля (ник TG и т.п.)
+function copyLeadField(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const v = (el.value || '').trim();
+  if (!v) { toast('Поле пустое'); return; }
+  const btn = el.parentNode ? el.parentNode.querySelector('.lead-copy-btn') : null;
+  const flash = () => { toast('Скопировано: ' + v); if (btn) { btn.classList.add('copied'); setTimeout(() => btn.classList.remove('copied'), 900); } };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(v).then(flash).catch(() => { legacyCopy(el); flash(); });
+  } else { legacyCopy(el); flash(); }
+}
+function legacyCopy(el) { try { el.focus(); el.select(); document.execCommand('copy'); el.setSelectionRange(0, 0); el.blur(); } catch (e) {} }
 function nowIso() { return new Date().toISOString(); }
 function genLeadId() {
   const d = new Date();
@@ -3206,13 +3228,7 @@ function fmtDateShort(iso) {
   return d.toLocaleDateString('ru-RU', { day:'numeric', month:'short' });
 }
 function fillLeadSelects() {
-  const channelSel = document.getElementById('leadChannel');
   const statusSel = document.getElementById('leadStatus');
-  if (channelSel && !channelSel.options.length) {
-    LEAD_CHANNELS.forEach(c => {
-      const opt = document.createElement('option'); opt.value = c.id; opt.textContent = c.name; channelSel.appendChild(opt);
-    });
-  }
   if (statusSel && !statusSel.options.length) {
     LEAD_STATUSES.forEach(s => {
       const opt = document.createElement('option'); opt.value = s.id; opt.textContent = s.name; statusSel.appendChild(opt);
@@ -3244,7 +3260,7 @@ function openLeadModal(id) {
   document.getElementById('leadModalId').value = lead ? lead.id : '';
   document.getElementById('leadName').value = lead ? lead.name : '';
   document.getElementById('leadCompany').value = lead ? (lead.company || '') : '';
-  document.getElementById('leadChannel').value = lead ? lead.channel : 'personal';
+  document.getElementById('leadChannel').value = lead ? channelDisplay(lead.channel) : '';
   document.getElementById('leadStatus').value = lead ? lead.status : 'new';
   document.getElementById('leadChek').value = lead && lead.potential_chek_rub ? lead.potential_chek_rub : '';
   document.getElementById('leadAction').value = lead ? (lead.next_action || '') : '';
@@ -3330,7 +3346,7 @@ function saveLeadInternal(closeModal) {
       handleWinFlow(existing, leads, newStatus);
       existing.name = name;
       existing.company = document.getElementById('leadCompany').value.trim();
-      existing.channel = document.getElementById('leadChannel').value;
+      existing.channel = document.getElementById('leadChannel').value.trim();
       existing.telegram = document.getElementById('leadTelegram').value.trim();
       existing.phone = document.getElementById('leadPhone').value.trim();
       existing.next_action = document.getElementById('leadAction').value.trim();
@@ -3349,7 +3365,7 @@ function saveLeadInternal(closeModal) {
     }
     existing.name = name;
     existing.company = document.getElementById('leadCompany').value.trim();
-    existing.channel = document.getElementById('leadChannel').value;
+    existing.channel = document.getElementById('leadChannel').value.trim();
     existing.telegram = document.getElementById('leadTelegram').value.trim();
     existing.phone = document.getElementById('leadPhone').value.trim();
     existing.potential_chek_rub = chek;
@@ -3366,7 +3382,7 @@ function saveLeadInternal(closeModal) {
       company: document.getElementById('leadCompany').value.trim(),
       telegram: document.getElementById('leadTelegram').value.trim(),
       phone: document.getElementById('leadPhone').value.trim(),
-      channel: document.getElementById('leadChannel').value,
+      channel: document.getElementById('leadChannel').value.trim(),
       potential_chek_rub: chek,
       status: newStatus,
       created_at: now,
@@ -3849,7 +3865,7 @@ function renderClientItem(l) {
   return '<div class="deal-item" onclick="openLeadModal(\''+l.id+'\')" style="cursor:pointer">'+
     '<div style="flex:1;min-width:0">'+
       '<div class="deal-item-name">'+escapeHtml(l.name)+(l.company ? ' <span style="color:var(--text-3);font-weight:400">— '+escapeHtml(l.company)+'</span>' : '')+'</div>'+
-      '<div class="deal-item-date">'+closed.toLocaleDateString('ru-RU')+(cycle != null ? ' · цикл '+cycle+' дн.' : '')+' · '+escapeHtml(leadChannelById(l.channel).name)+'</div>'+
+      '<div class="deal-item-date">'+closed.toLocaleDateString('ru-RU')+(cycle != null ? ' · цикл '+cycle+' дн.' : '')+' · '+escapeHtml(channelDisplay(l.channel) || leadChannelById(l.channel).name)+'</div>'+
     '</div>'+
     '<div class="deal-item-amount">'+fmtMoneyRub(l.potential_chek_rub||0)+'</div>'+
   '</div>';
