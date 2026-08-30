@@ -1007,6 +1007,12 @@
   .lead-field-mini select, .lead-field-mini input { width:100%; border:1.5px solid var(--border-2); border-radius:8px; padding:7px 10px; font-size:13px; font-family:inherit; outline:none; background:#fff; }
   .lead-field-mini select:focus, .lead-field-mini input:focus { border-color:var(--green-dark); }
   .lead-field-mini.full { grid-column: span 2; }
+  .lead-icon-input { display:flex; align-items:center; gap:7px; width:100%; border:1.5px solid var(--border-2); border-radius:8px; padding:0 10px; background:#fff; box-sizing:border-box; }
+  .lead-icon-input:focus-within { border-color:var(--green-dark); }
+  .lead-icon-input svg { width:15px; height:15px; flex-shrink:0; }
+  .lead-icon-input input { flex:1; width:auto; border:none; background:transparent; outline:none; padding:7px 0; font-size:13px; font-family:inherit; color:var(--text); min-width:0; }
+  .lead-icon-tg { color:#26A5E4; }
+  .lead-icon-ph { color:var(--green-dark); }
   .lead-meta-row { display:flex; gap:14px; flex-wrap:wrap; font-size:11px; color:var(--text-3); padding-top:10px; border-top:1px solid var(--border); margin-bottom:14px; }
   .lead-meta-row span b { color:var(--text-2); font-weight:600; }
   .lead-tags-section { margin-bottom:14px; }
@@ -1667,6 +1673,20 @@
       <div class="lead-field-mini">
         <label>Дедлайн next action</label>
         <input type="date" id="leadDeadline">
+      </div>
+      <div class="lead-field-mini">
+        <label>Telegram</label>
+        <div class="lead-icon-input">
+          <svg class="lead-icon-tg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
+          <input type="text" id="leadTelegram" placeholder="@username" autocomplete="off">
+        </div>
+      </div>
+      <div class="lead-field-mini">
+        <label>Телефон</label>
+        <div class="lead-icon-input">
+          <svg class="lead-icon-ph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <input type="tel" id="leadPhone" placeholder="+7 900 000-00-00" inputmode="tel" autocomplete="off">
+        </div>
       </div>
       <div class="lead-field-mini full">
         <label>Next action</label>
@@ -2934,7 +2954,7 @@ function filterLeads(leads) {
     if (interest && !(Array.isArray(l.interests) && l.interests.includes(interest))) return false;
     if (leadsFilterStuckOn && daysSince(l.updated_at) <= 7) return false;
     if (q) {
-      const hay = (l.name+' '+(l.company||'')+' '+(l.history||[]).map(h=>h.text).join(' ')).toLowerCase();
+      const hay = (l.name+' '+(l.company||'')+' '+(l.telegram||'')+' '+(l.phone||'')+' '+(l.history||[]).map(h=>h.text).join(' ')).toLowerCase();
       if (!hay.includes(q)) return false;
     }
     return true;
@@ -3217,6 +3237,8 @@ function openLeadModal(id) {
   document.getElementById('leadChek').value = lead && lead.potential_chek_rub ? lead.potential_chek_rub : '';
   document.getElementById('leadAction').value = lead ? (lead.next_action || '') : '';
   document.getElementById('leadDeadline').value = lead ? (lead.next_action_date || '') : '';
+  document.getElementById('leadTelegram').value = lead ? (lead.telegram || '') : '';
+  document.getElementById('leadPhone').value = lead ? (lead.phone || '') : '';
   document.getElementById('leadName').placeholder = 'Имя лида (обязательно)';
   document.getElementById('leadCompany').placeholder = 'Компания (опционально)';
   // Meta
@@ -3297,6 +3319,8 @@ function saveLeadInternal(closeModal) {
       existing.name = name;
       existing.company = document.getElementById('leadCompany').value.trim();
       existing.channel = document.getElementById('leadChannel').value;
+      existing.telegram = document.getElementById('leadTelegram').value.trim();
+      existing.phone = document.getElementById('leadPhone').value.trim();
       existing.next_action = document.getElementById('leadAction').value.trim();
       existing.next_action_date = document.getElementById('leadDeadline').value || null;
       saveLeads(leads);
@@ -3314,6 +3338,8 @@ function saveLeadInternal(closeModal) {
     existing.name = name;
     existing.company = document.getElementById('leadCompany').value.trim();
     existing.channel = document.getElementById('leadChannel').value;
+    existing.telegram = document.getElementById('leadTelegram').value.trim();
+    existing.phone = document.getElementById('leadPhone').value.trim();
     existing.potential_chek_rub = chek;
     existing.status = newStatus;
     existing.next_action = document.getElementById('leadAction').value.trim();
@@ -3326,6 +3352,8 @@ function saveLeadInternal(closeModal) {
       id: genLeadId(),
       name,
       company: document.getElementById('leadCompany').value.trim(),
+      telegram: document.getElementById('leadTelegram').value.trim(),
+      phone: document.getElementById('leadPhone').value.trim(),
       channel: document.getElementById('leadChannel').value,
       potential_chek_rub: chek,
       status: newStatus,
@@ -5345,6 +5373,7 @@ function generateLeadsMarkdown(allLeads) {
     for (const l of group) {
       md += '### '+l.name+(l.company ? ' — '+l.company : '')+'\n';
       md += '- channel: '+(CHANNEL_LABELS[l.channel]||l.channel)+(l.potential_chek_rub ? ', chek: '+l.potential_chek_rub.toLocaleString('ru-RU')+' ₽' : '')+'\n';
+      if (l.telegram || l.phone) md += '- контакт:'+(l.telegram ? ' TG '+l.telegram : '')+(l.phone ? ' тел '+l.phone : '')+'\n';
       if (l.next_action) md += '- next: '+l.next_action+(l.next_action_date ? ' ('+l.next_action_date+')' : '')+'\n';
       md += '- обновлён: '+new Date(l.updated_at).toISOString().slice(0,10)+'\n\n';
       const hist = (l.history || []).slice(0, 5);
@@ -5493,7 +5522,7 @@ function openPatModal() {
         '3. Resource owner: <code>maxdranitsa-hue</code><br>'+
         '4. Repository access → Only select → <code>second-brain</code><br>'+
         '5. Repository permissions → <b>Contents</b> → Read and write<br>'+
-        '6. Expiration: 90 дней (или дольше)<br>'+
+        '6. Expiration: <b>No expiration</b> (бессрочный)<br>'+
         '7. Скопируй токен (начинается с <code>github_pat_…</code>) и вставь ниже:'+
       '</div>'+
       '<input type="password" id="patInput" placeholder="github_pat_…" style="width:100%;padding:11px 14px;background:var(--bg);border:1px solid var(--border-2);border-radius:10px;font-family:inherit;font-size:13px;color:var(--text);outline:none;box-sizing:border-box" autocomplete="off">'+
