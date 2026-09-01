@@ -771,41 +771,77 @@
 
   /* ===== ВЫПУСКНИКИ (свимлейны: потоки × стадии) ===== */
   .swim-wrap { overflow-x:auto; padding-bottom:6px; }
-  .swim-inner { min-width:1040px; }
-  .swim-stages { display:grid; grid-template-columns:repeat(var(--alum-col-count, 5), minmax(190px,1fr)); gap:10px; padding:0 4px 10px; position:sticky; top:0; background:var(--surface); z-index:5; }
-  .swim-stage-head { display:flex; align-items:center; gap:7px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; padding:4px 6px; color:var(--_alum-color, var(--text-2)); }
-  .swim-stage-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; background:var(--_alum-color, #9ca3af); }
+  .swim-inner { min-width:1120px; }
 
-  .swim-lane { border:1px solid var(--border-2); border-radius:var(--r); margin-bottom:10px; overflow:hidden; background:var(--surface); }
-  .swim-lane-head { display:flex; align-items:center; gap:12px; padding:12px 15px; cursor:pointer; user-select:none; transition:background .12s; }
+  .swim-lane { border:1px solid var(--border-2); border-radius:var(--r); margin-bottom:12px; overflow:hidden; background:var(--surface); }
+  .swim-lane-head { display:flex; align-items:center; gap:12px; padding:13px 16px; cursor:pointer; user-select:none; transition:background .15s ease; }
   .swim-lane-head:hover { background:var(--bg); }
-  .swim-lane-caret { font-size:11px; color:var(--text-3); transition:transform .15s; flex-shrink:0; width:10px; }
+  .swim-lane-caret { font-size:10px; color:var(--text-3); transition:transform .2s cubic-bezier(.32,.72,0,1); flex-shrink:0; width:10px; }
   .swim-lane.open .swim-lane-caret { transform:rotate(90deg); }
-  .swim-lane-name { font-size:14px; font-weight:700; color:var(--text); flex:1; }
-  .swim-lane-stat { font-size:12px; color:var(--text-2); font-weight:600; white-space:nowrap; }
-  .swim-lane-bar { width:90px; height:6px; border-radius:4px; background:var(--bg); overflow:hidden; flex-shrink:0; }
-  .swim-lane-bar-fill { height:100%; background:var(--green-mid); border-radius:4px; transition:width .3s; }
-  .swim-lane-body { display:none; grid-template-columns:repeat(var(--alum-col-count, 5), minmax(190px,1fr)); gap:10px; padding:0 4px 10px; border-top:1px solid var(--border); }
+  .swim-lane-name { font-size:14px; font-weight:700; color:var(--text); letter-spacing:-.01em; flex:1; }
+  .swim-lane-stat { font-size:11px; color:var(--text-2); font-weight:600; white-space:nowrap; background:var(--bg); border-radius:999px; padding:3px 10px; }
+  .swim-lane-bar { width:90px; height:5px; border-radius:999px; background:var(--bg); overflow:hidden; flex-shrink:0; }
+  .swim-lane-bar-fill { height:100%; background:var(--green-mid); border-radius:999px; transition:width .3s cubic-bezier(.32,.72,0,1); }
+  .swim-lane-body { display:none; grid-template-columns:repeat(var(--alum-col-count, 5), minmax(200px,1fr)); gap:10px; padding:12px; border-top:1px solid var(--border); }
   .swim-lane.open .swim-lane-body { display:grid; }
-  .swim-cell { background:var(--bg); border-radius:var(--r-sm); min-height:54px; padding:8px; margin-top:10px; }
 
-  .alum-card { background:var(--surface); border:1px solid var(--border-2); border-left:3px solid var(--_alum-color, var(--text-3)); border-radius:var(--r-sm); padding:9px 10px; margin-bottom:8px; cursor:grab; transition:box-shadow .12s; }
+  /* колонка-стадия внутри дорожки: свой заголовок в каждом потоке */
+  .swim-col {
+    --_alum-color:#9ca3af;
+    display:flex; flex-direction:column; min-width:0;
+    background:color-mix(in srgb, var(--_alum-color) 5%, var(--bg));
+    border:1px solid color-mix(in srgb, var(--_alum-color) 15%, transparent);
+    border-radius:14px;
+    padding:10px 9px 9px;
+    transition:background .2s ease, border-color .2s ease;
+  }
+  .swim-col-head { display:flex; align-items:center; gap:7px; margin-bottom:9px; padding:0 3px; min-width:0; }
+  .swim-col-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; background:var(--_alum-color); box-shadow:0 0 0 3px color-mix(in srgb, var(--_alum-color) 20%, transparent); }
+  .swim-col-title {
+    font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.6px;
+    color:color-mix(in srgb, var(--_alum-color) 72%, #111827);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0;
+  }
+  .swim-col-count {
+    margin-left:auto; flex-shrink:0;
+    font-size:10px; font-weight:700; color:var(--text-2);
+    background:rgba(255,255,255,.78); border:1px solid rgba(0,0,0,.04);
+    padding:1px 7px; border-radius:999px; line-height:1.6;
+  }
+  .swim-cell { min-height:44px; }
+
+  /* карточка выпускника — один в один с карточкой лида */
+  .alum-card {
+    background:var(--surface);
+    border-radius:var(--r-sm);
+    padding:11px 12px;
+    margin-bottom:8px;
+    cursor:grab;
+    transition:box-shadow .12s, transform .12s;
+    border-left:3px solid transparent;
+    position:relative;
+  }
   .alum-card:last-child { margin-bottom:0; }
   .alum-card:hover { box-shadow:var(--shadow-lg); }
   .alum-card:active { cursor:grabbing; }
-  .alum-card-name { font-size:12px; font-weight:700; color:var(--text); line-height:1.3; display:flex; align-items:center; gap:6px; }
-  .alum-card-user { font-size:10px; margin-top:2px; }
+  .alum-card.fresh { border-left-color:var(--green-mid); }
+  .alum-card.medium { border-left-color:var(--orange); }
+  .alum-card.stuck { border-left-color:#dc2626; }
+  .alum-card-name { font-size:13px; font-weight:700; color:var(--text); line-height:1.3; display:flex; align-items:center; gap:6px; }
+  .alum-card-user { font-size:11px; margin-top:2px; line-height:1.3; }
   .alum-card-user a { color:var(--blue); text-decoration:none; }
   .alum-card-user a:hover { text-decoration:underline; }
   .alum-card-user .muted { color:var(--text-3); }
-  .alum-card-note { font-size:10px; color:var(--text-2); margin-top:5px; line-height:1.35; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-  .alum-card-touch { font-size:9px; color:var(--text-3); font-weight:600; margin-top:5px; }
+  .alum-card-note { font-size:11px; color:var(--text-2); margin-top:6px; line-height:1.35; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .alum-card-meta { display:flex; justify-content:space-between; align-items:center; margin-top:8px; gap:6px; }
+  .alum-card-touch { font-size:10px; color:var(--text-3); font-weight:600; }
   .alum-card-touch.bad { color:#dc2626; } .alum-card-touch.warn { color:var(--orange); }
   .alum-conv-badge { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.4px; color:var(--green-dark); background:var(--green-light); padding:2px 6px; border-radius:6px; white-space:nowrap; cursor:pointer; }
-  .swim-cell-empty { font-size:10px; color:var(--text-3); text-align:center; padding:6px; font-style:italic; opacity:.6; }
-  .swim-lane-add { padding:8px 15px 12px; }
-  .swim-lane-add button { font-size:12px; font-weight:600; color:var(--green-dark); background:transparent; border:1px dashed var(--border-2); border-radius:8px; padding:6px 12px; cursor:pointer; transition:background .12s; }
-  .swim-lane-add button:hover { background:var(--green-bg-soft); }
+
+  .swim-cell-empty { font-size:11px; color:var(--text-3); text-align:center; padding:12px 4px; font-style:italic; opacity:.55; }
+  .swim-lane-add { padding:2px 16px 14px; }
+  .swim-lane-add button { font-size:12px; font-weight:600; color:var(--green-dark); background:transparent; border:1px dashed var(--border-2); border-radius:10px; padding:7px 13px; cursor:pointer; transition:background .15s ease, border-color .15s ease; }
+  .swim-lane-add button:hover { background:var(--green-bg-soft); border-color:var(--green-light-2); }
   .alumni-empty-state { font-size:13px; color:var(--text-3); text-align:center; padding:40px 16px; font-style:italic; }
 
   /* Управление колонками выпускников */
@@ -3952,11 +3988,6 @@ function renderAlumni() {
     return;
   }
 
-  // Шапка со стадиями (общие колонки канбана)
-  const stagesHead = '<div class="swim-stages" style="--alum-col-count:'+ALUMNI_STATUSES.length+'">' + ALUMNI_STATUSES.map(s =>
-    '<div class="swim-stage-head" style="--_alum-color:'+s.color+'"><span class="swim-stage-dot"></span>'+escapeHtml(s.short)+'</div>'
-  ).join('') + '</div>';
-
   const lanesHtml = keys.map(key => {
     // Прогресс считаем по всему потоку (не по фильтру) — честная картинка
     const groupAll = all.filter(a => alumGroupKey(a) === key);
@@ -3967,14 +3998,21 @@ function renderAlumni() {
     const isOpen = !alumClosedGroups.has(key) || filtering;
     const addSrc = key === '__none__' ? '' : key;
 
-    // 5 ячеек-стадий внутри дорожки
+    // колонки-стадии внутри дорожки, у каждой свой заголовок
     const cells = ALUMNI_STATUSES.map(s => {
       const cellItems = groups[key].filter(a => (a.status||_initialId) === s.id)
         .sort((a,b) => new Date(b.last_touch_at||b.updated_at||0) - new Date(a.last_touch_at||a.updated_at||0));
       const cards = cellItems.length
         ? cellItems.map(a => alumCardHtml(a)).join('')
-        : '<div class="swim-cell-empty">—</div>';
-      return '<div class="swim-cell" data-status="'+s.id+'" data-lane="'+escapeHtml(key)+'">'+cards+'</div>';
+        : '<div class="swim-cell-empty">Пусто</div>';
+      return '<div class="swim-col" style="--_alum-color:'+s.color+'" title="'+escapeHtml(s.name)+'">'
+        + '<div class="swim-col-head">'
+        +   '<span class="swim-col-dot"></span>'
+        +   '<span class="swim-col-title">'+escapeHtml(s.short)+'</span>'
+        +   '<span class="swim-col-count">'+cellItems.length+'</span>'
+        + '</div>'
+        + '<div class="swim-cell" data-status="'+s.id+'" data-lane="'+escapeHtml(key)+'">'+cards+'</div>'
+        + '</div>';
     }).join('');
 
     return '<div class="swim-lane'+(isOpen?' open':'')+'">'
@@ -3989,7 +4027,7 @@ function renderAlumni() {
       + '</div>';
   }).join('');
 
-  board.innerHTML = stagesHead + lanesHtml;
+  board.innerHTML = lanesHtml;
 
   // Раскрытие/сворачивание дорожки
   board.querySelectorAll('.swim-lane-head').forEach(h => {
@@ -4042,11 +4080,14 @@ function alumCardHtml(a) {
     ? '<a href="https://t.me/'+encodeURIComponent(u)+'" target="_blank" rel="noopener">@'+escapeHtml(u)+'</a>'
     : '<span class="muted">@ не указан</span>';
   const note = alumLastNote(a) ? '<div class="alum-card-note">'+escapeHtml(alumLastNote(a))+'</div>' : '';
-  return '<div class="alum-card" data-alum-id="'+escapeHtml(a.id)+'" style="--_alum-color:'+st.color+'">'
+  const fresh = a.last_touch_at ? freshnessClass(a.last_touch_at) : '';
+  return '<div class="alum-card '+fresh+'" data-alum-id="'+escapeHtml(a.id)+'" style="--_alum-color:'+st.color+'">'
     + '<div class="alum-card-name">'+escapeHtml(a.name)+conv+'</div>'
     + '<div class="alum-card-user">'+userPart+'</div>'
     + note
-    + '<div class="alum-card-touch '+touch.cls+'">'+touch.text+'</div>'
+    + '<div class="alum-card-meta"><span></span>'
+    +   '<span class="alum-card-touch '+touch.cls+'">'+touch.text+'</span>'
+    + '</div>'
     + '</div>';
 }
 
