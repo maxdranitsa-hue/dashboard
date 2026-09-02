@@ -1068,12 +1068,6 @@
   .lead-tags-manage-btn { background:var(--bg); border:1px solid var(--border-2); color:var(--text-2); width:24px; height:24px; border-radius:6px; font-size:12px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; font-family:inherit; }
   .lead-tags-manage-btn:hover { background:var(--border); color:var(--text); }
   .lead-tags-chips { display:flex; flex-wrap:wrap; gap:6px; min-height:26px; }
-  .lead-tag-chip { --_c:#9ca3af; display:inline-flex; align-items:center; gap:5px; padding:5px 10px; border-radius:999px; font-size:12px; font-weight:600; cursor:pointer; user-select:none; background:var(--bg); border:1.5px solid var(--border-2); color:var(--text-3); transition:transform .1s, background .15s; }
-  .lead-tag-chip:hover { transform:translateY(-1px); }
-  .lead-tag-chip.on { background:color-mix(in srgb, var(--_c) 15%, transparent); border-color:var(--_c); color:var(--_c); }
-  .lead-tag-chip.on .lead-tag-dot { background:var(--_c); }
-  .lead-tag-dot { width:8px; height:8px; border-radius:50%; background:var(--_c); opacity:.6; }
-  .lead-tag-chip.on .lead-tag-dot { opacity:1; }
   .lead-tags-empty { font-size:11.5px; color:var(--text-3); font-style:italic; padding:4px 0; }
   .lead-card-interests { display:flex; flex-wrap:wrap; gap:4px; margin-top:6px; }
   .lead-card-interest { --_c:#9ca3af; font-size:10px; font-weight:600; padding:2px 7px; border-radius:999px; background:color-mix(in srgb, var(--_c) 18%, transparent); color:var(--_c); border:1px solid color-mix(in srgb, var(--_c) 40%, transparent); }
@@ -1098,6 +1092,55 @@
   .waitlist-member-side { display:flex; align-items:center; gap:10px; flex-shrink:0; }
   .waitlist-member-chek { font-size:12px; font-weight:700; color:var(--text-2); }
   .waitlist-member-status { --_c:#9ca3af; font-size:11px; font-weight:700; padding:3px 10px; border-radius:999px; background:color-mix(in srgb, var(--_c) 15%, transparent); color:var(--_c); border:1px solid color-mix(in srgb, var(--_c) 35%, transparent); }
+  /* ===== Складные секции карточки (лид и выпускник) ===== */
+  .lm-section { border-top:1px solid var(--border); margin-top:12px; padding-top:11px; }
+  .lm-sec-head { display:flex; align-items:center; gap:8px; cursor:pointer; user-select:none; }
+  .lm-sec-caret { font-size:9px; color:var(--text-3); transition:transform .2s cubic-bezier(.32,.72,0,1); width:9px; flex-shrink:0; }
+  .lm-section.open .lm-sec-caret { transform:rotate(90deg); }
+  .lm-sec-title { font-size:12px; font-weight:700; color:var(--text-2); text-transform:uppercase; letter-spacing:.4px; }
+  .lm-sec-count { font-size:10px; font-weight:700; color:var(--text-2); background:var(--bg); border-radius:999px; padding:1px 8px; line-height:1.7; }
+  .lm-sec-hint { font-size:11px; color:var(--text-3); margin-left:auto; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:180px; }
+  .lm-sec-btn { margin-left:auto; flex-shrink:0; background:var(--green-dark); color:#fff; border:none; border-radius:8px; padding:5px 11px; font-size:11px; font-weight:700; cursor:pointer; font-family:inherit; transition:background .15s ease; }
+  .lm-sec-btn:hover { background:var(--green-darker); }
+  .lm-sec-body { display:none; margin-top:10px; }
+  .lm-section.open .lm-sec-body { display:block; }
+  .lm-scroll { max-height:230px; overflow-y:auto; overscroll-behavior:contain; padding-right:2px; }
+
+  /* пилюли выбранного + выпадающий выбор */
+  .lm-pills { display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+  .lm-pill { --_c:#9ca3af; display:inline-flex; align-items:center; gap:5px; padding:4px 5px 4px 10px; border-radius:999px; font-size:12px; font-weight:600;
+    background:color-mix(in srgb, var(--_c) 13%, transparent);
+    border:1px solid color-mix(in srgb, var(--_c) 36%, transparent);
+    color:color-mix(in srgb, var(--_c) 72%, #111827); }
+  .lm-pill-dot { width:6px; height:6px; border-radius:50%; background:var(--_c); flex-shrink:0; }
+  .lm-pill-x { width:16px; height:16px; border:none; border-radius:50%; background:transparent; color:inherit; opacity:.5; font-size:12px; line-height:1; cursor:pointer; font-family:inherit; display:inline-flex; align-items:center; justify-content:center; padding:0; transition:opacity .15s ease, background .15s ease; }
+  .lm-pill-x:hover { opacity:1; background:rgba(0,0,0,.08); }
+  .lm-add-select { appearance:none; -webkit-appearance:none; font-family:inherit; font-size:12px; font-weight:600; color:var(--text-2);
+    background:transparent; border:1.5px dashed var(--border-2); border-radius:999px; padding:5px 12px; cursor:pointer; outline:none; transition:border-color .15s ease, color .15s ease, background .15s ease; }
+  .lm-add-select:hover { border-color:var(--green-light-2); color:var(--green-dark); background:var(--green-bg-soft); }
+  .lm-add-select:disabled { opacity:.45; cursor:default; }
+  .lm-empty { font-size:11.5px; color:var(--text-3); font-style:italic; }
+
+  /* транскрипты */
+  .lm-form { background:var(--green-bg-soft); border-radius:10px; padding:10px; margin-bottom:10px; display:none; }
+  .lm-form.show { display:block; }
+  .lm-form input, .lm-form textarea { width:100%; border:1.5px solid var(--border-2); border-radius:8px; padding:8px 10px; font-family:inherit; font-size:13px; outline:none; background:#fff; color:var(--text); box-sizing:border-box; }
+  .lm-form input:focus, .lm-form textarea:focus { border-color:var(--green-dark); }
+  .lm-form textarea { min-height:58px; resize:vertical; margin-top:7px; line-height:1.45; }
+  .lm-form-actions { display:flex; gap:6px; margin-top:7px; justify-content:flex-end; }
+  .lm-tr-item { display:flex; align-items:flex-start; gap:9px; background:var(--bg); border-radius:9px; padding:9px 10px; margin-bottom:7px; }
+  .lm-tr-item:last-child { margin-bottom:0; }
+  .lm-tr-main { flex:1; min-width:0; }
+  .lm-tr-date { font-size:10px; font-weight:600; color:var(--text-3); text-transform:uppercase; letter-spacing:.3px; }
+  .lm-tr-note { font-size:12.5px; color:var(--text); line-height:1.4; margin-top:2px; white-space:pre-wrap; word-break:break-word; }
+  .lm-tr-link { font-size:11px; color:var(--blue); text-decoration:none; word-break:break-all; display:inline-block; margin-top:3px; }
+  .lm-tr-link:hover { text-decoration:underline; }
+  .lm-tr-actions { display:flex; gap:4px; flex-shrink:0; }
+  .lm-tr-btn { width:26px; height:26px; border:none; border-radius:7px; background:var(--surface); color:var(--text-3); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; font-family:inherit; font-size:12px; transition:background .15s ease, color .15s ease; }
+  .lm-tr-btn:hover { background:var(--green-bg-soft); color:var(--green-dark); }
+  .lm-tr-btn.danger:hover { background:var(--red-bg); color:var(--red); }
+  .lm-tr-btn svg { width:14px; height:14px; }
+
   .lead-history-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
   .lead-history-title { font-size:12px; font-weight:700; color:var(--text-2); text-transform:uppercase; letter-spacing:.4px; }
   .lead-history-add-btn { background:var(--green-dark); color:#fff; border:none; border-radius:7px; padding:5px 11px; font-size:11px; font-weight:700; cursor:pointer; font-family:inherit; display:inline-flex; align-items:center; gap:4px; }
@@ -1753,20 +1796,6 @@
         <label>Дата next action</label>
         <input type="date" id="leadDeadline">
       </div>
-      <div class="lead-field-mini full">
-        <label>О чём был разговор</label>
-        <textarea id="leadTalk" rows="3" placeholder="Коротко: что обсуждали, что человеку нужно, какие возражения"></textarea>
-      </div>
-      <div class="lead-field-mini full">
-        <label>Ссылка на транскрипт</label>
-        <div class="lead-icon-input">
-          <svg class="lead-icon-tr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-          <input type="url" id="leadTranscript" placeholder="Ссылка на транскрипт разговора" autocomplete="off">
-          <button type="button" class="lead-copy-btn" onclick="openLinkField('leadTranscript')" title="Открыть транскрипт">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>
-          </button>
-        </div>
-      </div>
     </div>
 
     <div class="lead-meta-row" id="leadMetaRow" style="display:none">
@@ -1793,18 +1822,47 @@
       <div class="lead-tags-chips" id="leadWaitlistChips"></div>
     </div>
 
-    <div class="lead-history-header">
-      <div class="lead-history-title">История</div>
-      <button class="lead-history-add-btn" onclick="toggleHistoryForm()">+ Запись</button>
-    </div>
-    <div class="lead-history-form" id="leadHistoryForm">
-      <textarea id="leadHistoryText" placeholder="Что произошло. Дата проставится автоматически."></textarea>
-      <div class="lead-history-form-actions">
-        <button class="modal-btn cancel" onclick="toggleHistoryForm(false)">Отмена</button>
-        <button class="modal-btn primary" onclick="addHistoryEntry()">Сохранить запись</button>
+
+    <!-- Транскрипты разговоров -->
+    <div class="lm-section" id="leadTrSection">
+      <div class="lm-sec-head" onclick="toggleLmSection('leadTrSection')">
+        <span class="lm-sec-caret">▶</span>
+        <span class="lm-sec-title">Транскрипты</span>
+        <span class="lm-sec-count" id="leadTrCount">0</span>
+        <button type="button" class="lm-sec-btn" onclick="event.stopPropagation(); openTrForm('lead')">+ Транскрипт</button>
+      </div>
+      <div class="lm-sec-body">
+        <div class="lm-form" id="leadTrForm">
+          <input type="url" id="leadTrUrl" placeholder="Ссылка на транскрипт" autocomplete="off">
+          <textarea id="leadTrNote" placeholder="О чём был разговор, коротко"></textarea>
+          <div class="lm-form-actions">
+            <button class="modal-btn cancel" onclick="closeTrForm('lead')">Отмена</button>
+            <button class="modal-btn primary" onclick="addTranscript('lead')">Добавить</button>
+          </div>
+        </div>
+        <div class="lm-scroll" id="leadTrList"></div>
       </div>
     </div>
-    <div class="lead-history-list" id="leadHistoryList"></div>
+
+    <!-- История -->
+    <div class="lm-section" id="leadHistSection">
+      <div class="lm-sec-head" onclick="toggleLmSection('leadHistSection')">
+        <span class="lm-sec-caret">▶</span>
+        <span class="lm-sec-title">История</span>
+        <span class="lm-sec-count" id="leadHistCount">0</span>
+        <button type="button" class="lm-sec-btn" onclick="event.stopPropagation(); openHistForm('lead')">+ Запись</button>
+      </div>
+      <div class="lm-sec-body">
+        <div class="lead-history-form" id="leadHistoryForm">
+          <textarea id="leadHistoryText" placeholder="Что произошло. Дата проставится автоматически."></textarea>
+          <div class="lead-history-form-actions">
+            <button class="modal-btn cancel" onclick="toggleHistoryForm(false)">Отмена</button>
+            <button class="modal-btn primary" onclick="addHistoryEntry()">Сохранить запись</button>
+          </div>
+        </div>
+        <div class="lm-scroll"><div class="lead-history-list" id="leadHistoryList"></div></div>
+      </div>
+    </div>
 
     <div class="lead-modal-actions">
       <div class="lead-modal-actions-left">
@@ -1884,20 +1942,6 @@
         <label>Короткая заметка</label>
         <input type="text" id="alumNote" placeholder="Контекст: чем занимается, статус одной строкой…">
       </div>
-      <div class="lead-field-mini full">
-        <label>О чём был разговор</label>
-        <textarea id="alumTalk" rows="3" placeholder="Коротко: что обсуждали, что человеку нужно, какие возражения"></textarea>
-      </div>
-      <div class="lead-field-mini full">
-        <label>Ссылка на транскрипт</label>
-        <div class="lead-icon-input">
-          <svg class="lead-icon-tr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-          <input type="url" id="alumTranscript" placeholder="Ссылка на транскрипт разговора" autocomplete="off">
-          <button type="button" class="lead-copy-btn" onclick="openLinkField('alumTranscript')" title="Открыть транскрипт">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>
-          </button>
-        </div>
-      </div>
     </div>
 
     <div class="lead-meta-row" id="alumMetaRow" style="display:none">
@@ -1924,18 +1968,47 @@
       <div class="lead-tags-chips" id="alumWaitlistChips"></div>
     </div>
 
-    <div class="lead-history-header">
-      <div class="lead-history-title">История касаний</div>
-      <button class="lead-history-add-btn" onclick="toggleAlumHistoryForm()">+ Запись</button>
-    </div>
-    <div class="lead-history-form" id="alumHistoryForm">
-      <textarea id="alumHistoryText" placeholder="Что написал, что ответил, о чём договорились. Дата проставится сама."></textarea>
-      <div class="lead-history-form-actions">
-        <button class="modal-btn cancel" onclick="toggleAlumHistoryForm(false)">Отмена</button>
-        <button class="modal-btn primary" onclick="addAlumHistoryEntry()">Сохранить запись</button>
+
+    <!-- Транскрипты разговоров -->
+    <div class="lm-section" id="alumTrSection">
+      <div class="lm-sec-head" onclick="toggleLmSection('alumTrSection')">
+        <span class="lm-sec-caret">▶</span>
+        <span class="lm-sec-title">Транскрипты</span>
+        <span class="lm-sec-count" id="alumTrCount">0</span>
+        <button type="button" class="lm-sec-btn" onclick="event.stopPropagation(); openTrForm('alum')">+ Транскрипт</button>
+      </div>
+      <div class="lm-sec-body">
+        <div class="lm-form" id="alumTrForm">
+          <input type="url" id="alumTrUrl" placeholder="Ссылка на транскрипт" autocomplete="off">
+          <textarea id="alumTrNote" placeholder="О чём был разговор, коротко"></textarea>
+          <div class="lm-form-actions">
+            <button class="modal-btn cancel" onclick="closeTrForm('alum')">Отмена</button>
+            <button class="modal-btn primary" onclick="addTranscript('alum')">Добавить</button>
+          </div>
+        </div>
+        <div class="lm-scroll" id="alumTrList"></div>
       </div>
     </div>
-    <div class="lead-history-list" id="alumHistoryList"></div>
+
+    <!-- История -->
+    <div class="lm-section" id="alumHistSection">
+      <div class="lm-sec-head" onclick="toggleLmSection('alumHistSection')">
+        <span class="lm-sec-caret">▶</span>
+        <span class="lm-sec-title">История касаний</span>
+        <span class="lm-sec-count" id="alumHistCount">0</span>
+        <button type="button" class="lm-sec-btn" onclick="event.stopPropagation(); openHistForm('alum')">+ Запись</button>
+      </div>
+      <div class="lm-sec-body">
+        <div class="lead-history-form" id="alumHistoryForm">
+          <textarea id="alumHistoryText" placeholder="Что написал, что ответил, о чём договорились. Дата проставится сама."></textarea>
+          <div class="lead-history-form-actions">
+            <button class="modal-btn cancel" onclick="toggleAlumHistoryForm(false)">Отмена</button>
+            <button class="modal-btn primary" onclick="addAlumHistoryEntry()">Сохранить запись</button>
+          </div>
+        </div>
+        <div class="lm-scroll"><div class="lead-history-list" id="alumHistoryList"></div></div>
+      </div>
+    </div>
 
     <div class="lead-modal-actions">
       <div class="lead-modal-actions-left">
@@ -3272,6 +3345,147 @@ function handleWinFlow(lead, leads, newStatus) {
   toast('🎉 Сделка закрыта — попала в Купившие клиенты');
 }
 
+// Разовая миграция: одиночные поля transcript_url / talk_summary → список transcripts
+function migrateTranscripts() {
+  const move = (arr) => {
+    let changed = 0;
+    for (const e of arr) {
+      if (!e || Array.isArray(e.transcripts)) continue;
+      const url = (e.transcript_url || '').trim();
+      const note = (e.talk_summary || '').trim();
+      e.transcripts = (url || note)
+        ? [{ id: 'tr_' + (e.id || 'x') + '_0', url, note, date: e.updated_at || nowIso() }]
+        : [];
+      if (url || note) { delete e.transcript_url; delete e.talk_summary; changed++; }
+    }
+    return changed;
+  };
+  const leads = loadLeadsRaw();
+  if (move(leads)) saveLeads(leads);
+  const alumni = loadAlumniRaw();
+  if (move(alumni)) saveAlumni(alumni);
+}
+
+// ===== Общие механики карточки: складные секции, транскрипты, пилюли =====
+let lmOpenSections = new Set();
+try { const raw = JSON.parse(localStorage.getItem('lm_open_sections') || '[]'); if (Array.isArray(raw)) lmOpenSections = new Set(raw); } catch {}
+function toggleLmSection(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const open = el.classList.toggle('open');
+  if (open) lmOpenSections.add(id); else lmOpenSections.delete(id);
+  try { localStorage.setItem('lm_open_sections', JSON.stringify([...lmOpenSections])); } catch {}
+}
+function applyLmSections(ctx) {
+  ['TrSection', 'HistSection'].forEach(k => {
+    const el = document.getElementById(ctx + k);
+    if (el) el.classList.toggle('open', lmOpenSections.has(ctx + k));
+  });
+}
+function openHistForm(ctx) {
+  const sec = document.getElementById(ctx + 'HistSection');
+  if (sec && !sec.classList.contains('open')) toggleLmSection(ctx + 'HistSection');
+  if (ctx === 'lead') toggleHistoryForm(true); else toggleAlumHistoryForm(true);
+}
+
+let _leadDraftTranscripts = [];
+let _alumDraftTranscripts = [];
+function lmCurrentId(ctx) { return ctx === 'lead' ? currentLeadId : currentAlumId; }
+function lmLoadList(ctx) { return ctx === 'lead' ? loadLeads() : loadAlumni(); }
+function lmSaveList(ctx, list) { return ctx === 'lead' ? saveLeads(list) : saveAlumni(list); }
+function lmGetTranscripts(ctx) {
+  const id = lmCurrentId(ctx);
+  if (id) {
+    const e = lmLoadList(ctx).find(x => x.id === id);
+    return (e && Array.isArray(e.transcripts)) ? e.transcripts.slice() : [];
+  }
+  return (ctx === 'lead' ? _leadDraftTranscripts : _alumDraftTranscripts).slice();
+}
+function lmSetTranscripts(ctx, arr) {
+  const id = lmCurrentId(ctx);
+  if (id) {
+    const list = lmLoadList(ctx);
+    const e = list.find(x => x.id === id);
+    if (!e) return;
+    e.transcripts = arr;
+    e.updated_at = nowIso();
+    lmSaveList(ctx, list);
+    render();
+  } else if (ctx === 'lead') { _leadDraftTranscripts = arr; }
+  else { _alumDraftTranscripts = arr; }
+}
+// obsidian:// и http(s) пропускаем как есть, остальное считаем адресом без схемы
+function lmNormUrl(u) {
+  const v = String(u || '').trim();
+  if (!v) return '';
+  if (/^(https?|obsidian):/i.test(v)) return v;
+  if (/^[a-z][a-z0-9+.-]*:/i.test(v)) return '';
+  return 'https://' + v;
+}
+function lmShortUrl(u) {
+  const v = String(u || '').trim().replace(/^https?:\/\//i, '');
+  return v.length > 46 ? v.slice(0, 44) + '…' : v;
+}
+function openTrForm(ctx) {
+  const sec = document.getElementById(ctx + 'TrSection');
+  if (sec && !sec.classList.contains('open')) toggleLmSection(ctx + 'TrSection');
+  const f = document.getElementById(ctx + 'TrForm');
+  if (!f) return;
+  f.classList.add('show');
+  document.getElementById(ctx + 'TrUrl').value = '';
+  document.getElementById(ctx + 'TrNote').value = '';
+  setTimeout(() => { const i = document.getElementById(ctx + 'TrUrl'); if (i) i.focus(); }, 30);
+}
+function closeTrForm(ctx) {
+  const f = document.getElementById(ctx + 'TrForm');
+  if (f) f.classList.remove('show');
+}
+function addTranscript(ctx) {
+  const url = document.getElementById(ctx + 'TrUrl').value.trim();
+  const note = document.getElementById(ctx + 'TrNote').value.trim();
+  if (!url && !note) { closeTrForm(ctx); return; }
+  const arr = lmGetTranscripts(ctx);
+  arr.unshift({ id: 'tr_' + Date.now() + '_' + Math.floor(Math.random()*900+100), url, note, date: nowIso() });
+  lmSetTranscripts(ctx, arr);
+  closeTrForm(ctx);
+  renderTranscripts(ctx);
+  toast('Транскрипт добавлен');
+}
+function deleteTranscript(ctx, id) {
+  if (!confirm('Удалить эту запись о разговоре?')) return;
+  lmSetTranscripts(ctx, lmGetTranscripts(ctx).filter(t => t.id !== id));
+  renderTranscripts(ctx);
+}
+function renderTranscripts(ctx) {
+  const list = lmGetTranscripts(ctx);
+  const cnt = document.getElementById(ctx + 'TrCount');
+  if (cnt) cnt.textContent = list.length;
+  const el = document.getElementById(ctx + 'TrList');
+  if (!el) return;
+  if (!list.length) {
+    el.innerHTML = '<div class="lm-empty">Пока пусто. Жми «+ Транскрипт»: сначала ссылка, потом пара строк о чём говорили.</div>';
+    return;
+  }
+  const openSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>';
+  el.innerHTML = list.map(t => {
+    const href = lmNormUrl(t.url);
+    const openBtn = href
+      ? '<a class="lm-tr-btn" href="'+escapeHtml(href)+'" target="_blank" rel="noopener" title="Открыть транскрипт">'+openSvg+'</a>'
+      : '';
+    const link = href ? '<a class="lm-tr-link" href="'+escapeHtml(href)+'" target="_blank" rel="noopener">'+escapeHtml(lmShortUrl(t.url))+'</a>' : '';
+    return '<div class="lm-tr-item">'
+      + '<div class="lm-tr-main">'
+      +   '<div class="lm-tr-date">'+escapeHtml(fmtDateNice(t.date))+'</div>'
+      +   (t.note ? '<div class="lm-tr-note">'+escapeHtml(t.note)+'</div>' : '')
+      +   link
+      + '</div>'
+      + '<div class="lm-tr-actions">'+openBtn
+      +   '<button class="lm-tr-btn danger" title="Удалить" onclick="deleteTranscript(\''+ctx+'\',\''+t.id+'\')">✕</button>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+}
+
 // ===== LEAD MODAL =====
 let currentLeadId = null;
 // Черновики для нового лида (пока id не выдан). Для существующего — читаем из lead и рендерим сразу.
@@ -3281,30 +3495,36 @@ function renderLeadInterestChips() {
   const el = document.getElementById('leadInterestChips');
   if (!el) return;
   const selected = getCurrentLeadInterests();
-  if (!INTEREST_TAGS.length) {
-    el.innerHTML = '<div class="lead-tags-empty">Ни одного тега. Нажми ⚙, чтобы добавить.</div>';
-    return;
-  }
-  el.innerHTML = INTEREST_TAGS.map(t => {
-    const on = selected.includes(t.id);
-    return '<span class="lead-tag-chip'+(on?' on':'')+'" style="--_c:'+t.color+'" data-id="'+t.id+'" onclick="toggleLeadInterest(\''+t.id+'\')"><span class="lead-tag-dot"></span>'+escapeHtml(t.name)+'</span>';
-  }).join('');
+  const chosen = INTEREST_TAGS.filter(t => selected.includes(t.id));
+  const rest = INTEREST_TAGS.filter(t => !selected.includes(t.id));
+  const total = INTEREST_TAGS.length;
+  let html = chosen.map(t => '<span class="lm-pill" style="--_c:'+t.color+'"><span class="lm-pill-dot"></span>'+escapeHtml(t.name)
+    + '<button class="lm-pill-x" title="Убрать" onclick="toggleLeadInterest(\''+t.id+'\')">✕</button></span>').join('');
+  const options = rest.map(t => '<option value="'+escapeHtml(t.id)+'">'+escapeHtml(t.name)+'</option>').join('');
+  if (!total) { el.innerHTML = '<span class="lm-empty">Тегов пока нет. Нажми ⚙, чтобы добавить.</span>'; return; }
+  html += '<select class="lm-add-select"'+(rest.length ? '' : ' disabled')
+    + ' onchange="if(this.value){var v=this.value;this.value=\'\';toggleLeadInterest(v)}">'
+    + '<option value="">+ интерес</option>' + options + '</select>';
+  el.innerHTML = html;
 }
 function renderLeadWaitlistChips() {
   const el = document.getElementById('leadWaitlistChips');
   if (!el) return;
-  const lists = loadWaitlists().filter(w => !w.closed);
   const selected = getCurrentLeadWaitlists();
-  if (!lists.length) {
-    el.innerHTML = '<div class="lead-tags-empty">Списков ожидания ещё нет. Нажми ↗, чтобы создать.</div>';
-    return;
-  }
-  el.innerHTML = lists.map(w => {
-    const on = selected.includes(w.id);
-    const c = '#0ea5e9';
-    const dateSuf = w.event_date ? ' · '+fmtDateShort(w.event_date) : '';
-    return '<span class="lead-tag-chip'+(on?' on':'')+'" style="--_c:'+c+'" data-id="'+w.id+'" onclick="toggleLeadWaitlist(\''+w.id+'\')"><span class="lead-tag-dot"></span>'+escapeHtml(w.name)+escapeHtml(dateSuf)+'</span>';
-  }).join('');
+  const lists = loadWaitlists().filter(w => !w.closed);
+  const chosen = lists.filter(w => selected.includes(w.id));
+  const rest = lists.filter(w => !selected.includes(w.id));
+  const label = w => w.name + (w.event_date ? ' · ' + fmtDateShort(w.event_date) : '');
+  const color = () => '#0ea5e9';
+  const total = lists.length;
+  let html = chosen.map(w => '<span class="lm-pill" style="--_c:'+color()+'"><span class="lm-pill-dot"></span>'+escapeHtml(label(w))
+    + '<button class="lm-pill-x" title="Убрать" onclick="toggleLeadWaitlist(\''+w.id+'\')">✕</button></span>').join('');
+  const options = rest.map(w => '<option value="'+escapeHtml(w.id)+'">'+escapeHtml(label(w))+'</option>').join('');
+  if (!total) { el.innerHTML = '<span class="lm-empty">Списков ожидания ещё нет. Нажми ↗, чтобы создать.</span>'; return; }
+  html += '<select class="lm-add-select"'+(rest.length ? '' : ' disabled')
+    + ' onchange="if(this.value){var v=this.value;this.value=\'\';toggleLeadWaitlist(v)}">'
+    + '<option value="">+ список</option>' + options + '</select>';
+  el.innerHTML = html;
 }
 function getCurrentLeadInterests() {
   if (currentLeadId) {
@@ -3393,6 +3613,7 @@ function openLeadModal(id) {
   currentLeadId = lead ? lead.id : null;
   _leadDraftInterests = [];
   _leadDraftWaitlists = [];
+  _leadDraftTranscripts = [];
   document.getElementById('leadModalId').value = lead ? lead.id : '';
   document.getElementById('leadName').value = lead ? lead.name : '';
   document.getElementById('leadCompany').value = lead ? (lead.company || '') : '';
@@ -3403,8 +3624,6 @@ function openLeadModal(id) {
   document.getElementById('leadDeadline').value = lead ? (lead.next_action_date || '') : '';
   document.getElementById('leadTelegram').value = lead ? (lead.telegram || '') : '';
   document.getElementById('leadPhone').value = lead ? (lead.phone || '') : '';
-  document.getElementById('leadTalk').value = lead ? (lead.talk_summary || '') : '';
-  document.getElementById('leadTranscript').value = lead ? (lead.transcript_url || '') : '';
   document.getElementById('leadName').placeholder = 'Имя и фамилия';
   document.getElementById('leadCompany').placeholder = 'Компания (опционально)';
   // Meta
@@ -3424,12 +3643,17 @@ function openLeadModal(id) {
   renderHistoryList(lead);
   renderLeadInterestChips();
   renderLeadWaitlistChips();
+  applyLmSections('lead');
+  closeTrForm('lead');
+  renderTranscripts('lead');
   document.getElementById('leadModalBg').classList.add('show');
   setTimeout(() => { if (!lead) document.getElementById('leadName').focus(); }, 50);
 }
 function renderHistoryList(lead) {
   const el = document.getElementById('leadHistoryList');
   const history = (lead && lead.history) || [];
+  const cnt = document.getElementById('leadHistCount');
+  if (cnt) cnt.textContent = history.length;
   if (!history.length) {
     el.innerHTML = '<div class="lead-history-empty">Пока нет записей. Добавь первую через «+ Запись».</div>';
     return;
@@ -3489,8 +3713,6 @@ function saveLeadInternal(closeModal) {
       existing.phone = document.getElementById('leadPhone').value.trim();
       existing.next_action = document.getElementById('leadAction').value.trim();
       existing.next_action_date = document.getElementById('leadDeadline').value || null;
-      existing.talk_summary = document.getElementById('leadTalk').value.trim();
-      existing.transcript_url = document.getElementById('leadTranscript').value.trim();
       saveLeads(leads);
       if (closeModal) closeLeadModal();
       render();
@@ -3512,8 +3734,6 @@ function saveLeadInternal(closeModal) {
     existing.status = newStatus;
     existing.next_action = document.getElementById('leadAction').value.trim();
     existing.next_action_date = document.getElementById('leadDeadline').value || null;
-    existing.talk_summary = document.getElementById('leadTalk').value.trim();
-    existing.transcript_url = document.getElementById('leadTranscript').value.trim();
     existing.updated_at = nowIso();
     saveLeads(leads);
   } else {
@@ -3533,9 +3753,8 @@ function saveLeadInternal(closeModal) {
       closed_at: leadStatusKind(newStatus) !== 'active' ? now : null,
       next_action: document.getElementById('leadAction').value.trim(),
       next_action_date: document.getElementById('leadDeadline').value || null,
-      talk_summary: document.getElementById('leadTalk').value.trim(),
-      transcript_url: document.getElementById('leadTranscript').value.trim(),
       history: [],
+      transcripts: _leadDraftTranscripts.slice(),
       interests: _leadDraftInterests.slice(),
       waitlists: _leadDraftWaitlists.slice()
     };
@@ -3543,6 +3762,7 @@ function saveLeadInternal(closeModal) {
     currentLeadId = newLead.id;
     _leadDraftInterests = [];
     _leadDraftWaitlists = [];
+    _leadDraftTranscripts = [];
     saveLeads(leads);
   }
   if (closeModal) closeLeadModal();
@@ -4268,30 +4488,37 @@ function getCurrentAlumWaitlists() {
 function renderAlumInterestChips() {
   const el = document.getElementById('alumInterestChips');
   if (!el) return;
-  if (!INTEREST_TAGS.length) {
-    el.innerHTML = '<div class="lead-tags-empty">Ни одного тега. Нажми ⚙, чтобы добавить.</div>';
-    return;
-  }
   const selected = getCurrentAlumInterests();
-  el.innerHTML = INTEREST_TAGS.map(t => {
-    const on = selected.includes(t.id);
-    return '<span class="lead-tag-chip'+(on?' on':'')+'" style="--_c:'+t.color+'" data-id="'+t.id+'" onclick="toggleAlumInterest(\''+t.id+'\')"><span class="lead-tag-dot"></span>'+escapeHtml(t.name)+'</span>';
-  }).join('');
+  const chosen = INTEREST_TAGS.filter(t => selected.includes(t.id));
+  const rest = INTEREST_TAGS.filter(t => !selected.includes(t.id));
+  const total = INTEREST_TAGS.length;
+  let html = chosen.map(t => '<span class="lm-pill" style="--_c:'+t.color+'"><span class="lm-pill-dot"></span>'+escapeHtml(t.name)
+    + '<button class="lm-pill-x" title="Убрать" onclick="toggleAlumInterest(\''+t.id+'\')">✕</button></span>').join('');
+  const options = rest.map(t => '<option value="'+escapeHtml(t.id)+'">'+escapeHtml(t.name)+'</option>').join('');
+  if (!total) { el.innerHTML = '<span class="lm-empty">Тегов пока нет. Нажми ⚙, чтобы добавить.</span>'; return; }
+  html += '<select class="lm-add-select"'+(rest.length ? '' : ' disabled')
+    + ' onchange="if(this.value){var v=this.value;this.value=\'\';toggleAlumInterest(v)}">'
+    + '<option value="">+ интерес</option>' + options + '</select>';
+  el.innerHTML = html;
 }
 function renderAlumWaitlistChips() {
   const el = document.getElementById('alumWaitlistChips');
   if (!el) return;
-  const lists = loadWaitlists().filter(w => !w.closed);
-  if (!lists.length) {
-    el.innerHTML = '<div class="lead-tags-empty">Списков ожидания ещё нет. Нажми ↗, чтобы создать.</div>';
-    return;
-  }
   const selected = getCurrentAlumWaitlists();
-  el.innerHTML = lists.map(w => {
-    const on = selected.includes(w.id);
-    const dateSuf = w.event_date ? ' · '+fmtDateShort(w.event_date) : '';
-    return '<span class="lead-tag-chip'+(on?' on':'')+'" style="--_c:#0ea5e9" data-id="'+w.id+'" onclick="toggleAlumWaitlist(\''+w.id+'\')"><span class="lead-tag-dot"></span>'+escapeHtml(w.name)+escapeHtml(dateSuf)+'</span>';
-  }).join('');
+  const lists = loadWaitlists().filter(w => !w.closed);
+  const chosen = lists.filter(w => selected.includes(w.id));
+  const rest = lists.filter(w => !selected.includes(w.id));
+  const label = w => w.name + (w.event_date ? ' · ' + fmtDateShort(w.event_date) : '');
+  const color = () => '#0ea5e9';
+  const total = lists.length;
+  let html = chosen.map(w => '<span class="lm-pill" style="--_c:'+color()+'"><span class="lm-pill-dot"></span>'+escapeHtml(label(w))
+    + '<button class="lm-pill-x" title="Убрать" onclick="toggleAlumWaitlist(\''+w.id+'\')">✕</button></span>').join('');
+  const options = rest.map(w => '<option value="'+escapeHtml(w.id)+'">'+escapeHtml(label(w))+'</option>').join('');
+  if (!total) { el.innerHTML = '<span class="lm-empty">Списков ожидания ещё нет. Нажми ↗, чтобы создать.</span>'; return; }
+  html += '<select class="lm-add-select"'+(rest.length ? '' : ' disabled')
+    + ' onchange="if(this.value){var v=this.value;this.value=\'\';toggleAlumWaitlist(v)}">'
+    + '<option value="">+ список</option>' + options + '</select>';
+  el.innerHTML = html;
 }
 function toggleAlumInterest(tagId) {
   if (currentAlumId) {
@@ -4340,6 +4567,7 @@ function openAlumModal(id) {
   currentAlumId = a ? a.id : null;
   _alumDraftInterests = [];
   _alumDraftWaitlists = [];
+  _alumDraftTranscripts = [];
   document.getElementById('alumModalId').value = a ? a.id : '';
   document.getElementById('alumName').value = a ? a.name : '';
   document.getElementById('alumTelegram').value = a ? (a.username ? '@' + String(a.username).replace(/^@/, '') : '') : '';
@@ -4351,8 +4579,6 @@ function openAlumModal(id) {
   document.getElementById('alumAction').value = a ? (a.next_action || '') : '';
   document.getElementById('alumDeadline').value = a ? (a.next_action_date || '') : '';
   document.getElementById('alumNote').value = a ? (a.note || '') : '';
-  document.getElementById('alumTalk').value = a ? (a.talk_summary || '') : '';
-  document.getElementById('alumTranscript').value = a ? (a.transcript_url || '') : '';
   const metaRow = document.getElementById('alumMetaRow');
   const convBtn = document.getElementById('alumConvertBtn');
   if (a) {
@@ -4373,6 +4599,9 @@ function openAlumModal(id) {
   renderAlumHistoryList(a);
   renderAlumInterestChips();
   renderAlumWaitlistChips();
+  applyLmSections('alum');
+  closeTrForm('alum');
+  renderTranscripts('alum');
   document.getElementById('alumModalBg').classList.add('show');
   setTimeout(() => { if (!a) document.getElementById('alumName').focus(); }, 50);
 }
@@ -4380,6 +4609,8 @@ function openAlumModal(id) {
 function renderAlumHistoryList(a) {
   const el = document.getElementById('alumHistoryList');
   const history = (a && a.history) || [];
+  const cnt = document.getElementById('alumHistCount');
+  if (cnt) cnt.textContent = history.length;
   if (!history.length) {
     el.innerHTML = '<div class="lead-history-empty">Пока нет записей. Жми «+ Запись» после первого касания.</div>';
     return;
@@ -4489,8 +4720,6 @@ function saveAlumInternal(closeAfter) {
   const nextAction = document.getElementById('alumAction').value.trim();
   const nextActionDate = document.getElementById('alumDeadline').value || null;
   const note = document.getElementById('alumNote').value.trim();
-  const talkSummary = document.getElementById('alumTalk').value.trim();
-  const transcriptUrl = document.getElementById('alumTranscript').value.trim();
   const list = loadAlumni();
   const now = nowIso();
   const initialId = (ALUMNI_STATUSES[0] || {}).id || 'cold';
@@ -4502,7 +4731,6 @@ function saveAlumInternal(closeAfter) {
     a.phone = phone; a.company = company;
     a.potential_chek_rub = chek;
     a.next_action = nextAction; a.next_action_date = nextActionDate;
-    a.talk_summary = talkSummary; a.transcript_url = transcriptUrl;
     if (statusChanged) { a.status = status; a.last_touch_at = now; }
     a.updated_at = now;
     saveAlumni(list);
@@ -4512,7 +4740,7 @@ function saveAlumInternal(closeAfter) {
       phone, company,
       potential_chek_rub: chek,
       next_action: nextAction, next_action_date: nextActionDate,
-      talk_summary: talkSummary, transcript_url: transcriptUrl,
+      transcripts: _alumDraftTranscripts.slice(),
       interests: _alumDraftInterests.slice(),
       waitlists: _alumDraftWaitlists.slice(),
       converted: false, lead_id: null,
@@ -4946,8 +5174,7 @@ function convertAlumToLead(id) {
     created_at: now, updated_at: now, status_changed_at: now, closed_at: null,
     next_action: a.next_action || 'Связаться, прощупать задачу',
     next_action_date: a.next_action_date || null,
-    talk_summary: a.talk_summary || '',
-    transcript_url: a.transcript_url || '',
+    transcripts: Array.isArray(a.transcripts) ? a.transcripts.slice() : [],
     interests: Array.isArray(a.interests) ? a.interests.slice() : [],
     waitlists: Array.isArray(a.waitlists) ? a.waitlists.slice() : [],
     history: [{ date: now, text: histText }]
@@ -5935,6 +6162,7 @@ document.addEventListener('visibilitychange', () => {
 seedLeadsIfEmpty();
 importLeadsFromVault();
 migrateDealsToLeads();
+migrateTranscripts();
 seedProjectsIfEmpty();
 const savedPage = localStorage.getItem('activeTab') || 'home';
 navTo(['home','leads','alumni','waitlists','today','finance','history','projects','events'].includes(savedPage) ? savedPage : 'home');
