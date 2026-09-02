@@ -1046,6 +1046,9 @@
   .lead-field-mini select, .lead-field-mini input { width:100%; border:1.5px solid var(--border-2); border-radius:8px; padding:7px 10px; font-size:13px; font-family:inherit; outline:none; background:#fff; }
   .lead-field-mini select:focus, .lead-field-mini input:focus { border-color:var(--green-dark); }
   .lead-field-mini.full { grid-column: span 2; }
+  .lead-field-mini textarea { width:100%; border:1.5px solid var(--border-2); border-radius:8px; padding:7px 10px; font-size:13px; font-family:inherit; line-height:1.45; outline:none; background:#fff; resize:vertical; min-height:56px; box-sizing:border-box; color:var(--text); }
+  .lead-field-mini textarea:focus { border-color:var(--green-dark); }
+  .lead-icon-tr { color:var(--text-3); }
   .lead-icon-input { display:flex; align-items:center; gap:7px; width:100%; border:1.5px solid var(--border-2); border-radius:8px; padding:0 10px; background:#fff; box-sizing:border-box; }
   .lead-icon-input:focus-within { border-color:var(--green-dark); }
   .lead-icon-input svg { width:15px; height:15px; flex-shrink:0; }
@@ -1750,6 +1753,20 @@
         <label>Дата next action</label>
         <input type="date" id="leadDeadline">
       </div>
+      <div class="lead-field-mini full">
+        <label>О чём был разговор</label>
+        <textarea id="leadTalk" rows="3" placeholder="Коротко: что обсуждали, что человеку нужно, какие возражения"></textarea>
+      </div>
+      <div class="lead-field-mini full">
+        <label>Ссылка на транскрипт</label>
+        <div class="lead-icon-input">
+          <svg class="lead-icon-tr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          <input type="url" id="leadTranscript" placeholder="Ссылка на транскрипт разговора" autocomplete="off">
+          <button type="button" class="lead-copy-btn" onclick="openLinkField('leadTranscript')" title="Открыть транскрипт">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>
+          </button>
+        </div>
+      </div>
     </div>
 
     <div class="lead-meta-row" id="leadMetaRow" style="display:none">
@@ -1866,6 +1883,20 @@
       <div class="lead-field-mini full">
         <label>Короткая заметка</label>
         <input type="text" id="alumNote" placeholder="Контекст: чем занимается, статус одной строкой…">
+      </div>
+      <div class="lead-field-mini full">
+        <label>О чём был разговор</label>
+        <textarea id="alumTalk" rows="3" placeholder="Коротко: что обсуждали, что человеку нужно, какие возражения"></textarea>
+      </div>
+      <div class="lead-field-mini full">
+        <label>Ссылка на транскрипт</label>
+        <div class="lead-icon-input">
+          <svg class="lead-icon-tr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          <input type="url" id="alumTranscript" placeholder="Ссылка на транскрипт разговора" autocomplete="off">
+          <button type="button" class="lead-copy-btn" onclick="openLinkField('alumTranscript')" title="Открыть транскрипт">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -2196,6 +2227,14 @@ function leadChannelById(id) { return LEAD_CHANNELS.find(c => c.id === id) || LE
 // Канал теперь свободный текст: для старых кодов показываем читаемое имя, иначе — как есть
 function channelDisplay(ch) { if (!ch) return ''; const c = LEAD_CHANNELS.find(x => x.id === ch); return c ? c.name : ch; }
 // Быстрое копирование значения поля (ник TG и т.п.)
+function openLinkField(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  let v = (el.value || '').trim();
+  if (!v) { toast('Ссылка не вставлена'); return; }
+  if (!/^[a-z][a-z0-9+.-]*:/i.test(v)) v = 'https://' + v;
+  window.open(v, '_blank', 'noopener');
+}
 function copyLeadField(id) {
   const el = document.getElementById(id);
   if (!el) return;
@@ -3364,6 +3403,8 @@ function openLeadModal(id) {
   document.getElementById('leadDeadline').value = lead ? (lead.next_action_date || '') : '';
   document.getElementById('leadTelegram').value = lead ? (lead.telegram || '') : '';
   document.getElementById('leadPhone').value = lead ? (lead.phone || '') : '';
+  document.getElementById('leadTalk').value = lead ? (lead.talk_summary || '') : '';
+  document.getElementById('leadTranscript').value = lead ? (lead.transcript_url || '') : '';
   document.getElementById('leadName').placeholder = 'Имя и фамилия';
   document.getElementById('leadCompany').placeholder = 'Компания (опционально)';
   // Meta
@@ -3448,6 +3489,8 @@ function saveLeadInternal(closeModal) {
       existing.phone = document.getElementById('leadPhone').value.trim();
       existing.next_action = document.getElementById('leadAction').value.trim();
       existing.next_action_date = document.getElementById('leadDeadline').value || null;
+      existing.talk_summary = document.getElementById('leadTalk').value.trim();
+      existing.transcript_url = document.getElementById('leadTranscript').value.trim();
       saveLeads(leads);
       if (closeModal) closeLeadModal();
       render();
@@ -3469,6 +3512,8 @@ function saveLeadInternal(closeModal) {
     existing.status = newStatus;
     existing.next_action = document.getElementById('leadAction').value.trim();
     existing.next_action_date = document.getElementById('leadDeadline').value || null;
+    existing.talk_summary = document.getElementById('leadTalk').value.trim();
+    existing.transcript_url = document.getElementById('leadTranscript').value.trim();
     existing.updated_at = nowIso();
     saveLeads(leads);
   } else {
@@ -3488,6 +3533,8 @@ function saveLeadInternal(closeModal) {
       closed_at: leadStatusKind(newStatus) !== 'active' ? now : null,
       next_action: document.getElementById('leadAction').value.trim(),
       next_action_date: document.getElementById('leadDeadline').value || null,
+      talk_summary: document.getElementById('leadTalk').value.trim(),
+      transcript_url: document.getElementById('leadTranscript').value.trim(),
       history: [],
       interests: _leadDraftInterests.slice(),
       waitlists: _leadDraftWaitlists.slice()
@@ -4304,6 +4351,8 @@ function openAlumModal(id) {
   document.getElementById('alumAction').value = a ? (a.next_action || '') : '';
   document.getElementById('alumDeadline').value = a ? (a.next_action_date || '') : '';
   document.getElementById('alumNote').value = a ? (a.note || '') : '';
+  document.getElementById('alumTalk').value = a ? (a.talk_summary || '') : '';
+  document.getElementById('alumTranscript').value = a ? (a.transcript_url || '') : '';
   const metaRow = document.getElementById('alumMetaRow');
   const convBtn = document.getElementById('alumConvertBtn');
   if (a) {
@@ -4440,6 +4489,8 @@ function saveAlumInternal(closeAfter) {
   const nextAction = document.getElementById('alumAction').value.trim();
   const nextActionDate = document.getElementById('alumDeadline').value || null;
   const note = document.getElementById('alumNote').value.trim();
+  const talkSummary = document.getElementById('alumTalk').value.trim();
+  const transcriptUrl = document.getElementById('alumTranscript').value.trim();
   const list = loadAlumni();
   const now = nowIso();
   const initialId = (ALUMNI_STATUSES[0] || {}).id || 'cold';
@@ -4451,6 +4502,7 @@ function saveAlumInternal(closeAfter) {
     a.phone = phone; a.company = company;
     a.potential_chek_rub = chek;
     a.next_action = nextAction; a.next_action_date = nextActionDate;
+    a.talk_summary = talkSummary; a.transcript_url = transcriptUrl;
     if (statusChanged) { a.status = status; a.last_touch_at = now; }
     a.updated_at = now;
     saveAlumni(list);
@@ -4460,6 +4512,7 @@ function saveAlumInternal(closeAfter) {
       phone, company,
       potential_chek_rub: chek,
       next_action: nextAction, next_action_date: nextActionDate,
+      talk_summary: talkSummary, transcript_url: transcriptUrl,
       interests: _alumDraftInterests.slice(),
       waitlists: _alumDraftWaitlists.slice(),
       converted: false, lead_id: null,
@@ -4893,6 +4946,8 @@ function convertAlumToLead(id) {
     created_at: now, updated_at: now, status_changed_at: now, closed_at: null,
     next_action: a.next_action || 'Связаться, прощупать задачу',
     next_action_date: a.next_action_date || null,
+    talk_summary: a.talk_summary || '',
+    transcript_url: a.transcript_url || '',
     interests: Array.isArray(a.interests) ? a.interests.slice() : [],
     waitlists: Array.isArray(a.waitlists) ? a.waitlists.slice() : [],
     history: [{ date: now, text: histText }]
