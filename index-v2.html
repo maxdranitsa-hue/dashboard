@@ -1188,9 +1188,15 @@
   .calc-result-line:first-child { padding-top:0; }
   .calc-result-label { font-size:13px; color:var(--text-2); }
   .calc-result-value { font-size:14px; font-weight:700; white-space:nowrap; }
-  .calc-result-line.cut { background:var(--red-bg); margin:6px -14px; padding:11px 14px; border-radius:8px; }
-  .calc-result-line.cut .calc-result-value { color:var(--red); font-size:16px; }
-  .calc-result-line.cut .calc-result-label { font-weight:600; }
+  .calc-result-line.payout { background:var(--surface); margin:6px -14px; padding:11px 14px; border-radius:8px; border-bottom:none; }
+  .calc-result-line.payout .calc-result-value { color:var(--text); font-size:16px; }
+  .calc-result-line.payout .calc-result-label { font-weight:600; color:var(--text-2); }
+  .calc-eye { width:26px; height:26px; margin-left:8px; border:none; border-radius:7px; background:rgba(13,58,44,.07); color:var(--green-dark); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; padding:0; vertical-align:middle; transition:background .15s ease; }
+  .calc-eye:hover { background:rgba(13,58,44,.15); }
+  .calc-eye svg { width:15px; height:15px; }
+  .calc-dots { letter-spacing:3px; color:var(--text-3); }
+  .calc-final-wrap { display:inline-flex; align-items:center; gap:2px; }
+  .calc-final-num { display:inline-block; text-align:right; }
   .calc-result-line.final { background:var(--green-bg-soft); margin:8px -14px -14px; padding:14px; border-radius:0 0 9px 9px; border-top:1px solid var(--green-mid); }
   .calc-result-line.final .calc-result-label { font-weight:700; color:var(--green-dark); font-size:14px; }
   .calc-result-line.final .calc-result-value { color:var(--green-dark); font-size:20px; text-align:right; line-height:1.3; }
@@ -4083,6 +4089,7 @@ async function openCalcModal() {
   document.getElementById('calcRateInfo').textContent = 'Загружаю курс…';
   const aIn = document.getElementById('calcAmount');
   aIn.value = s.lastAmount ? formatThousands(String(s.lastAmount)) : '';
+  calcSecret = true;
   recalcSplit();
   renderCalcHistory();
   document.getElementById('calcModalBg').classList.add('show');
@@ -4093,6 +4100,18 @@ async function openCalcModal() {
   document.getElementById('calcRate').placeholder = ph;
   document.getElementById('calcRateInfo').innerHTML = r.source === 'по умолчанию' ? '<b>'+ph+'</b> ₽/$ — по умолчанию' : '<b>'+ph+'</b> ₽/$ — '+r.source+' от '+fmtDateShort(r.date);
   recalcSplit();
+}
+// Мой остаток скрыт по умолчанию: карточку часто показывают команде
+let calcSecret = true;
+function calcEyeBtn() {
+  const open = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>';
+  const shut = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-6.5 0-10-8-10-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c6.5 0 10 8 10 8a18.5 18.5 0 0 1-2.16 3.19"/><path d="m1 1 22 22"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>';
+  return '<button class="calc-eye" onclick="toggleCalcSecret()" title="'+(calcSecret ? 'Показать мой остаток' : 'Скрыть мой остаток')+'">'+(calcSecret ? shut : open)+'</button>';
+}
+function toggleCalcSecret() {
+  calcSecret = !calcSecret;
+  recalcSplit();
+  renderCalcHistory();
 }
 function closeCalcModal() { document.getElementById('calcModalBg').classList.remove('show'); }
 function recalcSplit() {
@@ -4107,12 +4126,15 @@ function recalcSplit() {
   const cut2 = after1 * pct2 / 100;
   const final = after1 - cut2;
   const finalUSD = rate > 0 ? final / rate : 0;
+  const myPart = calcSecret
+    ? '<span class="calc-dots">•••••</span>'
+    : fmtMoneyRubFull(final)+'<span class="calc-result-usd">≈ '+fmtUSD(finalUSD)+' (по '+rate.toFixed(2)+' ₽/$)</span>';
   document.getElementById('calcResults').innerHTML =
-    '<div class="calc-result-line"><span class="calc-result-label">Сумма на вход</span><span class="calc-result-value">'+fmtMoneyRubFull(amount)+'</span></div>'+
-    '<div class="calc-result-line cut"><span class="calc-result-label">'+escapeHtml(l1)+' — '+pct1+'%</span><span class="calc-result-value">−'+fmtMoneyRubFull(cut1)+'</span></div>'+
-    '<div class="calc-result-line"><span class="calc-result-label">Остаток после '+pct1+'%</span><span class="calc-result-value">'+fmtMoneyRubFull(after1)+'</span></div>'+
-    '<div class="calc-result-line cut"><span class="calc-result-label">'+escapeHtml(l2)+' — '+pct2+'% от остатка</span><span class="calc-result-value">−'+fmtMoneyRubFull(cut2)+'</span></div>'+
-    '<div class="calc-result-line final"><span class="calc-result-label">Остаток</span><span class="calc-result-value">'+fmtMoneyRubFull(final)+'<span class="calc-result-usd">≈ '+fmtUSD(finalUSD)+' (по '+rate.toFixed(2)+' ₽/$)</span></span></div>';
+    '<div class="calc-result-line payout"><span class="calc-result-label">'+escapeHtml(l1)+' — '+pct1+'%</span><span class="calc-result-value">'+fmtMoneyRubFull(cut1)+'</span></div>'+
+    '<div class="calc-result-line payout"><span class="calc-result-label">'+escapeHtml(l2)+' — '+pct2+'% от остатка</span><span class="calc-result-value">'+fmtMoneyRubFull(cut2)+'</span></div>'+
+    '<div class="calc-result-line final"><span class="calc-result-label">Остаток</span>'+
+      '<span class="calc-result-value"><span class="calc-final-wrap"><span class="calc-final-num">'+myPart+'</span>'+calcEyeBtn()+'</span></span>'+
+    '</div>';
   const sb = document.getElementById('calcSaveBtn');
   if (sb) sb.disabled = !(amount > 0);
   const mr = parseFloat(document.getElementById('calcRate').value) || null;
@@ -4158,7 +4180,7 @@ function renderCalcHistory() {
   list.innerHTML = h.slice(0, 10).map(r => {
     const d = new Date(r.date);
     const ds = d.toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric'}) + ' · ' + d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
-    return '<div class="calc-history-item"><div class="calc-history-head"><span>'+ds+' · '+r.rate.toFixed(2)+' ₽/$</span><button class="calc-history-del" onclick="deleteSplitRecord('+r.id+')">×</button></div><div class="calc-history-amount">'+fmtMoneyRubFull(r.amount)+'</div><div class="calc-history-split"><b>'+escapeHtml(r.label1)+'</b> '+fmtMoneyRubFull(r.cut1)+' · <b>'+escapeHtml(r.label2)+'</b> '+fmtMoneyRubFull(r.cut2)+' · <b>Остаток</b> '+fmtMoneyRubFull(r.final)+'<span class="usd">≈ '+fmtUSD(r.finalUSD)+'</span></div></div>';
+    return '<div class="calc-history-item"><div class="calc-history-head"><span>'+ds+' · '+r.rate.toFixed(2)+' ₽/$</span><button class="calc-history-del" onclick="deleteSplitRecord('+r.id+')">×</button></div><div class="calc-history-amount">'+fmtMoneyRubFull(r.amount)+'</div><div class="calc-history-split"><b>'+escapeHtml(r.label1)+'</b> '+fmtMoneyRubFull(r.cut1)+' · <b>'+escapeHtml(r.label2)+'</b> '+fmtMoneyRubFull(r.cut2)+' · <b>Остаток</b> '+(calcSecret ? '<span class="calc-dots">•••••</span>' : fmtMoneyRubFull(r.final)+'<span class="usd">≈ '+fmtUSD(r.finalUSD)+'</span>')+'</div></div>';
   }).join('');
   if (h.length > 10) list.innerHTML += '<div class="calc-history-empty">Показаны 10 из '+h.length+'</div>';
 }
