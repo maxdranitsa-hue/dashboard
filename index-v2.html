@@ -1842,6 +1842,10 @@
         <select id="leadProduct" onchange="onLeadProductChange()"></select>
       </div>
       <div class="lead-field-mini full">
+        <label>Пометка к сделке</label>
+        <input type="text" id="leadTitle" placeholder="Кто участник, место 2, поток 26.09…" autocomplete="off">
+      </div>
+      <div class="lead-field-mini full">
         <label>Откуда пришёл (можно с комментарием)</label>
         <input type="text" id="leadChannel" placeholder="Напр.: личный контакт · реф от Иванова · с вебинара 12.06">
       </div>
@@ -3466,7 +3470,7 @@ function renderLeadsKanban() {
         const daysCls = days > 7 ? 'bad' : days > 3 ? 'warn' : '';
         const daysText = days === 0 ? 'сегодня' : days === 1 ? '1 день' : days < 5 ? days + ' дня' : days + ' дней';
         const tags = (isAll ? '<span class="lead-card-pipe" style="--_c:'+pipe.color+'">'+escapeHtml(pipe.short)+'</span>' : '')
-          + (others > 0 ? '<span class="lead-card-more" title="У клиента есть сделки в других продуктах">+'+others+' прод.</span>' : '');
+          + (others > 0 ? '<span class="lead-card-more" title="У клиента есть и другие сделки">+'+others+' '+(others % 10 === 1 && others % 100 !== 11 ? 'сделка' : (others % 10 >= 2 && others % 10 <= 4 && (others % 100 < 10 || others % 100 >= 20)) ? 'сделки' : 'сделок')+'</span>' : '');
         const interestBadges = interests.length
           ? '<div class="lead-card-interests">' + interests.map(id => {
               const t = interestTagById(id); if (!t) return '';
@@ -3944,8 +3948,9 @@ function mergeFromModalSelect(sel) {
 let currentLeadId = null;
 let currentClientId = null;
 let _leadDirty = false;
+let _leadTitleShown = '';
 // Поля выбранной сделки и контакты: правка любого из них = несохранённые изменения
-const LEAD_FORM_IDS = new Set(['leadName','leadTelegram','leadPhone','leadCompany','leadProduct','leadChannel','leadStatus','leadChek','leadAction','leadDeadline']);
+const LEAD_FORM_IDS = new Set(['leadName','leadTelegram','leadPhone','leadCompany','leadProduct','leadTitle','leadChannel','leadStatus','leadChek','leadAction','leadDeadline']);
 document.addEventListener('input', e => { if (e.target && LEAD_FORM_IDS.has(e.target.id)) _leadDirty = true; }, true);
 document.addEventListener('change', e => { if (e.target && LEAD_FORM_IDS.has(e.target.id)) _leadDirty = true; }, true);
 // Черновики для нового лида (пока id не выдан). Для существующего — читаем из lead и рендерим сразу.
@@ -4092,6 +4097,9 @@ function openLeadModal(id, opts) {
   document.getElementById('leadTelegram').value = client ? (client.telegram || '') : (lead ? (lead.telegram || '') : '');
   document.getElementById('leadPhone').value = client ? (client.phone || '') : (lead ? (lead.phone || '') : '');
   document.getElementById('leadProduct').value = product;
+  const cname = client ? client.name : (lead ? lead.name : '');
+  document.getElementById('leadTitle').value = lead && lead.title && lead.title !== cname ? lead.title : '';
+  _leadTitleShown = document.getElementById('leadTitle').value;
   fillLeadStatusSelect(product, lead ? lead.status : opts.status);
   document.getElementById('leadChannel').value = lead ? channelDisplay(lead.channel) : '';
   document.getElementById('leadChek').value = lead && lead.potential_chek_rub ? lead.potential_chek_rub : '';
@@ -4243,6 +4251,8 @@ function saveLeadInternal(closeModal) {
     phone: document.getElementById('leadPhone').value.trim()
   };
   const product = document.getElementById('leadProduct').value || 'inbox';
+  const titleRaw = document.getElementById('leadTitle').value.trim();
+  const titleTouched = titleRaw !== (_leadTitleShown || '').trim();
   const newStatus = document.getElementById('leadStatus').value;
   const chek = parseFloat(document.getElementById('leadChek').value) || 0;
 
@@ -4287,6 +4297,7 @@ function saveLeadInternal(closeModal) {
     if (statusChanged && newKind === 'won') {
       handleWinFlow(existing, leads, newStatus);
       Object.assign(existing, mirror);
+      if (titleTouched) existing.title = titleRaw;
       existing.channel = document.getElementById('leadChannel').value.trim();
       existing.next_action = document.getElementById('leadAction').value.trim();
       existing.next_action_date = document.getElementById('leadDeadline').value || null;
@@ -4305,6 +4316,7 @@ function saveLeadInternal(closeModal) {
       if (oldKind === 'won' || oldKind === 'lost') existing.closed_at = null;
     }
     Object.assign(existing, mirror);
+    if (titleTouched) existing.title = titleRaw;
     existing.channel = document.getElementById('leadChannel').value.trim();
     existing.potential_chek_rub = chek;
     existing.status = newStatus;
@@ -4317,7 +4329,7 @@ function saveLeadInternal(closeModal) {
       id: genLeadId(),
       client_id: client.id,
       product,
-      title: ''
+      title: titleRaw
     }, mirror, {
       channel: document.getElementById('leadChannel').value.trim(),
       potential_chek_rub: chek,
@@ -4339,7 +4351,12 @@ function saveLeadInternal(closeModal) {
   _leadDirty = false;
   if (closeModal) closeLeadModal();
   render();
-  if (!closeModal) { renderLeadDeals(); fillLeadMergeSelect(); }
+  if (!closeModal) {
+    const cur = loadLeads().find(l => l.id === currentLeadId);
+    const t = document.getElementById('leadTitle');
+    if (cur && t) { t.value = cur.title && cur.title !== client.name ? cur.title : ''; _leadTitleShown = t.value; }
+    renderLeadDeals(); fillLeadMergeSelect();
+  }
   return true;
 }
 function saveLead() {
