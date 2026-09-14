@@ -723,7 +723,20 @@
   .leads-toggle-stuck { background:var(--bg); border:none; border-radius:10px; padding:9px 14px; font-family:inherit; font-size:13px; color:var(--text-2); cursor:pointer; transition:all .12s; }
   .leads-toggle-stuck.active { background:#fef3c7; color:#92400e; font-weight:600; }
 
-  .kanban { display:grid; grid-template-columns:repeat(7, 240px); gap:12px; overflow-x:auto; padding-bottom:8px; }
+  .kanban { display:grid; grid-template-columns:repeat(var(--kanban-cols, 7), 240px); gap:12px; overflow-x:auto; padding-bottom:8px; }
+  .pipe-tabs { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+  .pipe-tab { --_c:#9ca3af; display:inline-flex; align-items:center; gap:7px; padding:7px 13px; border-radius:999px; border:1px solid var(--border-2); background:var(--surface); font-family:inherit; font-size:13px; font-weight:600; color:var(--text-2); cursor:pointer; transition:background .15s ease, border-color .15s ease, color .15s ease; }
+  .pipe-tab:hover { border-color:color-mix(in srgb, var(--_c) 45%, var(--border-2)); color:var(--text); }
+  .pipe-tab.active { background:color-mix(in srgb, var(--_c) 12%, #fff); border-color:color-mix(in srgb, var(--_c) 55%, transparent); color:color-mix(in srgb, var(--_c) 70%, #111827); }
+  .pipe-tab-dot { width:7px; height:7px; border-radius:50%; background:var(--_c); flex-shrink:0; }
+  .pipe-tab-count { font-size:11px; font-weight:700; background:rgba(0,0,0,.05); padding:1px 7px; border-radius:999px; line-height:1.6; }
+  .pipe-tab.all { --_c:var(--green-dark); }
+  .lead-card-tags { display:flex; flex-wrap:wrap; gap:4px; margin-top:6px; }
+  .lead-card-pipe { --_c:#9ca3af; font-size:10px; font-weight:700; padding:2px 7px; border-radius:999px; background:color-mix(in srgb, var(--_c) 14%, transparent); color:color-mix(in srgb, var(--_c) 75%, #111827); white-space:nowrap; }
+  .lead-card-more { font-size:10px; font-weight:700; padding:2px 7px; border-radius:999px; background:var(--bg); color:var(--text-2); border:1px solid var(--border-2); white-space:nowrap; }
+  .lead-card-assign { margin-top:8px; width:100%; font-family:inherit; font-size:11px; font-weight:600; border:1px dashed var(--border-2); border-radius:8px; padding:5px 8px; background:transparent; color:var(--text-2); cursor:pointer; appearance:none; -webkit-appearance:none; outline:none; }
+  .lead-card-assign:hover { border-color:var(--green-light-2); color:var(--green-dark); background:var(--green-bg-soft); }
+  .leads-dup-btn .count { font-size:11px; font-weight:700; background:var(--orange-bg); color:#92400e; padding:1px 7px; border-radius:999px; margin-left:4px; }
   .kanban-col { background:var(--bg); border-radius:var(--r); padding:12px 10px; min-height:300px; display:flex; flex-direction:column; }
   .kanban-col-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; padding:0 4px; }
   .kanban-col-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; display:flex; align-items:center; gap:6px; color:var(--_lead-color, var(--text-2)); }
@@ -1092,6 +1105,36 @@
   .waitlist-member-side { display:flex; align-items:center; gap:10px; flex-shrink:0; }
   .waitlist-member-chek { font-size:12px; font-weight:700; color:var(--text-2); }
   .waitlist-member-status { --_c:#9ca3af; font-size:11px; font-weight:700; padding:3px 10px; border-radius:999px; background:color-mix(in srgb, var(--_c) 15%, transparent); color:var(--_c); border:1px solid color-mix(in srgb, var(--_c) 35%, transparent); }
+  /* ===== Сделки клиента в карточке ===== */
+  .deals-block { background:var(--bg); border-radius:12px; padding:10px 10px 8px; margin-bottom:14px; }
+  .deals-head { display:flex; align-items:center; gap:8px; margin-bottom:8px; padding:0 2px; }
+  .deals-title { font-size:12px; font-weight:700; color:var(--text-2); text-transform:uppercase; letter-spacing:.4px; }
+  .deals-head .lm-add-select { margin-left:auto; background:var(--surface); width:112px; text-align:center; text-align-last:center; }
+  .deal-row { display:flex; align-items:center; gap:8px; width:100%; border:1.5px solid transparent; background:var(--surface); border-radius:9px; padding:7px 9px; margin-bottom:5px; cursor:pointer; font-family:inherit; text-align:left; transition:border-color .15s ease, box-shadow .15s ease; }
+  .deal-row:last-child { margin-bottom:0; }
+  .deal-row:hover { box-shadow:var(--shadow-lg); }
+  .deal-row.active { border-color:var(--green-dark); cursor:default; box-shadow:none; }
+  .deal-row-status { --_c:#9ca3af; font-size:11.5px; font-weight:600; color:color-mix(in srgb, var(--_c) 75%, #111827); display:inline-flex; align-items:center; gap:5px; white-space:nowrap; }
+  .deal-row-status::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--_c); }
+  .deal-row-title { font-size:11px; color:var(--text-3); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0; flex:1; }
+  .deal-row-amount { font-size:12px; font-weight:700; color:var(--green-dark); margin-left:auto; white-space:nowrap; }
+  .deals-empty { font-size:11.5px; color:var(--text-3); font-style:italic; padding:2px 2px 4px; }
+  .deal-section-label { font-size:10px; color:var(--text-3); text-transform:uppercase; letter-spacing:.4px; font-weight:700; margin:0 0 8px; }
+  .lead-merge-select { max-width:170px; }
+
+  /* ===== Окно «Похожие клиенты» ===== */
+  .merge-group { border:1px solid var(--border-2); border-radius:12px; padding:8px 12px 10px; margin-bottom:10px; }
+  .merge-row { display:flex; align-items:center; gap:9px; padding:7px 0; border-bottom:1px solid var(--border); font-size:13px; }
+  .merge-row:last-of-type { border-bottom:none; }
+  .merge-row input { margin:0; flex-shrink:0; accent-color:var(--green-dark); }
+  .merge-who { min-width:0; }
+  .merge-name { font-weight:600; color:var(--text); }
+  .merge-sub { font-size:11px; color:var(--text-3); }
+  .merge-deals { display:flex; flex-wrap:wrap; gap:4px; margin-left:auto; justify-content:flex-end; }
+  .merge-main { font-size:10px; color:var(--text-3); display:inline-flex; align-items:center; gap:4px; white-space:nowrap; cursor:pointer; }
+  .merge-actions { display:flex; gap:8px; justify-content:flex-end; margin-top:8px; }
+  .merge-empty { font-size:13px; color:var(--text-3); text-align:center; padding:26px 10px; font-style:italic; }
+
   /* ===== Складные секции карточки (лид и выпускник) ===== */
   .lm-section { border-top:1px solid var(--border); margin-top:12px; padding-top:11px; }
   .lm-sec-head { display:flex; align-items:center; gap:8px; cursor:pointer; user-select:none; }
@@ -1518,10 +1561,11 @@
           <div class="card-head">
             <div class="card-title">CRM лидов</div>
             <div style="display:flex;gap:8px">
-              <button class="btn btn-secondary" onclick="openLeadStatusesModal()" title="Управление колонками">⚙ Колонки</button>
+              <button class="btn btn-secondary leads-dup-btn" id="leadsDupBtn" onclick="openMergeModal()" title="Похожие клиенты: склеить в одну карточку">Дубли<span class="count" id="leadsDupCount" hidden></span></button>
               <button class="btn btn-primary" onclick="openLeadModal()">+ Новый лид</button>
             </div>
           </div>
+          <div class="pipe-tabs" id="leadsPipeTabs"></div>
           <div class="leads-toolbar">
             <div class="leads-search">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -1780,8 +1824,23 @@
       </div>
     </div>
 
-    <!-- Воронка -->
+    <!-- Сделки клиента -->
+    <div class="deals-block" id="leadDealsBlock">
+      <div class="deals-head">
+        <span class="deals-title">Сделки</span>
+        <span class="lm-sec-count" id="leadDealsCount">0</span>
+        <select class="lm-add-select" id="leadDealAdd" onchange="addDealFromSelect(this)" title="Завести сделку в другом продукте"></select>
+      </div>
+      <div id="leadDealsList"></div>
+    </div>
+
+    <!-- Выбранная сделка -->
+    <div class="deal-section-label" id="leadDealLabel">Сделка</div>
     <div class="lead-fields-grid">
+      <div class="lead-field-mini full">
+        <label>Продукт</label>
+        <select id="leadProduct" onchange="onLeadProductChange()"></select>
+      </div>
       <div class="lead-field-mini full">
         <label>Откуда пришёл (можно с комментарием)</label>
         <input type="text" id="leadChannel" placeholder="Напр.: личный контакт · реф от Иванова · с вебинара 12.06">
@@ -1854,7 +1913,7 @@
     <div class="lm-section" id="leadHistSection">
       <div class="lm-sec-head" onclick="toggleLmSection('leadHistSection')">
         <span class="lm-sec-caret">▶</span>
-        <span class="lm-sec-title">История</span>
+        <span class="lm-sec-title">История сделки</span>
         <span class="lm-sec-count" id="leadHistCount">0</span>
         <button type="button" class="lm-sec-btn" onclick="event.stopPropagation(); openHistForm('lead')">+ Запись</button>
       </div>
@@ -1872,7 +1931,8 @@
 
     <div class="lead-modal-actions">
       <div class="lead-modal-actions-left">
-        <button class="danger" id="leadDeleteBtn" onclick="deleteLeadFromModal()" style="display:none">Удалить</button>
+        <button class="danger" id="leadDeleteBtn" onclick="deleteLeadFromModal()" style="display:none">Удалить сделку</button>
+        <select class="lm-add-select lead-merge-select" id="leadMergeSelect" onchange="mergeFromModalSelect(this)" title="Это тот же человек, что и другая карточка" hidden></select>
       </div>
       <div class="lead-modal-actions-right">
         <button class="modal-btn cancel" onclick="closeLeadModal()">Закрыть</button>
@@ -2183,6 +2243,20 @@
   </div>
 </div>
 
+<!-- MODAL: MERGE (похожие клиенты) -->
+<div class="modal-bg" id="mergeModalBg" onclick="if(event.target===this)closeMergeModal()">
+  <div class="modal" style="max-width:660px">
+    <div class="lead-modal-head">
+      <div class="lead-modal-title-block">
+        <div class="lead-modal-name">Похожие клиенты</div>
+        <div class="lead-modal-company" id="mergeSub"></div>
+      </div>
+      <button class="lead-modal-close" onclick="closeMergeModal()" title="Закрыть">✕</button>
+    </div>
+    <div id="mergeList"></div>
+  </div>
+</div>
+
 <!-- MODAL: CALC -->
 <div class="modal-bg" id="calcModalBg" onclick="if(event.target===this)closeCalcModal()">
   <div class="modal" style="max-width:500px">
@@ -2236,7 +2310,63 @@ function loadLeadStatuses() {
   return DEFAULT_LEAD_STATUSES.map(s => Object.assign({}, s));
 }
 function saveLeadStatuses(arr) { localStorage.setItem('lead_statuses', JSON.stringify(arr)); }
-let LEAD_STATUSES = loadLeadStatuses();
+// ===== ВОРОНКИ ПО ПРОДУКТАМ =====
+// Запись лида = одна сделка (продукт + стадия + чек). Человек живёт в отдельном списке clients.
+// Стадии задаются шаблоном воронки: короткий цикл интенсивов и длинный B2B.
+const PIPE_TEMPLATES = {
+  b2b: [
+    { id:'new',           name:'Новый',      short:'Новый',      color:'#9ca3af', kind:'active', phase:'new'   },
+    { id:'call',          name:'Созвон',     short:'Созвон',     color:'#3b82f6', kind:'active', phase:'work'  },
+    { id:'proposal_sent', name:'КП',         short:'КП',         color:'#a855f7', kind:'active', phase:'work'  },
+    { id:'negotiation',   name:'Переговоры', short:'Переговоры', color:'#0ea5e9', kind:'active', phase:'work'  },
+    { id:'ls_ojs5yu',     name:'На паузе',   short:'На паузе',   color:'#eab308', kind:'active', phase:'pause' },
+    { id:'won',           name:'Выиграно',   short:'Выиграно',   color:'#10b981', kind:'won',    phase:'won'   },
+    { id:'lost',          name:'Проиграно',  short:'Проиграно',  color:'#dc2626', kind:'lost',   phase:'lost'  }
+  ],
+  intensive: [
+    { id:'i_interest', name:'Интерес',   short:'Интерес',   color:'#9ca3af', kind:'active', phase:'new'   },
+    { id:'i_invited',  name:'Пригласил', short:'Пригласил', color:'#3b82f6', kind:'active', phase:'work'  },
+    { id:'i_thinking', name:'Думает',    short:'Думает',    color:'#f97316', kind:'active', phase:'work'  },
+    { id:'i_pause',    name:'На паузе',  short:'На паузе',  color:'#eab308', kind:'active', phase:'pause' },
+    { id:'i_paid',     name:'Оплатил',   short:'Оплатил',   color:'#10b981', kind:'won',    phase:'won'   },
+    { id:'i_declined', name:'Отказ',     short:'Отказ',     color:'#dc2626', kind:'lost',   phase:'lost'  }
+  ]
+};
+// Сводная вкладка «Все»: колонки по фазам, общим для обоих шаблонов
+const PIPE_PHASES = [
+  { id:'new',   name:'Новые',     short:'Новые',     color:'#9ca3af' },
+  { id:'work',  name:'В работе',  short:'В работе',  color:'#3b82f6' },
+  { id:'pause', name:'На паузе',  short:'На паузе',  color:'#eab308' },
+  { id:'won',   name:'Выиграно',  short:'Выиграно',  color:'#10b981' },
+  { id:'lost',  name:'Проиграно', short:'Проиграно', color:'#dc2626' }
+];
+const PIPELINES = [
+  { id:'cc',        name:'Claude Code 160к',            short:'Claude Code',  tpl:'intensive', color:'#d97706' },
+  { id:'claude50',  name:'Интенсив Claude 50к',         short:'Интенсив 50к', tpl:'intensive', color:'#f97316' },
+  { id:'corp',      name:'Корп обучение',               short:'Корп',         tpl:'b2b',       color:'#0ea5e9' },
+  { id:'discovery', name:'Discovery',                   short:'Discovery',    tpl:'b2b',       color:'#10b981' },
+  { id:'teens',     name:'Подростки',                   short:'Подростки',    tpl:'intensive', color:'#a855f7' },
+  { id:'dev',       name:'Разработка и сопровождение',  short:'Разработка',   tpl:'b2b',       color:'#ef4444' },
+  { id:'inbox',     name:'Разобрать',                   short:'Разобрать',    tpl:'b2b',       color:'#9ca3af', hideIfEmpty:true }
+];
+const PIPELINES_BY_ID = Object.fromEntries(PIPELINES.map(p => [p.id, p]));
+function pipeById(id) { return PIPELINES_BY_ID[id] || PIPELINES_BY_ID.inbox; }
+function dealPipe(l) { return (l && PIPELINES_BY_ID[l.product]) ? l.product : 'inbox'; }
+function pipeStatuses(pipeId) { return PIPE_TEMPLATES[pipeById(pipeId).tpl]; }
+// Старые id колонок → куда их класть в каждом шаблоне
+const STATUS_MAP = {
+  b2b:       { first_contact:'call', in_progress:'call', i_interest:'new', i_invited:'call', i_thinking:'proposal_sent', i_pause:'ls_ojs5yu', i_paid:'won', i_declined:'lost' },
+  intensive: { new:'i_interest', first_contact:'i_invited', call:'i_invited', in_progress:'i_thinking', proposal_sent:'i_thinking', negotiation:'i_thinking', ls_ojs5yu:'i_pause', won:'i_paid', lost:'i_declined' }
+};
+function mapStatusToTpl(statusId, tpl) {
+  const list = PIPE_TEMPLATES[tpl];
+  if (list.some(s => s.id === statusId)) return statusId;
+  const m = STATUS_MAP[tpl][statusId];
+  if (m) return m;
+  return list[0].id;
+}
+// Регистр всех стадий: финансы и метрики спрашивают у него «выиграно или нет»
+let LEAD_STATUSES = PIPE_TEMPLATES.b2b.concat(PIPE_TEMPLATES.intensive);
 function leadStatusKind(id) { const s = LEAD_STATUSES.find(x => x.id === id); return s ? s.kind : 'active'; }
 function firstStatusIdOfKind(kind) { const s = LEAD_STATUSES.find(x => x.kind === kind); return s ? s.id : null; }
 function leadIsWon(l)  { return leadStatusKind(l && l.status) === 'won'; }
@@ -3026,7 +3156,7 @@ function renderReminder() {
   const el = document.getElementById('reminderContent');
   const lastCall = (state.day.callLog || [])[0];
   const activeLead = loadLeads()
-    .filter(l => (l.status==='proposal_sent' || l.status==='negotiation' || l.status==='in_progress') && l.next_action_date)
+    .filter(l => (leadStatusById(l.status) || {}).phase === 'work' && l.next_action_date)
     .sort((a,b) => new Date(a.next_action_date) - new Date(b.next_action_date))[0];
   if (activeLead) {
     const d = new Date(activeLead.next_action_date);
@@ -3056,7 +3186,7 @@ function renderReminder() {
 
 // ===== ACTIVE KP LIST =====
 function renderActiveKp() {
-  const leads = loadLeads().filter(l => l.status === 'proposal_sent' || l.status === 'negotiation');
+  const leads = loadLeads().filter(l => l.status === 'proposal_sent' || l.status === 'negotiation' || l.status === 'i_thinking');
   const el = document.getElementById('activeKpList');
   if (!el) return;
   if (!leads.length) { el.innerHTML = '<div class="card-empty">Нет активных КП</div>'; return; }
@@ -3148,6 +3278,8 @@ const STATUS_GROUPS = {
 
 function openLeadsWithFilter(group) {
   leadsStatusGroup = group;
+  leadsPipe = 'all';
+  try { localStorage.setItem('_leads_pipe', 'all'); } catch {}
   const sel = document.getElementById('leadsFilterStatusGroup');
   if (sel) sel.value = group;
   navTo('leads');
@@ -3198,20 +3330,66 @@ function filterLeads(leads) {
   const q = (document.getElementById('leadsSearchInput')?.value || '').trim().toLowerCase();
   const channel = document.getElementById('leadsFilterChannel')?.value || '';
   const interest = document.getElementById('leadsFilterInterest')?.value || '';
+  const cMap = new Map(loadClientsRaw().map(c => [c.id, c]));
   return leads.filter(l => {
+    const c = cMap.get(l.client_id);
     if (channel && l.channel !== channel) return false;
-    if (interest && !(Array.isArray(l.interests) && l.interests.includes(interest))) return false;
+    if (interest && !(c && Array.isArray(c.interests) && c.interests.includes(interest))) return false;
     if (leadsFilterStuckOn && daysSince(l.updated_at) <= 7) return false;
     if (q) {
-      const hay = (l.name+' '+(l.company||'')+' '+(l.telegram||'')+' '+(l.phone||'')+' '+(l.history||[]).map(h=>h.text).join(' ')).toLowerCase();
+      const hay = (l.name+' '+(l.title||'')+' '+(l.company||'')+' '+(c ? (c.name+' '+(c.company||'')) : '')+' '+(l.telegram||'')+' '+(l.phone||'')+' '+(l.history||[]).map(h=>h.text).join(' ')).toLowerCase();
       if (!hay.includes(q)) return false;
     }
     return true;
   });
 }
+// Выбранная воронка во вкладке «Лиды» (локальная настройка, в синк не уходит)
+let leadsPipe = (function () { try { return localStorage.getItem('_leads_pipe') || 'all'; } catch { return 'all'; } })();
+function setLeadsPipe(id) {
+  leadsPipe = id;
+  try { localStorage.setItem('_leads_pipe', id); } catch {}
+  renderLeadsKanban();
+}
+function renderLeadsPipeTabs() {
+  const el = document.getElementById('leadsPipeTabs');
+  if (!el) return;
+  const all = loadLeads();
+  const activeIn = id => all.filter(l => dealPipe(l) === id && leadStatusKind(l.status) === 'active').length;
+  const totalIn = id => all.filter(l => dealPipe(l) === id).length;
+  if (leadsPipe !== 'all' && (!PIPELINES_BY_ID[leadsPipe] || (PIPELINES_BY_ID[leadsPipe].hideIfEmpty && !totalIn(leadsPipe)))) leadsPipe = 'all';
+  const allActive = all.filter(l => leadStatusKind(l.status) === 'active').length;
+  let html = '<button class="pipe-tab all'+(leadsPipe === 'all' ? ' active' : '')+'" onclick="setLeadsPipe(\'all\')"><span class="pipe-tab-dot"></span>Все<span class="pipe-tab-count">'+allActive+'</span></button>';
+  PIPELINES.forEach(p => {
+    const total = totalIn(p.id);
+    if (p.hideIfEmpty && !total) return;
+    const n = p.id === 'inbox' ? total : activeIn(p.id);
+    html += '<button class="pipe-tab'+(leadsPipe === p.id ? ' active' : '')+'" style="--_c:'+p.color+'" onclick="setLeadsPipe(\''+p.id+'\')" title="'+escapeHtml(p.name)+'">'
+      + '<span class="pipe-tab-dot"></span>'+escapeHtml(p.short)
+      + (n ? '<span class="pipe-tab-count">'+n+'</span>' : '')
+      + '</button>';
+  });
+  el.innerHTML = html;
+}
+// Быстрый разбор из «Разобрать»: перенести сделку в воронку прямо с плитки
+function setDealPipe(dealId, pipeId) {
+  if (!PIPELINES_BY_ID[pipeId]) return;
+  const leads = loadLeadsRaw();
+  const l = leads.find(x => x.id === dealId);
+  if (!l) return;
+  l.product = pipeId;
+  l.status = mapStatusToTpl(l.status, pipeById(pipeId).tpl);
+  l.updated_at = tsPlus1(l.updated_at);
+  saveLeads(leads);
+  render();
+  toast('→ ' + pipeById(pipeId).name);
+}
+
 function renderLeadsKanban() {
   fillLeadsFilterChannel();
-  const leads = filterLeads(loadLeads());
+  renderLeadsPipeTabs();
+  updateDupCount();
+  const all = loadLeads();
+  const leads = filterLeads(all).filter(l => leadsPipe === 'all' || dealPipe(l) === leadsPipe);
   const board = document.getElementById('leadsBoard');
   if (!board) return;
 
@@ -3237,65 +3415,92 @@ function renderLeadsKanban() {
   }
 
   const visibleStatuses = STATUS_GROUPS[leadsStatusGroup]?.statuses;
+  const isAll = leadsPipe === 'all';
+  const columns = isAll
+    ? PIPE_PHASES.map(ph => ({ id: ph.id, name: ph.name, short: ph.short, color: ph.color,
+        statuses: LEAD_STATUSES.filter(s => s.phase === ph.id).map(s => s.id) }))
+    : pipeStatuses(leadsPipe).map(st => ({ id: st.id, name: st.name, short: st.short, color: st.color, statuses: [st.id] }));
+  const clientsMap = new Map(loadClientsRaw().map(c => [c.id, c]));
+  const perClient = {};
+  all.forEach(l => { perClient[l.client_id] = (perClient[l.client_id] || 0) + 1; });
+  const assignOpts = PIPELINES.filter(p => p.id !== 'inbox').map(p => '<option value="'+p.id+'">'+escapeHtml(p.name)+'</option>').join('');
 
   board.innerHTML = '';
-  LEAD_STATUSES.forEach((status) => {
-    if (visibleStatuses && !visibleStatuses.includes(status.id)) return;
+  board.style.setProperty('--kanban-cols', columns.length);
+  columns.forEach(colDef => {
+    if (visibleStatuses && !colDef.statuses.some(id => visibleStatuses.includes(id))) return;
     const col = document.createElement('div');
     col.className = 'kanban-col';
-    col.style.setProperty('--_lead-color', status.color || '#9ca3af');
-    col.dataset.status = status.id;
+    col.style.setProperty('--_lead-color', colDef.color || '#9ca3af');
+    col.dataset.status = colDef.id;
     const colLeads = leads
-      .filter(l => l.status === status.id)
+      .filter(l => colDef.statuses.includes(l.status))
       .sort((a,b) => new Date(b.updated_at) - new Date(a.updated_at));
+    const addBtn = isAll
+      ? '<button class="kanban-col-add" onclick="event.stopPropagation(); openLeadModal()" title="Новый лид">+</button>'
+      : '<button class="kanban-col-add" onclick="event.stopPropagation(); openLeadModalForStatus(\''+colDef.id+'\')" title="Добавить лида в «'+escapeHtml(colDef.name)+'»">+</button>';
     col.innerHTML =
       '<div class="kanban-col-head">'+
-        '<div class="kanban-col-title"><span class="kanban-col-dot"></span>'+escapeHtml(status.short)+'</div>'+
-        '<div class="kanban-col-head-right">'+
-          '<button class="kanban-col-add" onclick="event.stopPropagation(); openLeadModalForStatus(\''+status.id+'\')" title="Добавить лида в статус «'+escapeHtml(status.name)+'»">+</button>'+
+        '<div class="kanban-col-title"><span class="kanban-col-dot"></span>'+escapeHtml(colDef.short)+'</div>'+
+        '<div class="kanban-col-head-right">'+addBtn+
           '<div class="kanban-col-count">'+colLeads.length+'</div>'+
         '</div>'+
       '</div>'+
-      '<div class="kanban-col-body" data-status="'+status.id+'"></div>';
+      '<div class="kanban-col-body" data-status="'+colDef.id+'"></div>';
     const body = col.querySelector('.kanban-col-body');
     if (!colLeads.length) {
       body.innerHTML = '<div class="kanban-col-empty">Пусто</div>';
     } else {
       colLeads.forEach(lead => {
+        const c = clientsMap.get(lead.client_id);
+        const name = (c && c.name) || lead.name;
+        const company = (c && c.company) || lead.company || '';
+        const sub = (lead.title && lead.title.trim() && lead.title !== name) ? lead.title : company;
+        const others = (perClient[lead.client_id] || 1) - 1;
+        const pipe = pipeById(dealPipe(lead));
+        const interests = (c && Array.isArray(c.interests)) ? c.interests : [];
         const card = document.createElement('div');
         card.className = 'lead-card ' + freshnessClass(lead.updated_at);
         card.dataset.leadId = lead.id;
         const days = daysSince(lead.updated_at);
         const daysCls = days > 7 ? 'bad' : days > 3 ? 'warn' : '';
         const daysText = days === 0 ? 'сегодня' : days === 1 ? '1 день' : days < 5 ? days + ' дня' : days + ' дней';
-        const interestBadges = (Array.isArray(lead.interests) && lead.interests.length)
-          ? '<div class="lead-card-interests">' + lead.interests.map(id => {
+        const tags = (isAll ? '<span class="lead-card-pipe" style="--_c:'+pipe.color+'">'+escapeHtml(pipe.short)+'</span>' : '')
+          + (others > 0 ? '<span class="lead-card-more" title="У клиента есть сделки в других продуктах">+'+others+' прод.</span>' : '');
+        const interestBadges = interests.length
+          ? '<div class="lead-card-interests">' + interests.map(id => {
               const t = interestTagById(id); if (!t) return '';
               return '<span class="lead-card-interest" style="--_c:'+t.color+'">'+escapeHtml(t.name)+'</span>';
             }).join('') + '</div>'
           : '';
+        const assign = (leadsPipe === 'inbox')
+          ? '<select class="lead-card-assign" onclick="event.stopPropagation()" onchange="if(this.value) setDealPipe(\''+lead.id+'\', this.value)"><option value="">→ в воронку…</option>'+assignOpts+'</select>'
+          : '';
         card.innerHTML =
-          '<div class="lead-card-name">'+escapeHtml(lead.name)+'</div>'+
-          (lead.company ? '<div class="lead-card-company">'+escapeHtml(lead.company)+'</div>' : '')+
+          '<div class="lead-card-name">'+escapeHtml(name)+'</div>'+
+          (sub ? '<div class="lead-card-company">'+escapeHtml(sub)+'</div>' : '')+
+          (tags ? '<div class="lead-card-tags">'+tags+'</div>' : '')+
           interestBadges+
           '<div class="lead-card-meta">'+
             (lead.potential_chek_rub ? '<span class="lead-card-amount">'+fmtMoneyRubShort(lead.potential_chek_rub)+'</span>' : '<span></span>')+
             '<span class="lead-card-days '+daysCls+'">'+daysText+'</span>'+
-          '</div>';
+          '</div>'+assign;
         card.onclick = () => openLeadModal(lead.id);
         body.appendChild(card);
       });
     }
     board.appendChild(col);
   });
-  // SortableJS на каждой колонке
-  if (typeof Sortable !== 'undefined') {
+  // Перетаскивание только внутри воронки: во «Все» колонки это фазы, у них нет одной стадии
+  if (typeof Sortable !== 'undefined' && !isAll) {
     board.querySelectorAll('.kanban-col-body').forEach(body => {
       Sortable.create(body, {
         group: 'leads',
         animation: 150,
         ghostClass: 'sortable-ghost',
         dragClass: 'sortable-drag',
+        filter: 'select',
+        preventOnFilter: false,
         onEnd: (evt) => {
           const leadId = evt.item.dataset.leadId;
           const newStatus = evt.to.dataset.status;
@@ -3351,6 +3556,84 @@ function handleWinFlow(lead, leads, newStatus) {
   toast('🎉 Сделка закрыта — попала в Купившие клиенты');
 }
 
+// ===== КЛИЕНТЫ =====
+function loadClientsRaw() { try { const a = JSON.parse(localStorage.getItem('clients') || '[]'); return Array.isArray(a) ? a : []; } catch { return []; } }
+function loadClients() { return loadClientsRaw().filter(c => !c.deleted); }
+function saveClients(a) { localStorage.setItem('clients', JSON.stringify(a)); }
+function clientById(id) { return loadClientsRaw().find(c => c.id === id) || null; }
+function genClientId() { return 'cl_' + Date.now().toString(36) + '_' + Math.floor(Math.random()*9000+1000); }
+function clientDeals(clientId) { return loadLeads().filter(l => l.client_id === clientId); }
+function clientNameOf(l) { const c = l && l.client_id ? clientById(l.client_id) : null; return (c && c.name) || (l && l.name) || ''; }
+function tsPlus1(iso) { const t = Date.parse(iso || ''); return new Date((isNaN(t) ? 0 : t) + 1).toISOString(); }
+
+// Продукт по названию и компании карточки. «Откуда пришёл» не смотрим: канал это не продукт.
+function guessPipe(l) {
+  const t = ((l.name || '') + ' ' + (l.company || '')).toLowerCase();
+  const B = '(^|[^а-яёa-z0-9])', E = '([^а-яёa-z0-9]|$)';
+  if (/подрост|школьн/.test(t)) return 'teens';
+  if (/дискавери|discovery/.test(t)) return 'discovery';
+  if (/разработ|инстагр|аватар|обслуживан|сопровожд/.test(t)) return 'dev';
+  if (new RegExp('claude code|клод код|' + B + '(cc|сс)' + E + '|12 и 13|8 и 9 август').test(t)) return 'cc';
+  if (/28 август|26 сентябр|интенсив claude/.test(t)) return 'claude50';
+  if (/корп/.test(t)) return 'corp';
+  if ((l.potential_chek_rub || 0) === 160000) return 'cc';
+  const wt = (Array.isArray(l.waitlists) ? l.waitlists : []).map(id => ((typeof waitlistById === 'function' && waitlistById(id)) || {}).name || '').join(' ').toLowerCase();
+  if (/claude code/.test(wt)) return 'cc';
+  return 'inbox';
+}
+
+// Идемпотентно и детерминированно: на любом устройстве даёт одинаковый результат,
+// поэтому синк не плодит дублей. updated_at сдвигается на 1 мс, чтобы разложенная
+// версия выиграла у старой при слиянии и при этом «свежесть» карточек не сбилась.
+function ensurePipelines() {
+  const leads = loadLeadsRaw();
+  const clients = loadClientsRaw();
+  const cById = new Map(clients.map(c => [c.id, c]));
+  let lc = 0, cc = 0;
+  for (const l of leads) {
+    if (!l || !l.id) continue;
+    let touched = false;
+    if (!l.product || !PIPELINES_BY_ID[l.product]) {
+      l.product = guessPipe(l);
+      if (!l.title) l.title = l.name || '';
+      touched = true;
+    }
+    const st = mapStatusToTpl(l.status, pipeById(l.product).tpl);
+    if (st !== l.status) { l.status = st; touched = true; }
+    if (!l.client_id) { l.client_id = 'cl_' + l.id; touched = true; }
+    if (!cById.has(l.client_id) && !l.deleted) {
+      const base = l.created_at || l.updated_at || '1970-01-01T00:00:00.000Z';
+      const c = {
+        id: l.client_id, name: l.name || '', telegram: l.telegram || '', phone: l.phone || '', company: l.company || '',
+        transcripts: Array.isArray(l.transcripts) ? l.transcripts.slice() : [],
+        interests: Array.isArray(l.interests) ? l.interests.slice() : [],
+        waitlists: Array.isArray(l.waitlists) ? l.waitlists.slice() : [],
+        created_at: base, updated_at: base
+      };
+      clients.push(c); cById.set(c.id, c); cc++;
+    }
+    if (touched) { l.updated_at = tsPlus1(l.updated_at || l.created_at); lc++; }
+  }
+  if (lc) saveLeads(leads);
+  if (cc) saveClients(clients);
+}
+
+// Имя, компания и контакты клиента зеркалятся в его сделки: финансы, «Купившие» и leads.md читают их оттуда
+function mirrorClientToDeals(client) {
+  if (!client) return;
+  const leads = loadLeadsRaw();
+  let n = 0;
+  for (const l of leads) {
+    if (l.client_id !== client.id || l.deleted) continue;
+    if (l.name !== client.name || (l.company || '') !== (client.company || '') || (l.telegram || '') !== (client.telegram || '') || (l.phone || '') !== (client.phone || '')) {
+      l.name = client.name; l.company = client.company || ''; l.telegram = client.telegram || ''; l.phone = client.phone || '';
+      l.updated_at = tsPlus1(l.updated_at);
+      n++;
+    }
+  }
+  if (n) saveLeads(leads);
+}
+
 // Разовая миграция: одиночные поля transcript_url / talk_summary → список transcripts
 function migrateTranscripts() {
   const move = (arr) => {
@@ -3396,9 +3679,10 @@ function openHistForm(ctx) {
 
 let _leadDraftTranscripts = [];
 let _alumDraftTranscripts = [];
-function lmCurrentId(ctx) { return ctx === 'lead' ? currentLeadId : currentAlumId; }
-function lmLoadList(ctx) { return ctx === 'lead' ? loadLeads() : loadAlumni(); }
-function lmSaveList(ctx, list) { return ctx === 'lead' ? saveLeads(list) : saveAlumni(list); }
+// У лида транскрипты принадлежат человеку, а не сделке
+function lmCurrentId(ctx) { return ctx === 'lead' ? currentClientId : currentAlumId; }
+function lmLoadList(ctx) { return ctx === 'lead' ? loadClientsRaw() : loadAlumni(); }
+function lmSaveList(ctx, list) { return ctx === 'lead' ? saveClients(list) : saveAlumni(list); }
 function lmGetTranscripts(ctx) {
   const id = lmCurrentId(ctx);
   if (id) {
@@ -3492,8 +3776,178 @@ function renderTranscripts(ctx) {
   }).join('');
 }
 
+// ===== СКЛЕЙКА КЛИЕНТОВ =====
+// Похожими считаем одинаковые имена или общее «редкое» слово (фамилия, компания).
+// Имена собственные и продуктовые слова не в счёт: иначе все Ольги склеятся в одну.
+const MERGE_STOP = new Set(('оплата оплаты интенсив интенсива интенсиве claude code клод обучение обучения поток потока '
+  + 'январь января февраль февраля март марта апреля мая июня июля август августа сентябрь сентября октября ноября декабря '
+  + 'дискавери discovery разработка инстаграм инстаграмм обслуживание подростки подростков аватар корпобучение другое '
+  + 'медицина контакт уточнить рефералка цены хочет отдать маркетолог маркетолога group групп компания минск москва '
+  + 'александр алексей андрей анна анастасия артем артём вадим виктор виктория владимир влад дарья даша денис дмитрий '
+  + 'евгений евгения екатерина елена иван игорь ирина кристина люба любовь максим марина мария михаил наталья николай '
+  + 'ольга павел роман руслан светлана сергей станислав татьяна юлия юрий яна вероника вика тамара артур инна фатима '
+  + 'svetlana evgeniya stanislav алина макс макса егор вилена витя асель айше '
+  + 'банк центр дизайн девелопер девелоперы бюро школа клиника клиники агенство агентство холдинг исследование').split(/\s+/));
+// Названия-«оплаты» («оплата интенсива Claude Code» и т.п.) это разные покупатели, по совпадению имени их не склеиваем
+function isProductLikeName(n) { return /\d|оплат|интенсив|обучени|подрост|claude|code/i.test(n || ''); }
+function mergeTokens(c) {
+  return ((c.name || '') + ' ' + (c.company || '')).toLowerCase().replace(/ё/g, 'е')
+    .split(/[^а-яa-z0-9]+/).filter(t => t.length >= 4 && !MERGE_STOP.has(t) && !/^\d+$/.test(t));
+}
+function mergeDismissed() { try { const a = JSON.parse(localStorage.getItem('merge_dismissed') || '[]'); return new Set(Array.isArray(a) ? a : []); } catch { return new Set(); } }
+function findDupGroups() {
+  const clients = loadClients();
+  const dealsBy = {};
+  loadLeads().forEach(l => { (dealsBy[l.client_id] = dealsBy[l.client_id] || []).push(l); });
+  const live = clients.filter(c => (dealsBy[c.id] || []).length);
+  const parent = new Map(live.map(c => [c.id, c.id]));
+  const find = x => { while (parent.get(x) !== x) { parent.set(x, parent.get(parent.get(x))); x = parent.get(x); } return x; };
+  const unite = (a, b) => { const ra = find(a), rb = find(b); if (ra !== rb) parent.set(ra, rb); };
+  const byName = {}, tok = live.map(c => ({ id: c.id, t: mergeTokens(c) }));
+  live.forEach(c => { const k = normPersonName(c.name); if (k && !isProductLikeName(c.name)) (byName[k] = byName[k] || []).push(c.id); });
+  Object.values(byName).forEach(ids => ids.slice(1).forEach(id => unite(ids[0], id)));
+  for (let i = 0; i < tok.length; i++) for (let j = i + 1; j < tok.length; j++) {
+    const A = tok[i].t, Bt = tok[j].t;
+    if (A.some(a => Bt.some(b => a === b || (a.length >= 4 && b.length >= 4 && (a.startsWith(b) || b.startsWith(a)))))) unite(tok[i].id, tok[j].id);
+  }
+  const groups = {};
+  live.forEach(c => { const r = find(c.id); (groups[r] = groups[r] || []).push(c); });
+  const dismissed = mergeDismissed();
+  return Object.values(groups).filter(g => g.length > 1)
+    .map(g => ({ key: g.map(c => c.id).sort().join('|'), clients: g, dealsBy }))
+    .filter(g => !dismissed.has(g.key));
+}
+// Кого оставить главным: живое имя без цифр, с контактами, с большим числом сделок
+function mergeMainScore(c, deals) {
+  let s = 0;
+  if (!/\d/.test(c.name || '')) s += 3;
+  s -= ((c.name || '').toLowerCase().split(/[^а-яёa-z0-9]+/).filter(t => MERGE_STOP.has(t) && t.length > 4).length);
+  if (c.telegram) s += 2;
+  if (c.phone) s += 2;
+  s += Math.min((deals || []).length, 3) * 0.5;
+  return s;
+}
+function updateDupCount() {
+  const el = document.getElementById('leadsDupCount');
+  if (!el) return;
+  const n = findDupGroups().length;
+  el.textContent = n;
+  el.hidden = !n;
+}
+function openMergeModal() { renderMergeList(); document.getElementById('mergeModalBg').classList.add('show'); }
+function closeMergeModal() { document.getElementById('mergeModalBg').classList.remove('show'); }
+function renderMergeList() {
+  const groups = findDupGroups();
+  const el = document.getElementById('mergeList');
+  const sub = document.getElementById('mergeSub');
+  if (sub) sub.textContent = groups.length ? 'Групп: ' + groups.length + '. Отметь, кто из них один и тот же человек, и выбери главную карточку.' : '';
+  if (!groups.length) { el.innerHTML = '<div class="merge-empty">Похожих клиентов не осталось.</div>'; return; }
+  el.innerHTML = groups.map((g, gi) => {
+    const sorted = g.clients.slice().sort((a, b) => mergeMainScore(b, g.dealsBy[b.id]) - mergeMainScore(a, g.dealsBy[a.id]));
+    const rows = sorted.map((c, ci) => {
+      const deals = (g.dealsBy[c.id] || []).map(d => {
+        const p = pipeById(dealPipe(d)); const st = leadStatusById(d.status) || {};
+        return '<span class="lead-card-pipe" style="--_c:'+p.color+'">'+escapeHtml(p.short)+' · '+escapeHtml(st.short || st.name || '')+'</span>';
+      }).join('');
+      return '<div class="merge-row">'
+        + '<input type="checkbox" checked data-g="'+gi+'" data-id="'+c.id+'" title="Это тот же человек">'
+        + '<div class="merge-who"><div class="merge-name">'+escapeHtml(c.name)+'</div>'+(c.company ? '<div class="merge-sub">'+escapeHtml(c.company)+'</div>' : '')+'</div>'
+        + '<div class="merge-deals">'+deals+'</div>'
+        + '<label class="merge-main"><input type="radio" name="mergeMain'+gi+'" value="'+c.id+'"'+(ci === 0 ? ' checked' : '')+'> главная</label>'
+        + '</div>';
+    }).join('');
+    return '<div class="merge-group" data-key="'+escapeHtml(g.key)+'">'+rows
+      + '<div class="merge-actions">'
+      +   '<button class="modal-btn cancel" onclick="dismissDupGroup('+gi+')">Это разные люди</button>'
+      +   '<button class="modal-btn primary" onclick="mergeDupGroup('+gi+')">Склеить отмеченных</button>'
+      + '</div></div>';
+  }).join('');
+}
+function dismissDupGroup(gi) {
+  const box = document.querySelectorAll('#mergeList .merge-group')[gi];
+  if (!box) return;
+  const d = mergeDismissed(); d.add(box.dataset.key);
+  localStorage.setItem('merge_dismissed', JSON.stringify([...d]));
+  renderMergeList(); updateDupCount();
+}
+function mergeDupGroup(gi) {
+  const box = document.querySelectorAll('#mergeList .merge-group')[gi];
+  if (!box) return;
+  const ids = [...box.querySelectorAll('input[type=checkbox]:checked')].map(i => i.dataset.id);
+  const mainEl = box.querySelector('input[type=radio]:checked');
+  let mainId = mainEl ? mainEl.value : ids[0];
+  if (!ids.includes(mainId)) mainId = ids[0];
+  if (ids.length < 2) { toast('Отметь хотя бы двоих'); return; }
+  const n = mergeClients(mainId, ids.filter(id => id !== mainId));
+  render(); renderMergeList();
+  toast('Склеено. Сделок перенесено: ' + n);
+}
+function mergeClients(mainId, otherIds) {
+  const clients = loadClientsRaw();
+  const main = clients.find(c => c.id === mainId);
+  if (!main) return 0;
+  const leads = loadLeadsRaw();
+  const now = nowIso();
+  let moved = 0;
+  for (const oid of otherIds) {
+    if (oid === mainId) continue;
+    const o = clients.find(c => c.id === oid);
+    if (!o || o.deleted) continue;
+    ['telegram', 'phone', 'company'].forEach(f => { if (!main[f] && o[f]) main[f] = o[f]; });
+    const tr = new Map();
+    [...(main.transcripts || []), ...(o.transcripts || [])].forEach(t => tr.set(t.id || JSON.stringify(t), t));
+    main.transcripts = [...tr.values()].sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+    main.interests = [...new Set([...(main.interests || []), ...(o.interests || [])])];
+    main.waitlists = [...new Set([...(main.waitlists || []), ...(o.waitlists || [])])];
+    o.deleted = true; o.merged_into = mainId; o.updated_at = now;
+    for (const l of leads) {
+      if (l.client_id !== oid) continue;
+      l.client_id = mainId;
+      if (!l.title) l.title = l.name || '';
+      l.updated_at = tsPlus1(l.updated_at);
+      moved++;
+    }
+  }
+  main.updated_at = now;
+  saveClients(clients);
+  saveLeads(leads);
+  mirrorClientToDeals(main);
+  return moved;
+}
+function fillLeadMergeSelect() {
+  const sel = document.getElementById('leadMergeSelect');
+  if (!sel) return;
+  if (!currentClientId) { sel.hidden = true; return; }
+  const dealsBy = {};
+  loadLeads().forEach(l => { dealsBy[l.client_id] = (dealsBy[l.client_id] || 0) + 1; });
+  const others = loadClients().filter(c => c.id !== currentClientId && dealsBy[c.id])
+    .sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ru'));
+  sel.innerHTML = '<option value="">Склеить с…</option>' + others.map(c => '<option value="'+c.id+'">'+escapeHtml(c.name)+(c.company ? ' · '+escapeHtml(c.company) : '')+'</option>').join('');
+  sel.value = '';
+  sel.hidden = !others.length;
+}
+function mergeFromModalSelect(sel) {
+  const otherId = sel.value;
+  sel.value = '';
+  if (!otherId || !currentClientId) return;
+  const me = clientById(currentClientId), other = clientById(otherId);
+  if (!me || !other) return;
+  if (!confirm('«' + other.name + '» это тот же человек, что «' + me.name + '»? Его сделки, транскрипты и контакты переедут в эту карточку.')) return;
+  if (_leadDirty && !saveLeadInternal(false)) return;
+  const n = mergeClients(currentClientId, [otherId]);
+  render();
+  openLeadModal(currentLeadId);
+  toast('Склеено. Сделок перенесено: ' + n);
+}
+
 // ===== LEAD MODAL =====
 let currentLeadId = null;
+let currentClientId = null;
+let _leadDirty = false;
+// Поля выбранной сделки и контакты: правка любого из них = несохранённые изменения
+const LEAD_FORM_IDS = new Set(['leadName','leadTelegram','leadPhone','leadCompany','leadProduct','leadChannel','leadStatus','leadChek','leadAction','leadDeadline']);
+document.addEventListener('input', e => { if (e.target && LEAD_FORM_IDS.has(e.target.id)) _leadDirty = true; }, true);
+document.addEventListener('change', e => { if (e.target && LEAD_FORM_IDS.has(e.target.id)) _leadDirty = true; }, true);
 // Черновики для нового лида (пока id не выдан). Для существующего — читаем из lead и рендерим сразу.
 let _leadDraftInterests = [];
 let _leadDraftWaitlists = [];
@@ -3533,29 +3987,29 @@ function renderLeadWaitlistChips() {
   el.innerHTML = html;
 }
 function getCurrentLeadInterests() {
-  if (currentLeadId) {
-    const l = loadLeads().find(x => x.id === currentLeadId);
-    return (l && Array.isArray(l.interests)) ? l.interests.slice() : [];
+  if (currentClientId) {
+    const c = clientById(currentClientId);
+    return (c && Array.isArray(c.interests)) ? c.interests.slice() : [];
   }
   return _leadDraftInterests.slice();
 }
 function getCurrentLeadWaitlists() {
-  if (currentLeadId) {
-    const l = loadLeads().find(x => x.id === currentLeadId);
-    return (l && Array.isArray(l.waitlists)) ? l.waitlists.slice() : [];
+  if (currentClientId) {
+    const c = clientById(currentClientId);
+    return (c && Array.isArray(c.waitlists)) ? c.waitlists.slice() : [];
   }
   return _leadDraftWaitlists.slice();
 }
 function toggleLeadInterest(tagId) {
-  if (currentLeadId) {
-    const leads = loadLeads();
-    const l = leads.find(x => x.id === currentLeadId);
-    if (!l) return;
-    l.interests = Array.isArray(l.interests) ? l.interests : [];
-    const i = l.interests.indexOf(tagId);
-    if (i >= 0) l.interests.splice(i, 1); else l.interests.push(tagId);
-    l.updated_at = nowIso();
-    saveLeads(leads);
+  if (currentClientId) {
+    const clients = loadClientsRaw();
+    const c = clients.find(x => x.id === currentClientId);
+    if (!c) return;
+    c.interests = Array.isArray(c.interests) ? c.interests : [];
+    const i = c.interests.indexOf(tagId);
+    if (i >= 0) c.interests.splice(i, 1); else c.interests.push(tagId);
+    c.updated_at = nowIso();
+    saveClients(clients);
     renderLeadInterestChips();
     render();
   } else {
@@ -3565,15 +4019,15 @@ function toggleLeadInterest(tagId) {
   }
 }
 function toggleLeadWaitlist(wlId) {
-  if (currentLeadId) {
-    const leads = loadLeads();
-    const l = leads.find(x => x.id === currentLeadId);
-    if (!l) return;
-    l.waitlists = Array.isArray(l.waitlists) ? l.waitlists : [];
-    const i = l.waitlists.indexOf(wlId);
-    if (i >= 0) l.waitlists.splice(i, 1); else l.waitlists.push(wlId);
-    l.updated_at = nowIso();
-    saveLeads(leads);
+  if (currentClientId) {
+    const clients = loadClientsRaw();
+    const c = clients.find(x => x.id === currentClientId);
+    if (!c) return;
+    c.waitlists = Array.isArray(c.waitlists) ? c.waitlists : [];
+    const i = c.waitlists.indexOf(wlId);
+    if (i >= 0) c.waitlists.splice(i, 1); else c.waitlists.push(wlId);
+    c.updated_at = nowIso();
+    saveClients(clients);
     renderLeadWaitlistChips();
     render();
     const w = waitlistById(wlId);
@@ -3590,12 +4044,22 @@ function fmtDateShort(iso) {
   return d.toLocaleDateString('ru-RU', { day:'numeric', month:'short' });
 }
 function fillLeadSelects() {
-  const statusSel = document.getElementById('leadStatus');
-  if (statusSel && !statusSel.options.length) {
-    LEAD_STATUSES.forEach(s => {
-      const opt = document.createElement('option'); opt.value = s.id; opt.textContent = s.name; statusSel.appendChild(opt);
-    });
+  const prod = document.getElementById('leadProduct');
+  if (prod && !prod.options.length) {
+    prod.innerHTML = PIPELINES.map(p => '<option value="'+p.id+'">'+escapeHtml(p.name)+'</option>').join('');
   }
+}
+function fillLeadStatusSelect(pipeId, value) {
+  const sel = document.getElementById('leadStatus');
+  if (!sel) return;
+  const list = pipeStatuses(pipeId);
+  sel.innerHTML = list.map(st => '<option value="'+st.id+'">'+escapeHtml(st.name)+'</option>').join('');
+  sel.value = list.some(st => st.id === value) ? value : list[0].id;
+}
+function onLeadProductChange() {
+  const pipeId = document.getElementById('leadProduct').value || 'inbox';
+  const cur = document.getElementById('leadStatus').value;
+  fillLeadStatusSelect(pipeId, mapStatusToTpl(cur, pipeById(pipeId).tpl));
 }
 function fmtDateNice(iso) {
   if (!iso) return '—';
@@ -3608,30 +4072,35 @@ function fmtDateNice(iso) {
   return d.toLocaleDateString('ru-RU', {day:'2-digit', month:'2-digit', year:'2-digit'});
 }
 function openLeadModalForStatus(status) {
-  openLeadModal();
-  const sel = document.getElementById('leadStatus');
-  if (sel) sel.value = status;
+  openLeadModal(null, { product: leadsPipe !== 'all' ? leadsPipe : 'inbox', status });
 }
-function openLeadModal(id) {
+function openLeadModal(id, opts) {
+  opts = opts || {};
   fillLeadSelects();
   const leads = loadLeads();
   const lead = id ? leads.find(l => l.id === id) : null;
   currentLeadId = lead ? lead.id : null;
+  currentClientId = lead ? (lead.client_id || null) : (opts.clientId || null);
+  const client = currentClientId ? clientById(currentClientId) : null;
   _leadDraftInterests = [];
   _leadDraftWaitlists = [];
   _leadDraftTranscripts = [];
+  const product = lead ? dealPipe(lead) : (opts.product || (leadsPipe !== 'all' ? leadsPipe : 'inbox'));
   document.getElementById('leadModalId').value = lead ? lead.id : '';
-  document.getElementById('leadName').value = lead ? lead.name : '';
-  document.getElementById('leadCompany').value = lead ? (lead.company || '') : '';
+  document.getElementById('leadName').value = client ? client.name : (lead ? lead.name : '');
+  document.getElementById('leadCompany').value = client ? (client.company || '') : (lead ? (lead.company || '') : '');
+  document.getElementById('leadTelegram').value = client ? (client.telegram || '') : (lead ? (lead.telegram || '') : '');
+  document.getElementById('leadPhone').value = client ? (client.phone || '') : (lead ? (lead.phone || '') : '');
+  document.getElementById('leadProduct').value = product;
+  fillLeadStatusSelect(product, lead ? lead.status : opts.status);
   document.getElementById('leadChannel').value = lead ? channelDisplay(lead.channel) : '';
-  document.getElementById('leadStatus').value = lead ? lead.status : 'new';
   document.getElementById('leadChek').value = lead && lead.potential_chek_rub ? lead.potential_chek_rub : '';
   document.getElementById('leadAction').value = lead ? (lead.next_action || '') : '';
   document.getElementById('leadDeadline').value = lead ? (lead.next_action_date || '') : '';
-  document.getElementById('leadTelegram').value = lead ? (lead.telegram || '') : '';
-  document.getElementById('leadPhone').value = lead ? (lead.phone || '') : '';
   document.getElementById('leadName').placeholder = 'Имя и фамилия';
   document.getElementById('leadCompany').placeholder = 'Компания (опционально)';
+  const label = document.getElementById('leadDealLabel');
+  if (label) label.textContent = lead && lead.title && lead.title !== (client ? client.name : lead.name) ? 'Сделка · ' + lead.title : 'Сделка';
   // Meta
   const metaRow = document.getElementById('leadMetaRow');
   if (lead) {
@@ -3649,12 +4118,78 @@ function openLeadModal(id) {
   renderHistoryList(lead);
   renderLeadInterestChips();
   renderLeadWaitlistChips();
+  renderLeadDeals();
+  fillLeadMergeSelect();
   applyLmSections('lead');
   closeTrForm('lead');
   renderTranscripts('lead');
+  _leadDirty = false;
   document.getElementById('leadModalBg').classList.add('show');
   setTimeout(() => { if (!lead) document.getElementById('leadName').focus(); }, 50);
 }
+
+// Сделки клиента: список, переключение, новая сделка в другом продукте
+function renderLeadDeals() {
+  const list = document.getElementById('leadDealsList');
+  const cnt = document.getElementById('leadDealsCount');
+  const add = document.getElementById('leadDealAdd');
+  if (!list) return;
+  const deals = currentClientId ? clientDeals(currentClientId) : [];
+  deals.sort((a, b) => {
+    const ka = leadStatusKind(a.status) === 'active' ? 0 : 1, kb = leadStatusKind(b.status) === 'active' ? 0 : 1;
+    return ka - kb || new Date(b.updated_at) - new Date(a.updated_at);
+  });
+  if (cnt) cnt.textContent = deals.length || (currentLeadId ? 1 : 0);
+  if (!deals.length) {
+    list.innerHTML = '<div class="deals-empty">Сделка появится после сохранения. Другие продукты этому человеку добавишь через «+ сделка».</div>';
+  } else {
+    const client = clientById(currentClientId);
+    list.innerHTML = deals.map(d => {
+      const p = pipeById(dealPipe(d));
+      const st = leadStatusById(d.status) || {};
+      const title = d.title && d.title !== (client ? client.name : d.name) ? d.title : '';
+      return '<button type="button" class="deal-row'+(d.id === currentLeadId ? ' active' : '')+'" onclick="switchDeal(\''+d.id+'\')">'
+        + '<span class="lead-card-pipe" style="--_c:'+p.color+'">'+escapeHtml(p.short)+'</span>'
+        + '<span class="deal-row-status" style="--_c:'+(st.color || '#9ca3af')+'">'+escapeHtml(st.name || '')+'</span>'
+        + '<span class="deal-row-title">'+escapeHtml(title)+'</span>'
+        + (d.potential_chek_rub ? '<span class="deal-row-amount">'+fmtMoneyRubShort(d.potential_chek_rub)+'</span>' : '')
+        + '</button>';
+    }).join('');
+  }
+  if (add) {
+    add.innerHTML = '<option value="">+ сделка</option>' + PIPELINES.filter(p => p.id !== 'inbox').map(p => '<option value="'+p.id+'">'+escapeHtml(p.name)+'</option>').join('');
+    add.value = '';
+  }
+}
+function switchDeal(dealId) {
+  if (dealId === currentLeadId) return;
+  if (_leadDirty && !saveLeadInternal(false)) return;
+  openLeadModal(dealId);
+}
+function addDealFromSelect(sel) {
+  const product = sel.value;
+  sel.value = '';
+  if (!PIPELINES_BY_ID[product]) return;
+  if (!currentClientId || _leadDirty) { if (!saveLeadInternal(false)) return; }
+  const c = clientById(currentClientId);
+  if (!c) return;
+  const now = nowIso();
+  const tpl = pipeById(product).tpl;
+  const deal = {
+    id: genLeadId(), client_id: c.id, product, title: '',
+    name: c.name, company: c.company || '', telegram: c.telegram || '', phone: c.phone || '',
+    channel: '', potential_chek_rub: 0, status: PIPE_TEMPLATES[tpl][0].id,
+    created_at: now, updated_at: now, status_changed_at: now, closed_at: null,
+    next_action: '', next_action_date: null, history: []
+  };
+  const leads = loadLeads();
+  leads.push(deal);
+  saveLeads(leads);
+  render();
+  openLeadModal(deal.id);
+  toast('Сделка в «' + pipeById(product).name + '» заведена');
+}
+function normPersonName(n) { return String(n || '').toLowerCase().replace(/ё/g, 'е').replace(/\s+/g, ' ').trim(); }
 function renderHistoryList(lead) {
   const el = document.getElementById('leadHistoryList');
   const history = (lead && lead.history) || [];
@@ -3700,56 +4235,90 @@ function addHistoryEntry() {
 function saveLeadInternal(closeModal) {
   const name = document.getElementById('leadName').value.trim();
   if (!name) { alert('Имя обязательно'); return false; }
-  const leads = loadLeads();
-  const existing = currentLeadId ? leads.find(l => l.id === currentLeadId) : null;
-
+  const now = nowIso();
+  const contact = {
+    name,
+    company: document.getElementById('leadCompany').value.trim(),
+    telegram: document.getElementById('leadTelegram').value.trim(),
+    phone: document.getElementById('leadPhone').value.trim()
+  };
+  const product = document.getElementById('leadProduct').value || 'inbox';
   const newStatus = document.getElementById('leadStatus').value;
   const chek = parseFloat(document.getElementById('leadChek').value) || 0;
 
+  // 1) Человек
+  const clients = loadClientsRaw();
+  let client = currentClientId ? clients.find(c => c.id === currentClientId) : null;
+  if (client) {
+    Object.assign(client, contact);
+    client.deleted = false;
+  } else {
+    const same = clients.find(c => !c.deleted && normPersonName(c.name) === normPersonName(name));
+    if (same && confirm('Клиент «' + same.name + '» уже есть. Добавить эту сделку в его карточку?')) {
+      client = same;
+      ['company', 'telegram', 'phone'].forEach(f => { if (!client[f] && contact[f]) client[f] = contact[f]; });
+      client.interests = [...new Set([...(client.interests || []), ..._leadDraftInterests])];
+      client.waitlists = [...new Set([...(client.waitlists || []), ..._leadDraftWaitlists])];
+      client.transcripts = [..._leadDraftTranscripts, ...(client.transcripts || [])];
+    } else {
+      client = Object.assign({ id: genClientId(), created_at: now }, contact, {
+        transcripts: _leadDraftTranscripts.slice(),
+        interests: _leadDraftInterests.slice(),
+        waitlists: _leadDraftWaitlists.slice()
+      });
+      clients.push(client);
+    }
+    _leadDraftInterests = []; _leadDraftWaitlists = []; _leadDraftTranscripts = [];
+  }
+  client.updated_at = now;
+  saveClients(clients);
+  currentClientId = client.id;
+  const mirror = { name: client.name, company: client.company || '', telegram: client.telegram || '', phone: client.phone || '' };
+
+  // 2) Сделка
+  const leads = loadLeads();
+  const existing = currentLeadId ? leads.find(l => l.id === currentLeadId) : null;
   if (existing) {
+    existing.product = product;
+    existing.client_id = client.id;
     const statusChanged = existing.status !== newStatus;
     const newKind = leadStatusKind(newStatus);
     const oldKind = leadStatusKind(existing.status);
     if (statusChanged && newKind === 'won') {
       handleWinFlow(existing, leads, newStatus);
-      existing.name = name;
-      existing.company = document.getElementById('leadCompany').value.trim();
+      Object.assign(existing, mirror);
       existing.channel = document.getElementById('leadChannel').value.trim();
-      existing.telegram = document.getElementById('leadTelegram').value.trim();
-      existing.phone = document.getElementById('leadPhone').value.trim();
       existing.next_action = document.getElementById('leadAction').value.trim();
       existing.next_action_date = document.getElementById('leadDeadline').value || null;
       saveLeads(leads);
+      mirrorClientToDeals(client);
+      _leadDirty = false;
       if (closeModal) closeLeadModal();
       render();
       return true;
     }
     if (statusChanged && newKind === 'lost') {
-      existing.status_changed_at = nowIso();
-      existing.closed_at = nowIso();
+      existing.status_changed_at = now;
+      existing.closed_at = now;
     } else if (statusChanged) {
-      existing.status_changed_at = nowIso();
+      existing.status_changed_at = now;
       if (oldKind === 'won' || oldKind === 'lost') existing.closed_at = null;
     }
-    existing.name = name;
-    existing.company = document.getElementById('leadCompany').value.trim();
+    Object.assign(existing, mirror);
     existing.channel = document.getElementById('leadChannel').value.trim();
-    existing.telegram = document.getElementById('leadTelegram').value.trim();
-    existing.phone = document.getElementById('leadPhone').value.trim();
     existing.potential_chek_rub = chek;
     existing.status = newStatus;
     existing.next_action = document.getElementById('leadAction').value.trim();
     existing.next_action_date = document.getElementById('leadDeadline').value || null;
-    existing.updated_at = nowIso();
+    existing.updated_at = now;
     saveLeads(leads);
   } else {
-    const now = nowIso();
-    const newLead = {
+    const newLead = Object.assign({
       id: genLeadId(),
-      name,
-      company: document.getElementById('leadCompany').value.trim(),
-      telegram: document.getElementById('leadTelegram').value.trim(),
-      phone: document.getElementById('leadPhone').value.trim(),
+      client_id: client.id,
+      product,
+      title: ''
+    }, mirror, {
       channel: document.getElementById('leadChannel').value.trim(),
       potential_chek_rub: chek,
       status: newStatus,
@@ -3759,40 +4328,49 @@ function saveLeadInternal(closeModal) {
       closed_at: leadStatusKind(newStatus) !== 'active' ? now : null,
       next_action: document.getElementById('leadAction').value.trim(),
       next_action_date: document.getElementById('leadDeadline').value || null,
-      history: [],
-      transcripts: _leadDraftTranscripts.slice(),
-      interests: _leadDraftInterests.slice(),
-      waitlists: _leadDraftWaitlists.slice()
-    };
+      history: []
+    });
     leads.push(newLead);
     currentLeadId = newLead.id;
-    _leadDraftInterests = [];
-    _leadDraftWaitlists = [];
-    _leadDraftTranscripts = [];
+    document.getElementById('leadModalId').value = newLead.id;
     saveLeads(leads);
   }
+  mirrorClientToDeals(client);
+  _leadDirty = false;
   if (closeModal) closeLeadModal();
   render();
+  if (!closeModal) { renderLeadDeals(); fillLeadMergeSelect(); }
   return true;
 }
 function saveLead() {
   if (saveLeadInternal(true)) toast('Лид сохранён');
 }
-function closeLeadModal() { document.getElementById('leadModalBg').classList.remove('show'); currentLeadId = null; }
+function closeLeadModal() { document.getElementById('leadModalBg').classList.remove('show'); currentLeadId = null; currentClientId = null; _leadDirty = false; }
 function deleteLeadFromModal() {
   if (!currentLeadId) return;
   const leads = loadLeadsRaw();
   const lead = leads.find(l => l.id === currentLeadId);
   if (!lead) return;
-  if (!confirm('Удалить лид «'+lead.name+'» и всю историю? Это нельзя отменить.')) return;
+  const rest = leads.filter(l => !l.deleted && l.id !== lead.id && l.client_id && l.client_id === lead.client_id);
+  const pname = pipeById(dealPipe(lead)).name;
+  const msg = rest.length
+    ? 'Удалить сделку «' + pname + '» у «' + clientNameOf(lead) + '» вместе с её историей? Остальные сделки клиента останутся.'
+    : 'Удалить сделку «' + pname + '»? Это последняя сделка «' + clientNameOf(lead) + '», карточка клиента тоже удалится.';
+  if (!confirm(msg)) return;
   // Soft-delete: помечаем флагом, чтобы tombstone дошёл до других устройств через sync
   lead.deleted = true;
   lead.deleted_at = nowIso();
   lead.updated_at = nowIso();
   saveLeads(leads);
+  if (!rest.length && lead.client_id) {
+    const clients = loadClientsRaw();
+    const c = clients.find(x => x.id === lead.client_id);
+    if (c) { c.deleted = true; c.updated_at = nowIso(); saveClients(clients); }
+  }
+  if (rest.length) { render(); openLeadModal(rest[0].id); toast('Сделка удалена'); return; }
   closeLeadModal();
   render();
-  toast('Лид удалён');
+  toast('Удалено');
 }
 
 // ===== CHECKLIST =====
@@ -5111,6 +5689,16 @@ function saveInterestTagsFromModal() {
     }
   }
   if (cleaned) saveLeads(leads);
+  const clientsT = loadClientsRaw();
+  let cleanedC = 0;
+  for (const c of clientsT) {
+    if (Array.isArray(c.interests)) {
+      const before = c.interests.length;
+      c.interests = c.interests.filter(id => newIds.has(id));
+      if (c.interests.length !== before) { c.updated_at = nowIso(); cleanedC++; }
+    }
+  }
+  if (cleanedC) { saveClients(clientsT); cleaned += cleanedC; }
   INTEREST_TAGS = _interestTagsDraft.slice();
   saveInterestTags(INTEREST_TAGS);
   closeInterestTagsModal();
@@ -5229,6 +5817,9 @@ function renderWaitlists() {
   });
   const leads = loadLeads();
   const alumni = loadAlumni();
+  const clientsWl = loadClients();
+  const dealsByClient = {};
+  leads.forEach(l => { (dealsByClient[l.client_id] = dealsByClient[l.client_id] || []).push(l); });
   // Badge
   const openCount = lists.filter(w => !w.closed).length;
   const badge = document.getElementById('navWaitlistsBadge');
@@ -5242,8 +5833,12 @@ function renderWaitlists() {
   cont.innerHTML = lists.map(w => {
     // в список ожидания могут попасть и лиды, и выпускники
     const members = []
-      .concat(leads.filter(l => Array.isArray(l.waitlists) && l.waitlists.includes(w.id))
-        .map(l => ({ kind:'lead', id:l.id, name:l.name, company:l.company, interests:l.interests, chek:l.potential_chek_rub, st:leadStatusById(l.status) })))
+      .concat(clientsWl.filter(c => Array.isArray(c.waitlists) && c.waitlists.includes(w.id))
+        .map(c => {
+          const ds = (dealsByClient[c.id] || []).slice().sort((a, b) => (leadStatusKind(a.status) === 'active' ? 0 : 1) - (leadStatusKind(b.status) === 'active' ? 0 : 1) || new Date(b.updated_at) - new Date(a.updated_at));
+          const d = ds[0];
+          return d ? { kind:'lead', id:d.id, name:c.name, company:c.company, interests:c.interests, chek:d.potential_chek_rub, st:leadStatusById(d.status) } : null;
+        }).filter(Boolean))
       .concat(alumni.filter(a => Array.isArray(a.waitlists) && a.waitlists.includes(w.id))
         .map(a => ({ kind:'alum', id:a.id, name:a.name, company:a.company || a.group, interests:a.interests, chek:a.potential_chek_rub, st:alumStatusById(a.status) })));
     const dateStr = w.event_date ? fmtDateShort(w.event_date) : 'без даты';
@@ -5283,6 +5878,7 @@ function renderWaitlists() {
 }
 
 function render() {
+  ensurePipelines();
   renderMetrics();
   renderWeekBars();
   renderRecentList();
@@ -5855,7 +6451,7 @@ function mergeSnapshots(remote, local) {
         if (!seen.has(sig)) { seen.add(sig); merged.push(d); }
       }
       out[k] = merged;
-    } else if ((k === 'projects' || k === 'alumni' || k === 'waitlists') && Array.isArray(rv) && Array.isArray(lv)) {
+    } else if ((k === 'projects' || k === 'alumni' || k === 'waitlists' || k === 'clients') && Array.isArray(rv) && Array.isArray(lv)) {
       const byId = new Map();
       for (const p of rv.concat(lv)) {
         const prev = byId.get(p.id);
@@ -5928,24 +6524,28 @@ function generateLeadsMarkdown(allLeads) {
   md += '- Всего активных: **'+active+'**\n';
   md += '- Won в этом месяце: **'+wonMonth.length+'** ('+wonSum.toLocaleString('ru-RU')+' ₽)\n';
   md += '- Застрявших (>7 дней без апдейта): **'+stuck+'**\n\n';
-  for (const status of ORDER) {
-    const group = leads.filter(l => l.status === status);
-    if (!group.length) continue;
-    const statusName = (leadStatusById(status) || {}).name || status;
-    md += '## '+statusName+' ('+group.length+')\n\n';
-    group.sort((a,b) => new Date(b.updated_at) - new Date(a.updated_at));
-    for (const l of group) {
-      md += '### '+l.name+(l.company ? ' — '+l.company : '')+'\n';
-      md += '- channel: '+(CHANNEL_LABELS[l.channel]||l.channel)+(l.potential_chek_rub ? ', chek: '+l.potential_chek_rub.toLocaleString('ru-RU')+' ₽' : '')+'\n';
-      if (l.telegram || l.phone) md += '- контакт:'+(l.telegram ? ' TG '+l.telegram : '')+(l.phone ? ' тел '+l.phone : '')+'\n';
-      if (l.next_action) md += '- next: '+l.next_action+(l.next_action_date ? ' ('+l.next_action_date+')' : '')+'\n';
-      md += '- обновлён: '+new Date(l.updated_at).toISOString().slice(0,10)+'\n\n';
-      const hist = (l.history || []).slice(0, 5);
-      for (const h of hist) {
-        const d = new Date(h.date).toISOString().slice(0,16).replace('T',' ');
-        md += '> '+d+' — '+h.text.replace(/\n+/g,' ')+'\n';
+  for (const pipe of PIPELINES) {
+    const inPipe = leads.filter(l => dealPipe(l) === pipe.id);
+    if (!inPipe.length) continue;
+    md += '## '+pipe.name+' ('+inPipe.length+')\n\n';
+    for (const st of pipeStatuses(pipe.id)) {
+      const group = inPipe.filter(l => l.status === st.id);
+      if (!group.length) continue;
+      md += '### '+st.name+' ('+group.length+')\n\n';
+      group.sort((a,b) => new Date(b.updated_at) - new Date(a.updated_at));
+      for (const l of group) {
+        md += '#### '+l.name+(l.company ? ' — '+l.company : '')+(l.title && l.title !== l.name ? ' · '+l.title : '')+'\n';
+        md += '- channel: '+(CHANNEL_LABELS[l.channel]||l.channel)+(l.potential_chek_rub ? ', chek: '+l.potential_chek_rub.toLocaleString('ru-RU')+' ₽' : '')+'\n';
+        if (l.telegram || l.phone) md += '- контакт:'+(l.telegram ? ' TG '+l.telegram : '')+(l.phone ? ' тел '+l.phone : '')+'\n';
+        if (l.next_action) md += '- next: '+l.next_action+(l.next_action_date ? ' ('+l.next_action_date+')' : '')+'\n';
+        md += '- обновлён: '+new Date(l.updated_at).toISOString().slice(0,10)+'\n\n';
+        const hist = (l.history || []).slice(0, 5);
+        for (const h of hist) {
+          const d = new Date(h.date).toISOString().slice(0,16).replace('T',' ');
+          md += '> '+d+' — '+h.text.replace(/\n+/g,' ')+'\n';
+        }
+        md += '\n';
       }
-      md += '\n';
     }
   }
   return md;
@@ -6185,6 +6785,7 @@ seedLeadsIfEmpty();
 importLeadsFromVault();
 migrateDealsToLeads();
 migrateTranscripts();
+ensurePipelines();
 seedProjectsIfEmpty();
 const savedPage = localStorage.getItem('activeTab') || 'home';
 navTo(['home','leads','alumni','waitlists','today','finance','history','projects','events'].includes(savedPage) ? savedPage : 'home');
