@@ -1054,7 +1054,7 @@
   .lead-modal-close { background:var(--bg); border:none; border-radius:50%; width:32px; height:32px; cursor:pointer; color:var(--text-2); font-size:18px; line-height:1; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
   .lead-modal-close:hover { background:var(--border); color:var(--text); }
   .lead-fields-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px 12px; margin-bottom:14px; }
-  .lead-field-mini { display:flex; flex-direction:column; gap:3px; }
+  .lead-field-mini { display:flex; flex-direction:column; gap:3px; min-width:0; }
   .lead-field-mini label { font-size:10px; color:var(--text-3); text-transform:uppercase; letter-spacing:.4px; font-weight:600; }
   .lead-field-mini select, .lead-field-mini input { width:100%; border:1.5px solid var(--border-2); border-radius:8px; padding:7px 10px; font-size:13px; font-family:inherit; outline:none; background:#fff; }
   .lead-field-mini select:focus, .lead-field-mini input:focus { border-color:var(--green-dark); }
@@ -1075,6 +1075,7 @@
   .lead-copy-btn.copied { color:var(--green-dark); }
   .lead-meta-row { display:flex; gap:14px; flex-wrap:wrap; font-size:11px; color:var(--text-3); padding-top:10px; border-top:1px solid var(--border); margin-bottom:14px; }
   .lead-meta-row span b { color:var(--text-2); font-weight:600; }
+  .lead-meta-row > span { white-space:nowrap; }
   .lead-tags-section { margin-bottom:14px; }
   .lead-tags-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:7px; }
   .lead-tags-title { font-size:12px; font-weight:700; color:var(--text-2); text-transform:uppercase; letter-spacing:.4px; }
@@ -1120,7 +1121,6 @@
   .deal-row-amount { font-size:12px; font-weight:700; color:var(--green-dark); margin-left:auto; white-space:nowrap; }
   .deals-empty { font-size:11.5px; color:var(--text-3); font-style:italic; padding:2px 2px 4px; }
   .deal-section-label { font-size:10px; color:var(--text-3); text-transform:uppercase; letter-spacing:.4px; font-weight:700; margin:0 0 8px; }
-  .lead-merge-select { max-width:170px; }
 
   /* ===== Окно «Похожие клиенты» ===== */
   .merge-group { border:1px solid var(--border-2); border-radius:12px; padding:8px 12px 10px; margin-bottom:10px; }
@@ -1162,6 +1162,11 @@
     background:transparent; border:1.5px dashed var(--border-2); border-radius:999px; padding:5px 12px; cursor:pointer; outline:none; transition:border-color .15s ease, color .15s ease, background .15s ease; }
   .lm-add-select:hover { border-color:var(--green-light-2); color:var(--green-dark); background:var(--green-bg-soft); }
   .lm-add-select:disabled { opacity:.45; cursor:default; }
+  /* нативный select тянется по самому длинному пункту: ширину задаём сами, список пунктов при этом открывается целиком */
+  .lm-add-select { width:112px; text-align:center; text-align-last:center; flex-shrink:0; }
+  .deals-merge { appearance:none; -webkit-appearance:none; display:block; width:100%; margin-top:7px; padding:3px 2px; border:none; background:transparent;
+    font-family:inherit; font-size:11.5px; font-weight:500; color:var(--text-3); cursor:pointer; outline:none; text-overflow:ellipsis; }
+  .deals-merge:hover { color:var(--green-dark); text-decoration:underline; text-decoration-style:dotted; text-underline-offset:3px; }
   .lm-empty { font-size:11.5px; color:var(--text-3); font-style:italic; }
 
   /* транскрипты */
@@ -1204,7 +1209,8 @@
   .lead-history-form.show { display:block; }
   .lead-history-form textarea { width:100%; min-height:60px; border:1.5px solid var(--border-2); border-radius:6px; padding:8px 10px; font-family:inherit; font-size:13px; outline:none; resize:vertical; background:#fff; }
   .lead-history-form-actions { display:flex; gap:6px; margin-top:6px; justify-content:flex-end; }
-  .lead-modal-actions { display:flex; justify-content:space-between; gap:8px; align-items:center; padding-top:10px; border-top:1px solid var(--border); }
+  .lead-modal-actions { display:flex; justify-content:space-between; gap:8px; align-items:center; padding-top:10px; border-top:1px solid var(--border); flex-wrap:wrap; }
+  .lead-modal-actions button { white-space:nowrap; }
   .lead-modal-actions-left { display:flex; gap:6px; }
   .lead-modal-actions-right { display:flex; gap:6px; }
   .lead-modal-actions .danger { background:transparent; color:#dc2626; border:1px solid #fecaca; padding:7px 12px; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; }
@@ -1832,6 +1838,7 @@
         <select class="lm-add-select" id="leadDealAdd" onchange="addDealFromSelect(this)" title="Завести сделку в другом продукте"></select>
       </div>
       <div id="leadDealsList"></div>
+      <select class="deals-merge" id="leadMergeSelect" onchange="mergeFromModalSelect(this)" title="Это тот же человек, что и другая карточка" hidden></select>
     </div>
 
     <!-- Выбранная сделка -->
@@ -1936,7 +1943,6 @@
     <div class="lead-modal-actions">
       <div class="lead-modal-actions-left">
         <button class="danger" id="leadDeleteBtn" onclick="deleteLeadFromModal()" style="display:none">Удалить сделку</button>
-        <select class="lm-add-select lead-merge-select" id="leadMergeSelect" onchange="mergeFromModalSelect(this)" title="Это тот же человек, что и другая карточка" hidden></select>
       </div>
       <div class="lead-modal-actions-right">
         <button class="modal-btn cancel" onclick="closeLeadModal()">Закрыть</button>
@@ -3926,7 +3932,7 @@ function fillLeadMergeSelect() {
   loadLeads().forEach(l => { dealsBy[l.client_id] = (dealsBy[l.client_id] || 0) + 1; });
   const others = loadClients().filter(c => c.id !== currentClientId && dealsBy[c.id])
     .sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ru'));
-  sel.innerHTML = '<option value="">Склеить с…</option>' + others.map(c => '<option value="'+c.id+'">'+escapeHtml(c.name)+(c.company ? ' · '+escapeHtml(c.company) : '')+'</option>').join('');
+  sel.innerHTML = '<option value="">⤳ Тот же человек есть в другой карточке? Склеить…</option>' + others.map(c => '<option value="'+c.id+'">'+escapeHtml(c.name)+(c.company ? ' · '+escapeHtml(c.company) : '')+'</option>').join('');
   sel.value = '';
   sel.hidden = !others.length;
 }
