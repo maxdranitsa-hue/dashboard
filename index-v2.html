@@ -3501,8 +3501,9 @@ function renderLeadsKanban() {
     }
     board.appendChild(col);
   });
-  // Перетаскивание только внутри воронки: во «Все» колонки это фазы, у них нет одной стадии
-  if (typeof Sortable !== 'undefined' && !isAll) {
+  // Перетаскивание работает и в воронке, и во «Все». Во «Все» колонка это фаза:
+  // сделка встаёт в первую стадию своей воронки с этой фазой, тост говорит, в какую.
+  if (typeof Sortable !== 'undefined') {
     board.querySelectorAll('.kanban-col-body').forEach(body => {
       Sortable.create(body, {
         group: 'leads',
@@ -3513,9 +3514,14 @@ function renderLeadsKanban() {
         preventOnFilter: false,
         onEnd: (evt) => {
           const leadId = evt.item.dataset.leadId;
-          const newStatus = evt.to.dataset.status;
-          const oldStatus = evt.from.dataset.status;
-          if (newStatus !== oldStatus) handleLeadStatusChange(leadId, newStatus, oldStatus);
+          if (evt.to.dataset.status === evt.from.dataset.status) return;
+          if (!isAll) { handleLeadStatusChange(leadId, evt.to.dataset.status, evt.from.dataset.status); return; }
+          const lead = loadLeads().find(l => l.id === leadId);
+          if (!lead) return;
+          const phase = evt.to.dataset.status;
+          const target = pipeStatuses(dealPipe(lead)).find(st => st.phase === phase);
+          if (!target || target.id === lead.status) { renderLeadsKanban(); return; }
+          handleLeadStatusChange(leadId, target.id, lead.status);
         }
       });
     });
