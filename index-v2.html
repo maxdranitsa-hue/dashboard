@@ -861,6 +861,7 @@
   .alumni-empty-state { font-size:13px; color:var(--text-3); text-align:center; padding:40px 16px; font-style:italic; }
 
   /* Управление колонками выпускников */
+  .stage-count { font-size:11px; font-weight:700; color:var(--text-2); background:var(--surface); border:1px solid var(--border-2); border-radius:999px; padding:1px 8px; white-space:nowrap; }
   .alum-status-row { display:flex; align-items:center; gap:10px; padding:10px 12px; background:var(--bg); border-radius:10px; border:1px solid transparent; transition:border-color .15s; }
   .alum-status-row.sortable-ghost { opacity:.4; }
   .alum-status-row.sortable-drag { background:#fff; box-shadow:var(--shadow-lg); }
@@ -1567,6 +1568,7 @@
           <div class="card-head">
             <div class="card-title">CRM лидов</div>
             <div style="display:flex;gap:8px">
+              <button class="btn btn-secondary" onclick="openLeadStatusesModal()" title="Добавить, удалить, переименовать и переставить колонки воронки">⚙ Колонки</button>
               <button class="btn btn-secondary leads-dup-btn" id="leadsDupBtn" onclick="openMergeModal()" title="Похожие клиенты: склеить в одну карточку">Дубли<span class="count" id="leadsDupCount" hidden></span></button>
               <button class="btn btn-primary" onclick="openLeadModal()">+ Новый лид</button>
             </div>
@@ -2180,17 +2182,21 @@
 
 <!-- MODAL: LEAD COLUMNS MANAGER -->
 <div class="modal-bg" id="leadStatusesModalBg" onclick="if(event.target===this)closeLeadStatusesModal()">
-  <div class="modal" style="max-width:620px">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
-      <div>
-        <h3 style="margin:0;font-size:18px;font-weight:700">Колонки CRM лидов</h3>
-        <div style="font-size:12px;color:var(--text-2);margin-top:4px;line-height:1.5">Перетягивай ⋮⋮ для смены порядка. <b>Тип</b> определяет бизнес-логику:<br>• <b>В работе</b> — активная воронка. <b>Победа</b> — попадает в Купившие клиенты и Финансы. <b>Отказ</b> — закрытый лид без выручки.</div>
+  <div class="modal" style="max-width:640px">
+    <div class="lead-modal-head" style="margin-bottom:6px">
+      <div class="lead-modal-title-block">
+        <div class="lead-modal-name">Колонки воронки</div>
+        <div class="lead-modal-company" style="line-height:1.5">Перетаскивай ⋮⋮, чтобы поменять порядок. <b>Фаза</b> решает, в какой колонке вкладки «Все» окажется стадия; <b>Выиграно</b> идёт в финансы и «Купившие».</div>
       </div>
-      <button onclick="closeLeadStatusesModal()" style="background:var(--bg);border:none;border-radius:50%;width:32px;height:32px;cursor:pointer;color:var(--text-2);font-size:18px;line-height:1">✕</button>
+      <button class="lead-modal-close" onclick="closeLeadStatusesModal()" title="Закрыть">✕</button>
     </div>
-    <div id="leadStatusesList" style="margin-top:14px;display:flex;flex-direction:column;gap:8px"></div>
+    <div class="lead-field-mini" style="margin:12px 0 4px">
+      <label>Воронка</label>
+      <select id="stagesPipeSelect" onchange="onStagesPipeChange(this)"></select>
+    </div>
+    <div id="leadStatusesList" style="margin-top:12px;display:flex;flex-direction:column;gap:8px"></div>
     <button onclick="addLeadStatus()" style="width:100%;margin-top:10px;padding:11px;background:var(--bg);border:1px dashed var(--border-2);border-radius:10px;color:var(--text-2);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer">+ Добавить колонку</button>
-    <div style="display:flex;gap:10px;margin-top:18px;justify-content:flex-end">
+    <div style="display:flex;gap:10px;margin-top:18px;justify-content:flex-end;flex-wrap:wrap">
       <button class="modal-btn cancel" onclick="resetLeadStatusesToDefault()" style="margin-right:auto">Сбросить к стандарту</button>
       <button class="modal-btn cancel" onclick="closeLeadStatusesModal()">Отмена</button>
       <button class="modal-btn primary" onclick="saveLeadStatusesFromModal()">Сохранить</button>
@@ -2362,7 +2368,13 @@ const PIPELINES = [
 const PIPELINES_BY_ID = Object.fromEntries(PIPELINES.map(p => [p.id, p]));
 function pipeById(id) { return PIPELINES_BY_ID[id] || PIPELINES_BY_ID.inbox; }
 function dealPipe(l) { return (l && PIPELINES_BY_ID[l.product]) ? l.product : 'inbox'; }
-function pipeStatuses(pipeId) { return PIPE_TEMPLATES[pipeById(pipeId).tpl]; }
+// Стадии воронки: свои из «⚙ Колонки», иначе шаблон
+function pipeStatuses(pipeId) {
+  const p = pipeById(pipeId);
+  const c = PIPE_STAGES[p.id];
+  return (Array.isArray(c) && c.length) ? c : PIPE_TEMPLATES[p.tpl];
+}
+function dealStatusDef(l) { return (l && pipeStatuses(dealPipe(l)).find(st => st.id === l.status)) || leadStatusById(l && l.status) || {}; }
 // Старые id колонок → куда их класть в каждом шаблоне
 const STATUS_MAP = {
   b2b:       { first_contact:'call', in_progress:'call', i_interest:'new', i_invited:'call', i_thinking:'proposal_sent', i_pause:'ls_ojs5yu', i_paid:'won', i_declined:'lost' },
@@ -2376,7 +2388,31 @@ function mapStatusToTpl(statusId, tpl) {
   return list[0].id;
 }
 // Регистр всех стадий: финансы и метрики спрашивают у него «выиграно или нет»
-let LEAD_STATUSES = PIPE_TEMPLATES.b2b.concat(PIPE_TEMPLATES.intensive);
+function loadPipeStages() {
+  try { const o = JSON.parse(localStorage.getItem('pipe_stages') || '{}'); return (o && typeof o === 'object' && !Array.isArray(o)) ? o : {}; } catch { return {}; }
+}
+let PIPE_STAGES = loadPipeStages();
+function buildStatusRegistry() {
+  const m = new Map();
+  [...PIPE_TEMPLATES.b2b, ...PIPE_TEMPLATES.intensive, ...Object.values(PIPE_STAGES).flat()].forEach(st => { if (st && st.id && !m.has(st.id)) m.set(st.id, st); });
+  return [...m.values()];
+}
+function rebuildStatusRegistry() { LEAD_STATUSES = buildStatusRegistry(); }
+// Стадия сделки → стадия нужной воронки. strict=false (фоновая раскладка): незнакомую стадию не трогаем,
+// она могла прийти с другого устройства раньше настроек колонок.
+function mapStatusToPipe(statusId, pipeId, strict) {
+  const list = pipeStatuses(pipeId);
+  if (list.some(st => st.id === statusId)) return statusId;
+  const viaMap = STATUS_MAP[pipeById(pipeId).tpl][statusId];
+  if (viaMap && list.some(st => st.id === viaMap)) return viaMap;
+  const known = LEAD_STATUSES.find(st => st.id === statusId);
+  const phase = known ? known.phase
+    : ({ first_contact: 'work', in_progress: 'work' })[statusId]
+    || (viaMap ? (LEAD_STATUSES.find(st => st.id === viaMap) || {}).phase : null);
+  if (phase) { const t = list.find(st => st.phase === phase); return t ? t.id : list[0].id; }
+  return strict ? list[0].id : statusId;
+}
+let LEAD_STATUSES = buildStatusRegistry();
 function leadStatusKind(id) { const s = LEAD_STATUSES.find(x => x.id === id); return s ? s.kind : 'active'; }
 function firstStatusIdOfKind(kind) { const s = LEAD_STATUSES.find(x => x.kind === kind); return s ? s.id : null; }
 function leadIsWon(l)  { return leadStatusKind(l && l.status) === 'won'; }
@@ -3166,7 +3202,7 @@ function renderReminder() {
   const el = document.getElementById('reminderContent');
   const lastCall = (state.day.callLog || [])[0];
   const activeLead = loadLeads()
-    .filter(l => (leadStatusById(l.status) || {}).phase === 'work' && l.next_action_date)
+    .filter(l => dealStatusDef(l).phase === 'work' && l.next_action_date)
     .sort((a,b) => new Date(a.next_action_date) - new Date(b.next_action_date))[0];
   if (activeLead) {
     const d = new Date(activeLead.next_action_date);
@@ -3387,7 +3423,7 @@ function setDealPipe(dealId, pipeId) {
   const l = leads.find(x => x.id === dealId);
   if (!l) return;
   l.product = pipeId;
-  l.status = mapStatusToTpl(l.status, pipeById(pipeId).tpl);
+  l.status = mapStatusToPipe(l.status, pipeId, true);
   l.updated_at = tsPlus1(l.updated_at);
   saveLeads(leads);
   render();
@@ -3437,14 +3473,15 @@ function renderLeadsKanban() {
 
   board.innerHTML = '';
   board.style.setProperty('--kanban-cols', columns.length);
-  columns.forEach(colDef => {
+  const knownHere = new Set((isAll ? LEAD_STATUSES : pipeStatuses(leadsPipe)).map(st => st.id));
+  columns.forEach((colDef, colIdx) => {
     if (visibleStatuses && !colDef.statuses.some(id => visibleStatuses.includes(id))) return;
     const col = document.createElement('div');
     col.className = 'kanban-col';
     col.style.setProperty('--_lead-color', colDef.color || '#9ca3af');
     col.dataset.status = colDef.id;
     const colLeads = leads
-      .filter(l => colDef.statuses.includes(l.status))
+      .filter(l => colDef.statuses.includes(l.status) || (colIdx === 0 && !knownHere.has(l.status)))
       .sort((a,b) => new Date(b.updated_at) - new Date(a.updated_at));
     const addBtn = isAll
       ? '<button class="kanban-col-add" onclick="event.stopPropagation(); openLeadModal()" title="Новый лид">+</button>'
@@ -3531,7 +3568,7 @@ function handleLeadStatusChange(leadId, newStatus, oldStatus) {
   const leads = loadLeads();
   const lead = leads.find(l => l.id === leadId);
   if (!lead) return;
-  const newName = leadStatusById(newStatus).name;
+  const newName = ((pipeStatuses(dealPipe(lead)).find(st => st.id === newStatus)) || leadStatusById(newStatus) || {}).name;
   const kind = leadStatusKind(newStatus);
   if (kind === 'won') {
     handleWinFlow(lead, leads, newStatus);
@@ -3602,6 +3639,8 @@ function guessPipe(l) {
 // поэтому синк не плодит дублей. updated_at сдвигается на 1 мс, чтобы разложенная
 // версия выиграла у старой при слиянии и при этом «свежесть» карточек не сбилась.
 function ensurePipelines() {
+  PIPE_STAGES = loadPipeStages();
+  rebuildStatusRegistry();
   const leads = loadLeadsRaw();
   const clients = loadClientsRaw();
   const cById = new Map(clients.map(c => [c.id, c]));
@@ -3614,7 +3653,7 @@ function ensurePipelines() {
       if (!l.title) l.title = l.name || '';
       touched = true;
     }
-    const st = mapStatusToTpl(l.status, pipeById(l.product).tpl);
+    const st = mapStatusToPipe(l.status, l.product, false);
     if (st !== l.status) { l.status = st; touched = true; }
     if (!l.client_id) { l.client_id = 'cl_' + l.id; touched = true; }
     if (!cById.has(l.client_id) && !l.deleted) {
@@ -3862,7 +3901,7 @@ function renderMergeList() {
     const sorted = g.clients.slice().sort((a, b) => mergeMainScore(b, g.dealsBy[b.id]) - mergeMainScore(a, g.dealsBy[a.id]));
     const rows = sorted.map((c, ci) => {
       const deals = (g.dealsBy[c.id] || []).map(d => {
-        const p = pipeById(dealPipe(d)); const st = leadStatusById(d.status) || {};
+        const p = pipeById(dealPipe(d)); const st = dealStatusDef(d);
         return '<span class="lead-card-pipe" style="--_c:'+p.color+'">'+escapeHtml(p.short)+' · '+escapeHtml(st.short || st.name || '')+'</span>';
       }).join('');
       return '<div class="merge-row">'
@@ -4076,7 +4115,7 @@ function fillLeadStatusSelect(pipeId, value) {
 function onLeadProductChange() {
   const pipeId = document.getElementById('leadProduct').value || 'inbox';
   const cur = document.getElementById('leadStatus').value;
-  fillLeadStatusSelect(pipeId, mapStatusToTpl(cur, pipeById(pipeId).tpl));
+  fillLeadStatusSelect(pipeId, mapStatusToPipe(cur, pipeId, true));
 }
 function fmtDateNice(iso) {
   if (!iso) return '—';
@@ -4166,7 +4205,7 @@ function renderLeadDeals() {
     const client = clientById(currentClientId);
     list.innerHTML = deals.map(d => {
       const p = pipeById(dealPipe(d));
-      const st = leadStatusById(d.status) || {};
+      const st = dealStatusDef(d);
       const title = d.title && d.title !== (client ? client.name : d.name) ? d.title : '';
       return '<button type="button" class="deal-row'+(d.id === currentLeadId ? ' active' : '')+'" onclick="switchDeal(\''+d.id+'\')">'
         + '<span class="lead-card-pipe" style="--_c:'+p.color+'">'+escapeHtml(p.short)+'</span>'
@@ -4198,7 +4237,7 @@ function addDealFromSelect(sel) {
   const deal = {
     id: genLeadId(), client_id: c.id, product, title: '',
     name: c.name, company: c.company || '', telegram: c.telegram || '', phone: c.phone || '',
-    channel: '', potential_chek_rub: 0, status: PIPE_TEMPLATES[tpl][0].id,
+    channel: '', potential_chek_rub: 0, status: pipeStatuses(product)[0].id,
     created_at: now, updated_at: now, status_changed_at: now, closed_at: null,
     next_action: '', next_action_date: null, history: []
   };
@@ -5524,12 +5563,22 @@ const LEAD_KIND_OPTIONS = [
 ];
 let _leadStatusesDraft = null;
 let _leadStatusesSortable = null;
-function genLeadStatusId() { return 'ls_' + Math.random().toString(36).slice(2, 8); }
+let _stagesPipe = 'cc';
+function genStageId() { return 's_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+function phaseKind(ph) { return ph === 'won' ? 'won' : ph === 'lost' ? 'lost' : 'active'; }
 function openLeadStatusesModal() {
-  _leadStatusesDraft = LEAD_STATUSES.map(s => Object.assign({}, s));
-  renderLeadStatusesList();
+  const sel = document.getElementById('stagesPipeSelect');
+  sel.innerHTML = PIPELINES.map(p => '<option value="'+p.id+'">'+escapeHtml(p.name)+'</option>').join('');
+  _stagesPipe = (leadsPipe && leadsPipe !== 'all' && PIPELINES_BY_ID[leadsPipe]) ? leadsPipe : 'cc';
+  sel.value = _stagesPipe;
+  loadStagesDraft();
   document.getElementById('leadStatusesModalBg').classList.add('show');
 }
+function loadStagesDraft() {
+  _leadStatusesDraft = pipeStatuses(_stagesPipe).map(st => Object.assign({}, st));
+  renderLeadStatusesList();
+}
+function onStagesPipeChange(sel) { _stagesPipe = sel.value; loadStagesDraft(); }
 function closeLeadStatusesModal() {
   document.getElementById('leadStatusesModalBg').classList.remove('show');
   _leadStatusesDraft = null;
@@ -5538,17 +5587,21 @@ function closeLeadStatusesModal() {
 function renderLeadStatusesList() {
   const list = document.getElementById('leadStatusesList');
   if (!list || !_leadStatusesDraft) return;
-  list.innerHTML = _leadStatusesDraft.map((s, i) => {
-    const kindOpts = LEAD_KIND_OPTIONS.map(k =>
-      '<option value="'+k.value+'"'+(s.kind === k.value ? ' selected' : '')+'>'+k.label+'</option>'
+  const counts = {};
+  loadLeads().filter(l => dealPipe(l) === _stagesPipe).forEach(l => { counts[l.status] = (counts[l.status] || 0) + 1; });
+  list.innerHTML = _leadStatusesDraft.map((st, i) => {
+    const phaseOpts = PIPE_PHASES.map(ph =>
+      '<option value="'+ph.id+'"'+(st.phase === ph.id ? ' selected' : '')+'>'+(ph.id === 'won' ? 'Выиграно · в финансы' : ph.name)+'</option>'
     ).join('');
+    const n = counts[st.id] || 0;
     return '<div class="alum-status-row" data-idx="'+i+'">'+
       '<span class="alum-status-handle" title="Перетащить">⋮⋮</span>'+
-      '<label class="alum-status-color" style="background:'+s.color+'" title="Сменить цвет">'+
-        '<input type="color" value="'+s.color+'" oninput="updateLeadStatus('+i+', \'color\', this.value); this.parentNode.style.background=this.value">'+
+      '<label class="alum-status-color" style="background:'+st.color+'" title="Сменить цвет">'+
+        '<input type="color" value="'+st.color+'" oninput="updateLeadStatus('+i+', \'color\', this.value); this.parentNode.style.background=this.value">'+
       '</label>'+
-      '<input class="alum-status-name" type="text" value="'+escapeHtml(s.name)+'" placeholder="Название" oninput="updateLeadStatus('+i+', \'name\', this.value)">'+
-      '<select class="alum-status-kind" onchange="updateLeadStatus('+i+', \'kind\', this.value)">'+kindOpts+'</select>'+
+      '<input class="alum-status-name" type="text" value="'+escapeHtml(st.name)+'" placeholder="Название" oninput="updateLeadStatus('+i+', \'name\', this.value)">'+
+      (n ? '<span class="stage-count" title="Сделок в этой колонке">'+n+'</span>' : '')+
+      '<select class="alum-status-kind" onchange="updateLeadStatus('+i+', \'phase\', this.value)">'+phaseOpts+'</select>'+
       '<button class="alum-status-del" onclick="removeLeadStatusDraft('+i+')" title="Удалить колонку">✕</button>'+
     '</div>';
   }).join('');
@@ -5572,62 +5625,80 @@ function updateLeadStatus(i, key, val) {
   if (!_leadStatusesDraft || !_leadStatusesDraft[i]) return;
   _leadStatusesDraft[i][key] = val;
   if (key === 'name') _leadStatusesDraft[i].short = val;
+  if (key === 'phase') _leadStatusesDraft[i].kind = phaseKind(val);
 }
 function addLeadStatus() {
   if (!_leadStatusesDraft) return;
   const palette = ['#3b82f6','#f97316','#a855f7','#10b981','#eab308','#ec4899','#0ea5e9','#6366f1','#dc2626','#9ca3af'];
-  const used = new Set(_leadStatusesDraft.map(s => s.color));
+  const used = new Set(_leadStatusesDraft.map(st => st.color));
   const color = palette.find(c => !used.has(c)) || palette[Math.floor(Math.random()*palette.length)];
-  _leadStatusesDraft.push({ id: genLeadStatusId(), name: 'Новая колонка', short: 'Новая', color, kind: 'active' });
+  // новая колонка встаёт перед первой закрывающей (Выиграно / Проиграно)
+  const at = _leadStatusesDraft.findIndex(st => st.phase === 'won' || st.phase === 'lost');
+  const row = { id: genStageId(), name: 'Новая колонка', short: 'Новая колонка', color, phase: 'work', kind: 'active' };
+  if (at >= 0) _leadStatusesDraft.splice(at, 0, row); else _leadStatusesDraft.push(row);
   renderLeadStatusesList();
   setTimeout(() => {
-    const rows = document.querySelectorAll('#leadStatusesList .alum-status-row');
-    const last = rows[rows.length - 1];
-    if (last) { const inp = last.querySelector('.alum-status-name'); if (inp) { inp.focus(); inp.select(); } }
+    const idx = _leadStatusesDraft.indexOf(row);
+    const el = document.querySelectorAll('#leadStatusesList .alum-status-row')[idx];
+    if (el) { const inp = el.querySelector('.alum-status-name'); if (inp) { inp.focus(); inp.select(); } }
   }, 30);
 }
 function removeLeadStatusDraft(i) {
-  if (!_leadStatusesDraft || _leadStatusesDraft.length <= 1) {
-    alert('Нужна хотя бы одна колонка.'); return;
-  }
+  if (!_leadStatusesDraft || _leadStatusesDraft.length <= 1) { alert('Нужна хотя бы одна колонка.'); return; }
   _leadStatusesDraft.splice(i, 1);
   renderLeadStatusesList();
 }
 function resetLeadStatusesToDefault() {
-  if (!confirm('Сбросить колонки к стандартному набору? Существующие лиды с пропавшими статусами уйдут в первую колонку.')) return;
-  _leadStatusesDraft = DEFAULT_LEAD_STATUSES.map(s => Object.assign({}, s));
+  if (!confirm('Вернуть стандартные колонки этой воронки? Сделки из пропавших колонок переедут в колонку той же фазы.')) return;
+  _leadStatusesDraft = PIPE_TEMPLATES[pipeById(_stagesPipe).tpl].map(st => Object.assign({}, st));
   renderLeadStatusesList();
 }
 function saveLeadStatusesFromModal() {
   if (!_leadStatusesDraft || !_leadStatusesDraft.length) return;
-  for (const s of _leadStatusesDraft) {
-    const n = (s.name || '').trim();
-    if (!n) { alert('У всех колонок должно быть имя.'); return; }
-    s.name = n; s.short = n.length > 18 ? n.slice(0,17)+'…' : n;
+  for (const st of _leadStatusesDraft) {
+    const n = (st.name || '').trim();
+    if (!n) { alert('У всех колонок должно быть название.'); return; }
+    st.name = n; st.short = n; st.phase = st.phase || 'work'; st.kind = phaseKind(st.phase);
   }
-  // Предупреждение: если нет ни одной 'won' — финансы обнулятся; если нет 'lost' — тоже норм, но лучше предупредить
-  const hasWon = _leadStatusesDraft.some(s => s.kind === 'won');
-  if (!hasWon) {
-    if (!confirm('Внимание: у тебя не осталось колонки типа «Победа». Финансы (Купившие клиенты, прогресс к цели) перестанут заполняться. Продолжить?')) return;
+  if (!_leadStatusesDraft.some(st => st.phase === 'won')) {
+    if (!confirm('В воронке не останется колонки «Выиграно». Продажи этого продукта перестанут попадать в финансы и «Купившие». Сохранить всё равно?')) return;
   }
-  // Миграция лидов из удалённых колонок в первую
-  const newIds = new Set(_leadStatusesDraft.map(s => s.id));
-  const firstId = _leadStatusesDraft[0].id;
+  // У встроенной стадии сменили фазу: даём ей свой id, иначе «выиграно/нет» разъедется между воронками
+  const builtin = new Map([...PIPE_TEMPLATES.b2b, ...PIPE_TEMPLATES.intensive].map(st => [st.id, st]));
+  const reId = {};
+  const draft = _leadStatusesDraft.map(st => {
+    const b = builtin.get(st.id);
+    if (b && b.phase !== st.phase) { const nid = genStageId(); reId[st.id] = nid; return Object.assign({}, st, { id: nid }); }
+    return Object.assign({}, st);
+  });
+  const oldList = pipeStatuses(_stagesPipe);
+  const newIds = new Set(draft.map(st => st.id));
   const leads = loadLeadsRaw();
-  let migrated = 0;
+  const moves = [];
+  let lost = 0;
   for (const l of leads) {
-    if (l.status && !newIds.has(l.status)) {
-      l.status = firstId;
-      l.updated_at = nowIso();
-      migrated++;
+    if (l.deleted || dealPipe(l) !== _stagesPipe) continue;
+    let target = null;
+    if (reId[l.status]) target = reId[l.status];
+    else if (!newIds.has(l.status)) {
+      const old = oldList.find(st => st.id === l.status) || LEAD_STATUSES.find(st => st.id === l.status);
+      const t = (old && draft.find(st => st.phase === old.phase)) || draft[0];
+      target = t.id; lost++;
     }
+    if (target && target !== l.status) moves.push([l, target]);
   }
-  if (migrated) saveLeads(leads);
-  LEAD_STATUSES = _leadStatusesDraft.slice();
-  saveLeadStatuses(LEAD_STATUSES);
+  if (lost && !confirm('В удалённых колонках сделок: ' + lost + '. Они переедут в колонку той же фазы, а если такой нет, в первую. Сохранить?')) return;
+  PIPE_STAGES[_stagesPipe] = draft.map(st => ({ id: st.id, name: st.name, short: st.short, color: st.color, phase: st.phase, kind: st.kind }));
+  localStorage.setItem('pipe_stages', JSON.stringify(PIPE_STAGES));
+  rebuildStatusRegistry();
+  if (moves.length) {
+    moves.forEach(([l, t]) => { l.status = t; l.updated_at = tsPlus1(l.updated_at); });
+    saveLeads(leads);
+  }
+  const pname = pipeById(_stagesPipe).name;
   closeLeadStatusesModal();
   render();
-  toast(migrated ? 'Колонки сохранены. Перенесено лидов: ' + migrated : 'Колонки сохранены');
+  toast(moves.length ? 'Колонки «' + pname + '» сохранены. Перенесено сделок: ' + moves.length : 'Колонки «' + pname + '» сохранены');
 }
 
 // ===== INTEREST TAGS MANAGER =====
@@ -5866,7 +5937,7 @@ function renderWaitlists() {
         .map(c => {
           const ds = (dealsByClient[c.id] || []).slice().sort((a, b) => (leadStatusKind(a.status) === 'active' ? 0 : 1) - (leadStatusKind(b.status) === 'active' ? 0 : 1) || new Date(b.updated_at) - new Date(a.updated_at));
           const d = ds[0];
-          return d ? { kind:'lead', id:d.id, name:c.name, company:c.company, interests:c.interests, chek:d.potential_chek_rub, st:leadStatusById(d.status) } : null;
+          return d ? { kind:'lead', id:d.id, name:c.name, company:c.company, interests:c.interests, chek:d.potential_chek_rub, st:dealStatusDef(d) } : null;
         }).filter(Boolean))
       .concat(alumni.filter(a => Array.isArray(a.waitlists) && a.waitlists.includes(w.id))
         .map(a => ({ kind:'alum', id:a.id, name:a.name, company:a.company || a.group, interests:a.interests, chek:a.potential_chek_rub, st:alumStatusById(a.status) })));
