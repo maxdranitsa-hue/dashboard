@@ -46,7 +46,7 @@
     --shadow: 0 1px 1px rgba(0,0,0,.03), 0 1px 3px rgba(0,0,0,.04);
     --shadow-lg: 0 2px 6px rgba(0,0,0,.05), 0 16px 40px -16px rgba(0,0,0,.22);
   }
-  html, body { height:100%; }
+  html, body { height:100%; -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', system-ui, sans-serif;
     font-feature-settings: 'cv11', 'ss01';
@@ -741,7 +741,9 @@
   .leads-menu .count { font-size:11px; font-weight:700; background:var(--orange-bg); color:#92400e; padding:1px 7px; border-radius:999px; margin-left:auto; }
 
   .seg { display:flex; align-items:center; gap:2px; flex-wrap:wrap; padding:3px; background:var(--fill); border-radius:12px; margin-bottom:14px; }
-  .seg-tab { --_c:#9ca3af; display:inline-flex; align-items:center; gap:7px; padding:7px 12px; border-radius:9px; border:none; background:transparent; font-family:inherit; font-size:13px; font-weight:600; letter-spacing:-.005em; color:var(--text-2); cursor:pointer; transition:background .18s var(--ease), color .18s var(--ease), box-shadow .18s var(--ease), transform .1s var(--ease); }
+  .seg-in { display:inline-flex; align-items:center; gap:6px; white-space:nowrap; vertical-align:middle; }
+  .seg-tab .seg-in { gap:7px; }
+  .seg-tab { --_c:#9ca3af; flex:0 0 auto; white-space:nowrap; display:inline-flex; align-items:center; gap:7px; padding:7px 12px; border-radius:9px; border:none; background:transparent; font-family:inherit; font-size:13px; font-weight:600; letter-spacing:-.005em; color:var(--text-2); cursor:pointer; transition:background .18s var(--ease), color .18s var(--ease), box-shadow .18s var(--ease), transform .1s var(--ease); }
   .seg-tab:hover { color:var(--text); }
   .seg-tab:active { transform:scale(.97); }
   .seg-tab.active { background:#fff; color:var(--text); box-shadow:0 1px 2px rgba(0,0,0,.08), 0 3px 8px -2px rgba(0,0,0,.08); }
@@ -752,8 +754,8 @@
   .seg-tab.active .seg-count { color:var(--text-2); }
   .seg-gap { flex:1; min-width:6px; }
 
-  .seg-pills { display:flex; flex-wrap:wrap; gap:5px; }
-  .seg-pill { --_c:#9ca3af; display:inline-flex; align-items:center; gap:6px; padding:5px 10px; border-radius:999px; border:1px solid var(--border-2); background:#fff; font-family:inherit; font-size:12px; font-weight:600; color:var(--text-2); cursor:pointer; transition:background .15s var(--ease), border-color .15s var(--ease), color .15s var(--ease), transform .1s var(--ease); }
+  .seg-pills { display:flex; flex-wrap:wrap; gap:5px; min-width:0; }
+  .seg-pill { --_c:#9ca3af; flex:0 0 auto; white-space:nowrap; display:inline-flex; align-items:center; gap:6px; padding:5px 10px; line-height:1.3; border-radius:999px; border:1px solid var(--border-2); background:#fff; font-family:inherit; font-size:12px; font-weight:600; color:var(--text-2); cursor:pointer; transition:background .15s var(--ease), border-color .15s var(--ease), color .15s var(--ease), transform .1s var(--ease); }
   .seg-pill:hover { border-color:color-mix(in srgb, var(--_c) 45%, var(--border-2)); color:var(--text); }
   .seg-pill:active { transform:scale(.96); }
   .seg-pill.active { background:color-mix(in srgb, var(--_c) 12%, #fff); border-color:color-mix(in srgb, var(--_c) 55%, transparent); color:color-mix(in srgb, var(--_c) 72%, #111); }
@@ -3097,9 +3099,9 @@ function renderLeadsPipeTabs(all, grads) {
   if (leadsPipe === 'inbox' && !inboxTotal) leadsPipe = 'all';
   if (leadsPipe !== 'all' && leadsPipe !== 'grads' && leadsPipe !== 'inbox' && !isProductId(leadsPipe)) leadsPipe = 'all';
   const tab = (id, label, n, color, cls) =>
-    '<button class="seg-tab'+(leadsPipe === id ? ' active' : '')+(cls ? ' ' + cls : '')+'"'+(color ? ' style="--_c:'+color+'"' : '')+' onclick="setLeadsPipe(\''+id+'\')">'
+    '<button class="seg-tab'+(leadsPipe === id ? ' active' : '')+(cls ? ' ' + cls : '')+'"'+(color ? ' style="--_c:'+color+'"' : '')+' onclick="setLeadsPipe(\''+id+'\')"><span class="seg-in">'
     + (color ? '<span class="seg-dot"></span>' : '') + escapeHtml(label)
-    + (n ? '<span class="seg-count">'+n+'</span>' : '') + '</button>';
+    + (n ? '<span class="seg-count">'+n+'</span>' : '') + '</span></button>';
   let html = tab('all', 'Все', cnt(() => true), '');
   PRODUCTS.forEach(p => { html += tab(p.id, p.short, cnt(l => dealProducts(l).includes(p.id)), p.color); });
   if (inboxTotal) html += tab('inbox', 'Без продукта', cnt(l => !dealHasProduct(l)), '#9ca3af', 'muted');
@@ -3884,8 +3886,8 @@ function renderLeadProductPills(values) {
   const cur = [...new Set((Array.isArray(values) ? values : (values ? [values] : [])).filter(isProductId))];
   hid.value = JSON.stringify(cur);
   el.innerHTML = PRODUCTS.map(p =>
-    '<button type="button" class="seg-pill'+(cur.includes(p.id) ? ' active' : '')+(cur[0] === p.id && cur.length > 1 ? ' main' : '')+'" style="--_c:'+p.color+'" onclick="setLeadProduct(\''+p.id+'\')" title="'+escapeHtml(p.name)+(cur[0] === p.id && cur.length > 1 ? ' · основной' : '')+'"><span class="seg-dot"></span>'+escapeHtml(p.short)+'</button>'
-  ).join('') + '<button type="button" class="seg-pill none'+(cur.length ? '' : ' active')+'" onclick="setLeadProduct(\'\')">Без продукта</button>';
+    '<button type="button" class="seg-pill'+(cur.includes(p.id) ? ' active' : '')+(cur[0] === p.id && cur.length > 1 ? ' main' : '')+'" style="--_c:'+p.color+'" onclick="setLeadProduct(\''+p.id+'\')" title="'+escapeHtml(p.name)+(cur[0] === p.id && cur.length > 1 ? ' · основной' : '')+'"><span class="seg-in"><span class="seg-dot"></span>'+escapeHtml(p.short)+'</span></button>'
+  ).join('') + '<button type="button" class="seg-pill none'+(cur.length ? '' : ' active')+'" onclick="setLeadProduct(\'\')"><span class="seg-in">Без продукта</span></button>';
 }
 function setLeadProduct(id) {
   const cur = leadProductValues();
