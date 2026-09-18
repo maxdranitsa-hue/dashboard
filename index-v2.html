@@ -736,7 +736,10 @@
   .lead-card-more { font-size:10px; font-weight:700; padding:2px 7px; border-radius:999px; background:var(--bg); color:var(--text-2); border:1px solid var(--border-2); white-space:nowrap; }
   .lead-card-assign { margin-top:8px; width:100%; font-family:inherit; font-size:11px; font-weight:600; border:1px dashed var(--border-2); border-radius:8px; padding:5px 8px; background:transparent; color:var(--text-2); cursor:pointer; appearance:none; -webkit-appearance:none; outline:none; }
   .lead-card-assign:hover { border-color:var(--green-light-2); color:var(--green-dark); background:var(--green-bg-soft); }
-  .leads-dup-btn .count { font-size:11px; font-weight:700; background:var(--orange-bg); color:#92400e; padding:1px 7px; border-radius:999px; margin-left:4px; }
+  .leads-menu { position:absolute; top:calc(100% + 6px); right:132px; z-index:40; background:var(--surface); border:1px solid var(--border-2); border-radius:12px; box-shadow:var(--shadow-lg); padding:6px; min-width:210px; display:flex; flex-direction:column; gap:2px; }
+  .leads-menu button { display:flex; align-items:center; gap:8px; width:100%; text-align:left; background:transparent; border:none; border-radius:8px; padding:9px 10px; font-family:inherit; font-size:13px; color:var(--text); cursor:pointer; }
+  .leads-menu button:hover { background:var(--bg); }
+  .leads-menu .count { font-size:11px; font-weight:700; background:var(--orange-bg); color:#92400e; padding:1px 7px; border-radius:999px; margin-left:auto; }
   .kanban-col { background:var(--bg); border-radius:var(--r); padding:12px 10px; min-height:300px; display:flex; flex-direction:column; }
   .kanban-col-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; padding:0 4px; }
   .kanban-col-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; display:flex; align-items:center; gap:6px; color:var(--_lead-color, var(--text-2)); }
@@ -1599,9 +1602,12 @@
         <div class="card">
           <div class="card-head">
             <div class="card-title">CRM лидов</div>
-            <div style="display:flex;gap:8px">
-              <button class="btn btn-secondary" onclick="openPipesPage(leadsPipe)" title="Настроить воронки и их колонки">⚙ Воронки</button>
-              <button class="btn btn-secondary leads-dup-btn" id="leadsDupBtn" onclick="openMergeModal()" title="Похожие клиенты: склеить в одну карточку">Дубли<span class="count" id="leadsDupCount" hidden></span></button>
+            <div style="display:flex;gap:8px;position:relative">
+              <button class="btn btn-secondary" onclick="toggleLeadsMenu(event)" title="Ещё">⋯</button>
+              <div class="leads-menu" id="leadsMenu" hidden>
+                <button onclick="closeLeadsMenu(); openPipesPage(leadsPipe)">⚙ Воронки и колонки</button>
+                <button onclick="closeLeadsMenu(); openMergeModal()">Похожие клиенты<span class="count" id="leadsDupCount" hidden></span></button>
+              </div>
               <button class="btn btn-primary" onclick="openLeadModal()">+ Новый лид</button>
             </div>
           </div>
@@ -1614,15 +1620,6 @@
             </div>
             <select class="leads-filter-select" id="leadsFilterChannel" onchange="renderLeadsKanban()">
               <option value="">Все каналы</option>
-            </select>
-            <select class="leads-filter-select" id="leadsFilterInterest" onchange="renderLeadsKanban()">
-              <option value="">Все интересы</option>
-            </select>
-            <select class="leads-filter-select" id="leadsFilterStatusGroup" onchange="onStatusGroupChange()">
-              <option value="all">Все статусы</option>
-              <option value="active">Только активные</option>
-              <option value="wait">Только «ждут ответа»</option>
-              <option value="closed">Только закрытые (win)</option>
             </select>
             <button class="leads-toggle-stuck" id="leadsFilterStuck" onclick="toggleStuckFilter()">⏰ Только застрявшие</button>
           </div>
@@ -1857,9 +1854,9 @@
       <button class="lead-modal-close" onclick="closeLeadModal()" title="Закрыть">✕</button>
     </div>
 
-    <!-- Контакты -->
-    <div class="lead-fields-grid" style="margin-bottom:14px">
-      <div class="lead-field-mini">
+    <!-- Контакт -->
+    <div class="lead-fields-grid" style="margin-bottom:12px">
+      <div class="lead-field-mini full">
         <label>Telegram</label>
         <div class="lead-icon-input">
           <svg class="lead-icon-tg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
@@ -1867,20 +1864,6 @@
           <button type="button" class="lead-copy-btn" onclick="copyLeadField('leadTelegram')" title="Скопировать ник">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
-        </div>
-      </div>
-      <div class="lead-field-mini">
-        <label>Телефон</label>
-        <div class="lead-icon-input">
-          <svg class="lead-icon-ph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-          <input type="tel" id="leadPhone" placeholder="+7 900 000-00-00" inputmode="tel" autocomplete="off">
-        </div>
-      </div>
-      <div class="lead-field-mini full">
-        <label>Компания</label>
-        <div class="lead-icon-input">
-          <svg class="lead-icon-co" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-          <input type="text" id="leadCompany" placeholder="Компания (опционально)" autocomplete="off">
         </div>
       </div>
     </div>
@@ -1896,23 +1879,11 @@
       <select class="deals-merge" id="leadMergeSelect" onchange="mergeFromModalSelect(this)" title="Это тот же человек, что и другая карточка" hidden></select>
     </div>
 
-    <!-- Выбранная сделка -->
+    <!-- Выбранная сделка: только то, что нужно каждый раз -->
     <div class="deal-section-label" id="leadDealLabel">Сделка</div>
     <div class="lead-fields-grid">
-      <div class="lead-field-mini full">
-        <label>Продукт</label>
-        <select id="leadProduct" onchange="onLeadProductChange()"></select>
-      </div>
-      <div class="lead-field-mini full">
-        <label>Пометка к сделке</label>
-        <input type="text" id="leadTitle" placeholder="Кто участник, место 2, поток 26.09…" autocomplete="off">
-      </div>
-      <div class="lead-field-mini full">
-        <label>Откуда пришёл (можно с комментарием)</label>
-        <input type="text" id="leadChannel" placeholder="Напр.: личный контакт · реф от Иванова · с вебинара 12.06">
-      </div>
       <div class="lead-field-mini">
-        <label>Статус</label>
+        <label>Стадия</label>
         <select id="leadStatus"></select>
       </div>
       <div class="lead-field-mini">
@@ -1923,36 +1894,54 @@
         <label>Next action</label>
         <input type="text" id="leadAction" placeholder="Что дальше: позвонить, КП, пинг…">
       </div>
-      <div class="lead-field-mini">
-        <label>Дата next action</label>
-        <input type="date" id="leadDeadline">
+    </div>
+
+    <!-- Подробнее: всё, что нужно редко -->
+    <div class="lm-section" id="leadMoreSection">
+      <div class="lm-sec-head" onclick="toggleLmSection('leadMoreSection')">
+        <span class="lm-sec-caret">▶</span>
+        <span class="lm-sec-title">Подробнее</span>
+      </div>
+      <div class="lm-sec-body">
+        <div class="lead-fields-grid">
+          <div class="lead-field-mini">
+            <label>Телефон</label>
+            <div class="lead-icon-input">
+              <svg class="lead-icon-ph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              <input type="tel" id="leadPhone" placeholder="+7 900 000-00-00" inputmode="tel" autocomplete="off">
+            </div>
+          </div>
+          <div class="lead-field-mini">
+            <label>Дата next action</label>
+            <input type="date" id="leadDeadline">
+          </div>
+          <div class="lead-field-mini full">
+            <label>Компания</label>
+            <div class="lead-icon-input">
+              <svg class="lead-icon-co" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+              <input type="text" id="leadCompany" placeholder="Компания (опционально)" autocomplete="off">
+            </div>
+          </div>
+          <div class="lead-field-mini full">
+            <label>Продукт</label>
+            <select id="leadProduct" onchange="onLeadProductChange()"></select>
+          </div>
+          <div class="lead-field-mini full">
+            <label>Пометка к сделке</label>
+            <input type="text" id="leadTitle" placeholder="Кто участник, место 2, поток 26.09…" autocomplete="off">
+          </div>
+          <div class="lead-field-mini full">
+            <label>Откуда пришёл</label>
+            <input type="text" id="leadChannel" placeholder="Напр.: личный контакт · реф от Иванова · с вебинара 12.06">
+          </div>
+        </div>
+        <div class="lead-meta-row" id="leadMetaRow" style="display:none">
+          <span><b>Создан:</b> <span id="leadMetaCreated">—</span></span>
+          <span><b>Обновлён:</b> <span id="leadMetaUpdated">—</span></span>
+          <span><b>В статусе с:</b> <span id="leadMetaStatusChanged">—</span></span>
+        </div>
       </div>
     </div>
-
-    <div class="lead-meta-row" id="leadMetaRow" style="display:none">
-      <span><b>Создан:</b> <span id="leadMetaCreated">—</span></span>
-      <span><b>Обновлён:</b> <span id="leadMetaUpdated">—</span></span>
-      <span><b>В статусе с:</b> <span id="leadMetaStatusChanged">—</span></span>
-    </div>
-
-    <!-- Interests -->
-    <div class="lead-tags-section">
-      <div class="lead-tags-head">
-        <div class="lead-tags-title">Интересно ещё</div>
-        <button class="lead-tags-manage-btn" onclick="openInterestTagsModal()" title="Управление тегами интереса">⚙</button>
-      </div>
-      <div class="lead-tags-chips" id="leadInterestChips"></div>
-    </div>
-
-    <!-- Waitlists -->
-    <div class="lead-tags-section">
-      <div class="lead-tags-head">
-        <div class="lead-tags-title">В списках ожидания</div>
-        <button class="lead-tags-manage-btn" onclick="navTo('waitlists'); closeLeadModal();" title="Перейти к спискам ожидания">↗</button>
-      </div>
-      <div class="lead-tags-chips" id="leadWaitlistChips"></div>
-    </div>
-
 
     <!-- Транскрипты разговоров -->
     <div class="lm-section" id="leadTrSection">
@@ -3379,6 +3368,7 @@ function openLeadsWithFilter(group) {
 }
 
 function onStatusGroupChange() {
+  if (!document.getElementById('leadsFilterStatusGroup')) return;
   const sel = document.getElementById('leadsFilterStatusGroup');
   leadsStatusGroup = sel ? sel.value : 'all';
   renderLeadsKanban();
@@ -3390,6 +3380,15 @@ function clearStatusGroup() {
   if (sel) sel.value = 'all';
   renderLeadsKanban();
 }
+function toggleLeadsMenu(e) {
+  if (e) e.stopPropagation();
+  const m = document.getElementById('leadsMenu');
+  if (!m) return;
+  m.hidden = !m.hidden;
+  if (!m.hidden) setTimeout(() => document.addEventListener('click', closeLeadsMenu, { once: true }), 0);
+}
+function closeLeadsMenu() { const m = document.getElementById('leadsMenu'); if (m) m.hidden = true; }
+
 function toggleStuckFilter() {
   leadsFilterStuckOn = !leadsFilterStuckOn;
   document.getElementById('leadsFilterStuck').classList.toggle('active', leadsFilterStuckOn);
@@ -3481,8 +3480,9 @@ function renderLeadsKanban() {
   const hintEl = document.getElementById('leadsPhaseHint');
   if (hintEl) {
     hintEl.innerHTML = leadsPipe === 'all'
-      ? 'Колонки вкладки «Все» это общие фазы всех продуктов, добавить сюда свою нельзя. Стадии живут внутри воронки: выбери продукт выше или открой <a onclick="openPipesPage()">настройку воронок</a>.'
-      : 'Колонки этой воронки настраиваются в <a onclick="openPipesPage(\''+leadsPipe+'\')">разделе «Воронки»</a>: добавить, удалить, переименовать, переставить.';
+      ? 'Колонки здесь общие для всех продуктов. Свои стадии у каждой воронки: выбери продукт выше или открой <a onclick="openPipesPage()">настройку воронок</a>.'
+      : '';
+    hintEl.style.display = leadsPipe === 'all' ? '' : 'none';
   }
   updateDupCount();
   const all = loadLeads();
@@ -3516,7 +3516,7 @@ function renderLeadsKanban() {
   const columns = isAll
     ? PIPE_PHASES.map(ph => ({ id: ph.id, name: ph.name, short: ph.short, color: ph.color,
         statuses: LEAD_STATUSES.filter(s => s.phase === ph.id).map(s => s.id) }))
-    : pipeStatuses(leadsPipe).map(st => ({ id: st.id, name: st.name, short: st.short, color: st.color, statuses: [st.id] }));
+    : pipeStatuses(leadsPipe).map(st => ({ id: st.id, name: st.name, short: st.short, color: st.color, wait: st.wait, statuses: [st.id] }));
   const clientsMap = new Map(loadClientsRaw().map(c => [c.id, c]));
   const perClient = {};
   all.forEach(l => { perClient[l.client_id] = (perClient[l.client_id] || 0) + 1; });
@@ -3539,7 +3539,7 @@ function renderLeadsKanban() {
       : '<button class="kanban-col-add" onclick="event.stopPropagation(); openLeadModalForStatus(\''+colDef.id+'\')" title="Добавить лида в «'+escapeHtml(colDef.name)+'»">+</button>';
     col.innerHTML =
       '<div class="kanban-col-head">'+
-        '<div class="kanban-col-title"><span class="kanban-col-dot"></span>'+escapeHtml(colDef.short)+'</div>'+
+        '<div class="kanban-col-title"><span class="kanban-col-dot"></span>'+escapeHtml(colDef.short)+(colDef.wait ? ' <span title="Колонка-лист ожидания: карточка тут = человек в списке">⏳</span>' : '')+'</div>'+
         '<div class="kanban-col-head-right">'+addBtn+
           '<div class="kanban-col-count">'+colLeads.length+'</div>'+
         '</div>'+
@@ -3615,6 +3615,27 @@ function renderLeadsKanban() {
     });
   }
 }
+// Стадия может быть привязана к списку ожидания: перетащил карточку в колонку — человек в списке
+function applyWaitlistStage(lead, oldStatusId) {
+  if (!lead || !lead.client_id) return;
+  const list = pipeStatuses(dealPipe(lead));
+  const now = (list.find(st => st.id === lead.status) || {}).wait || null;
+  const before = (list.find(st => st.id === oldStatusId) || {}).wait || null;
+  if (!now && !before) return;
+  const clients = loadClientsRaw();
+  const c = clients.find(x => x.id === lead.client_id);
+  if (!c) return;
+  c.waitlists = Array.isArray(c.waitlists) ? c.waitlists : [];
+  let changed = false;
+  if (before && before !== now && c.waitlists.includes(before)) { c.waitlists = c.waitlists.filter(w => w !== before); changed = true; }
+  if (now && !c.waitlists.includes(now)) { c.waitlists.push(now); changed = true; }
+  if (!changed) return;
+  c.updated_at = nowIso();
+  saveClients(clients);
+  const w = waitlistById(now || before);
+  if (w) toast(now ? ('Добавлен в список «' + w.name + '»') : ('Убран из списка «' + w.name + '»'));
+}
+
 function handleLeadStatusChange(leadId, newStatus, oldStatus) {
   const leads = loadLeads();
   const lead = leads.find(l => l.id === leadId);
@@ -3623,6 +3644,7 @@ function handleLeadStatusChange(leadId, newStatus, oldStatus) {
   const kind = leadStatusKind(newStatus);
   if (kind === 'won') {
     handleWinFlow(lead, leads, newStatus);
+    applyWaitlistStage(lead, oldStatus);
   } else if (kind === 'lost') {
     lead.status = newStatus;
     lead.status_changed_at = nowIso();
@@ -3631,6 +3653,7 @@ function handleLeadStatusChange(leadId, newStatus, oldStatus) {
     saveLeads(leads);
     render();
     toast('Лид закрыт ('+newName+'). Причину можно дописать в «+ Запись»');
+    applyWaitlistStage(lead, oldStatus);
   } else {
     lead.status = newStatus;
     lead.status_changed_at = nowIso();
@@ -3640,6 +3663,7 @@ function handleLeadStatusChange(leadId, newStatus, oldStatus) {
     saveLeads(leads);
     render();
     toast('→ ' + newName);
+    applyWaitlistStage(lead, oldStatus);
   }
 }
 function handleWinFlow(lead, leads, newStatus) {
@@ -3773,7 +3797,7 @@ function toggleLmSection(id) {
   try { localStorage.setItem('lm_open_sections', JSON.stringify([...lmOpenSections])); } catch {}
 }
 function applyLmSections(ctx) {
-  ['TrSection', 'HistSection'].forEach(k => {
+  ['MoreSection', 'TrSection', 'HistSection'].forEach(k => {
     const el = document.getElementById(ctx + k);
     if (el) el.classList.toggle('open', lmOpenSections.has(ctx + k));
   });
@@ -4418,6 +4442,7 @@ function saveLeadInternal(closeModal) {
       existing.status_changed_at = now;
       if (oldKind === 'won' || oldKind === 'lost') existing.closed_at = null;
     }
+    const prevStatusForWait = existing.status;
     Object.assign(existing, mirror);
     if (titleTouched) existing.title = titleRaw;
     existing.channel = document.getElementById('leadChannel').value.trim();
@@ -4427,6 +4452,7 @@ function saveLeadInternal(closeModal) {
     existing.next_action_date = document.getElementById('leadDeadline').value || null;
     existing.updated_at = now;
     saveLeads(leads);
+    applyWaitlistStage(existing, prevStatusForWait);
   } else {
     const newLead = Object.assign({
       id: genLeadId(),
@@ -5792,6 +5818,10 @@ function renderLeadStatusesList() {
       + '<input class="alum-status-name" type="text" value="' + escapeHtml(st.name) + '" placeholder="Название" oninput="updateLeadStatus(' + i + ', \'name\', this.value)">'
       + (n ? '<span class="stage-count" title="Сделок в этой колонке">' + n + '</span>' : '')
       + '<select class="alum-status-kind" onchange="updateLeadStatus(' + i + ', \'phase\', this.value)">' + phaseOpts + '</select>'
+      + '<select class="alum-status-kind stage-wait" title="Колонка-лист ожидания: карточка в ней = человек в списке" onchange="updateLeadStatus(' + i + ', \'wait\', this.value)">'
+      +   '<option value="">без списка</option>'
+      +   loadWaitlists().filter(w => !w.closed).map(w => '<option value="' + w.id + '"' + (st.wait === w.id ? ' selected' : '') + '>⏳ ' + escapeHtml(w.name) + '</option>').join('')
+      + '</select>'
       + (system
         ? '<button class="alum-status-del" style="opacity:.25;cursor:default" title="Системная колонка: кормит финансы, удалить нельзя">✕</button>'
         : '<button class="alum-status-del" onclick="removeLeadStatusDraft(' + i + ')" title="Удалить колонку">✕</button>')
@@ -5876,7 +5906,7 @@ function saveLeadStatusesFromModal() {
     if (target && target !== l.status) moves.push([l, target]);
   }
   if (lost && !confirm('В удалённых колонках сделок: ' + lost + '. Они переедут в колонку той же фазы, а если такой нет, в первую. Сохранить?')) return;
-  PIPE_STAGES[_stagesPipe] = draft.map(st => ({ id: st.id, name: st.name, short: st.short, color: st.color, phase: st.phase, kind: st.kind }));
+  PIPE_STAGES[_stagesPipe] = draft.map(st => ({ id: st.id, name: st.name, short: st.short, color: st.color, phase: st.phase, kind: st.kind, wait: st.wait || undefined }));
   localStorage.setItem('pipe_stages', JSON.stringify(PIPE_STAGES));
   rebuildStatusRegistry();
   if (moves.length) {
