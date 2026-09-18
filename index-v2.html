@@ -758,6 +758,7 @@
   .seg-pill:active { transform:scale(.96); }
   .seg-pill.active { background:color-mix(in srgb, var(--_c) 12%, #fff); border-color:color-mix(in srgb, var(--_c) 55%, transparent); color:color-mix(in srgb, var(--_c) 72%, #111); }
   .seg-pill.none.active { background:var(--fill); border-color:var(--text-3); color:var(--text); }
+  .seg-pill.main { box-shadow:0 0 0 2px color-mix(in srgb, var(--_c) 30%, transparent); }
 
   .kanban { display:grid; gap:10px; overflow-x:auto; padding-bottom:8px; align-items:start; }
   .kanban-col { --_lead-color:#9ca3af; background:var(--fill); border-radius:var(--r); padding:10px 8px; min-height:320px; display:flex; flex-direction:column; transition:background .2s var(--ease); }
@@ -2079,8 +2080,20 @@ refreshProducts();
 function saveProducts(list) { PRODUCTS = list.map(normProduct); localStorage.setItem('products', JSON.stringify(PRODUCTS)); refreshProducts(); }
 function pipeById(id) { return PIPELINES_BY_ID[id] || NO_PRODUCT; }
 function isProductId(id) { return PRODUCTS.some(p => p.id === id); }
-function dealPipe(l) { return (l && isProductId(l.product)) ? l.product : 'inbox'; }
-function dealHasProduct(l) { return dealPipe(l) !== 'inbox'; }
+// У сделки может быть несколько продуктов (products); product = первый из них, основной для отчётов.
+// Незнакомые id (продукт удалён из списка) хранятся, но не показываются: вернёшь продукт, сделки найдутся.
+function dealProducts(l) {
+  const raw = (l && Array.isArray(l.products) && l.products.length) ? l.products : (l && l.product ? [l.product] : []);
+  return raw.filter(isProductId);
+}
+function dealPipe(l) { const a = dealProducts(l); return a.length ? a[0] : 'inbox'; }
+function dealHasProduct(l) { return dealProducts(l).length > 0; }
+function dealIsIntensive(l) { return dealProducts(l).some(id => pipeById(id).intensive); }
+function setDealProducts(l, ids) {
+  const arr = [...new Set((ids || []).filter(Boolean))];
+  l.products = arr;
+  l.product = arr[0] || '';
+}
 function pipeStatuses() { return STAGES; }
 function dealStatusDef(l) { return leadStatusById(l && l.status); }
 const LEAD_STATUSES = STAGES;
@@ -3066,14 +3079,14 @@ function toggleClosedColumns() {
 function graduateClientIds(leads) {
   const ids = new Set();
   loadClientsRaw().forEach(c => { if (!c.deleted && Array.isArray(c.cohorts) && c.cohorts.length) ids.add(c.id); });
-  (leads || loadLeads()).forEach(l => { if (leadIsWon(l) && pipeById(dealPipe(l)).intensive) ids.add(l.client_id); });
+  (leads || loadLeads()).forEach(l => { if (leadIsWon(l) && dealIsIntensive(l)) ids.add(l.client_id); });
   return ids;
 }
 function leadInTab(l, grads) {
   if (leadsPipe === 'all') return true;
   if (leadsPipe === 'grads') return grads.has(l.client_id);
   if (leadsPipe === 'inbox') return !dealHasProduct(l);
-  return dealPipe(l) === leadsPipe;
+  return dealProducts(l).includes(leadsPipe);
 }
 function renderLeadsPipeTabs(all, grads) {
   const el = document.getElementById('leadsPipeTabs');
@@ -3088,7 +3101,7 @@ function renderLeadsPipeTabs(all, grads) {
     + (color ? '<span class="seg-dot"></span>' : '') + escapeHtml(label)
     + (n ? '<span class="seg-count">'+n+'</span>' : '') + '</button>';
   let html = tab('all', 'Все', cnt(() => true), '');
-  PRODUCTS.forEach(p => { html += tab(p.id, p.short, cnt(l => dealPipe(l) === p.id), p.color); });
+  PRODUCTS.forEach(p => { html += tab(p.id, p.short, cnt(l => dealProducts(l).includes(p.id)), p.color); });
   if (inboxTotal) html += tab('inbox', 'Без продукта', cnt(l => !dealHasProduct(l)), '#9ca3af', 'muted');
   html += '<span class="seg-gap"></span>' + tab('grads', 'Выпускники', cnt(l => grads.has(l.client_id)), '#0d3a2c', 'grad');
   el.innerHTML = html;
@@ -3099,7 +3112,7 @@ function setDealPipe(dealId, pipeId) {
   const leads = loadLeadsRaw();
   const l = leads.find(x => x.id === dealId);
   if (!l) return;
-  l.product = pipeId;
+  setDealProducts(l, [pipeId]);
   l.updated_at = tsPlus1(l.updated_at);
   saveLeads(leads);
   render();
@@ -3215,7 +3228,7 @@ function leadCardEl(lead, clientsMap, perClient, grads, assignOpts) {
   const company = (c && c.company) || lead.company || '';
   const sub = (lead.title && lead.title.trim() && lead.title !== name) ? lead.title : company;
   const others = (perClient[lead.client_id] || 1) - 1;
-  const pipe = pipeById(dealPipe(lead));
+  const prods = dealProducts(lead).map(pipeById);
   const card = document.createElement('div');
   card.className = 'lead-card ' + freshnessClass(lead.updated_at);
   card.dataset.leadId = lead.id;
@@ -3223,7 +3236,7 @@ function leadCardEl(lead, clientsMap, perClient, grads, assignOpts) {
   const daysCls = days > 7 ? 'bad' : days > 3 ? 'warn' : '';
   const daysText = days === 0 ? 'сегодня' : days === 1 ? '1 день' : days < 5 ? days + ' дня' : days + ' дней';
   const cohorts = (c && Array.isArray(c.cohorts)) ? c.cohorts : [];
-  const chips = (pipe.none ? '' : '<span class="chip chip-product" style="--_c:'+pipe.color+'">'+escapeHtml(pipe.short)+'</span>')
+  const chips = prods.map(p => '<span class="chip chip-product" style="--_c:'+p.color+'">'+escapeHtml(p.short)+'</span>').join('')
     + (lead.flow ? '<span class="chip chip-flow" title="Поток">'+escapeHtml(lead.flow)+'</span>' : '')
     + (grads.has(lead.client_id) ? '<span class="chip chip-grad" title="Выпускник'+(cohorts.length ? ' · '+escapeHtml(cohorts.join(', ')) : '')+'">🎓</span>' : '')
     + (others > 0 ? '<span class="chip chip-more" title="У клиента есть и другие сделки">+'+others+' '+pluralDeals(others)+'</span>' : '');
@@ -3277,7 +3290,7 @@ function handleWinFlow(lead, leads, newStatus) {
 }
 // Оплаченный интенсив с потоком = человек стал выпускником этого потока
 function markGraduate(lead) {
-  if (!lead || !pipeById(dealPipe(lead)).intensive) return;
+  if (!lead || !dealIsIntensive(lead)) return;
   const flow = (lead.flow || '').trim();
   if (!flow) return;
   const clients = loadClientsRaw();
@@ -3332,8 +3345,11 @@ function alumProductGuess(a) {
 }
 function newDealRecord(c, extra) {
   const now = nowIso();
+  extra = Object.assign({}, extra || {});
+  if (extra.products && !extra.product) extra.product = extra.products[0] || '';
+  if (extra.product && !extra.products) extra.products = [extra.product];
   return Object.assign({
-    id: '', client_id: c.id, product: '', title: '', flow: '',
+    id: '', client_id: c.id, product: '', products: [], title: '', flow: '',
     name: c.name || '', company: c.company || '', telegram: c.telegram || '', phone: c.phone || '',
     channel: '', potential_chek_rub: 0, status: 'new',
     created_at: now, updated_at: now, status_changed_at: now, closed_at: null,
@@ -3394,7 +3410,7 @@ function ensureModel() {
         const target = closedSame || wonNoProd;
         if (target) {
           if (!target.flow) target.flow = flow;
-          if (!dealHasProduct(target) && prod) target.product = prod;
+          if (!dealHasProduct(target) && prod) setDealProducts(target, [prod]);
           target.updated_at = tsPlus1(target.updated_at); lc++;
           continue;
         }
@@ -3407,7 +3423,7 @@ function ensureModel() {
         }
         continue;
       }
-      if (!dealHasProduct(d) && prod) d.product = prod;
+      if (!dealHasProduct(d) && prod) setDealProducts(d, [prod]);
       if (!d.flow) d.flow = flow;
       if (d.status !== 'wait') { d.status = 'wait'; d.status_changed_at = tsPlus1(d.updated_at); }
       d.updated_at = tsPlus1(d.updated_at); lc++;
@@ -3704,8 +3720,8 @@ function renderMergeList() {
     const sorted = g.clients.slice().sort((a, b) => mergeMainScore(b, g.dealsBy[b.id]) - mergeMainScore(a, g.dealsBy[a.id]));
     const rows = sorted.map((c, ci) => {
       const deals = (g.dealsBy[c.id] || []).map(d => {
-        const p = pipeById(dealPipe(d)); const st = dealStatusDef(d);
-        return '<span class="chip chip-product'+(p.none ? ' none' : '')+'" style="--_c:'+p.color+'">'+escapeHtml(p.short)+' · '+escapeHtml(st.short || st.name || '')+'</span>';
+        const p = pipeById(dealPipe(d)); const st = dealStatusDef(d); const extra = dealProducts(d).length - 1;
+        return '<span class="chip chip-product'+(p.none ? ' none' : '')+'" style="--_c:'+p.color+'">'+escapeHtml(p.short)+(extra > 0 ? ' +'+extra : '')+' · '+escapeHtml(st.short || st.name || '')+'</span>';
       }).join('');
       return '<div class="merge-row">'
         + '<input type="checkbox" checked data-g="'+gi+'" data-id="'+c.id+'" title="Это тот же человек">'
@@ -3856,21 +3872,28 @@ function fmtDateShort(iso) {
   const d = new Date(iso);
   return d.toLocaleDateString('ru-RU', { day:'numeric', month:'short' });
 }
-function renderLeadProductPills(value) {
+// Пилюли продукта: можно отметить несколько, первая отмеченная становится основной. Скрытое поле хранит JSON-массив.
+function leadProductValues() {
+  const hid = document.getElementById('leadProduct');
+  try { const a = JSON.parse((hid && hid.value) || '[]'); return Array.isArray(a) ? a.filter(isProductId) : []; } catch { return []; }
+}
+function renderLeadProductPills(values) {
   const el = document.getElementById('leadProductPills');
   const hid = document.getElementById('leadProduct');
   if (!el || !hid) return;
-  const cur = isProductId(value) ? value : '';
-  hid.value = cur;
+  const cur = [...new Set((Array.isArray(values) ? values : (values ? [values] : [])).filter(isProductId))];
+  hid.value = JSON.stringify(cur);
   el.innerHTML = PRODUCTS.map(p =>
-    '<button type="button" class="seg-pill'+(p.id === cur ? ' active' : '')+'" style="--_c:'+p.color+'" onclick="setLeadProduct(\''+p.id+'\')"><span class="seg-dot"></span>'+escapeHtml(p.short)+'</button>'
-  ).join('') + '<button type="button" class="seg-pill none'+(cur ? '' : ' active')+'" onclick="setLeadProduct(\'\')">Без продукта</button>';
+    '<button type="button" class="seg-pill'+(cur.includes(p.id) ? ' active' : '')+(cur[0] === p.id && cur.length > 1 ? ' main' : '')+'" style="--_c:'+p.color+'" onclick="setLeadProduct(\''+p.id+'\')" title="'+escapeHtml(p.name)+(cur[0] === p.id && cur.length > 1 ? ' · основной' : '')+'"><span class="seg-dot"></span>'+escapeHtml(p.short)+'</button>'
+  ).join('') + '<button type="button" class="seg-pill none'+(cur.length ? '' : ' active')+'" onclick="setLeadProduct(\'\')">Без продукта</button>';
 }
 function setLeadProduct(id) {
-  const hid = document.getElementById('leadProduct');
-  if (!hid || hid.value === id) return;
+  const cur = leadProductValues();
+  let next;
+  if (!id) { if (!cur.length) return; next = []; }
+  else next = cur.includes(id) ? cur.filter(x => x !== id) : cur.concat([id]);
   _leadDirty = true;
-  renderLeadProductPills(id);
+  renderLeadProductPills(next);
 }
 function fillLeadStatusSelect(value) {
   const sel = document.getElementById('leadStatus');
@@ -3900,13 +3923,13 @@ function openLeadModal(id, opts) {
   const client = currentClientId ? clientById(currentClientId) : null;
   _leadDraftInterests = [];
   _leadDraftTranscripts = [];
-  const product = lead ? (dealHasProduct(lead) ? lead.product : '') : (opts.product || (isProductId(leadsPipe) ? leadsPipe : ''));
+  const products = lead ? dealProducts(lead) : (opts.product ? [opts.product] : (isProductId(leadsPipe) ? [leadsPipe] : []));
   document.getElementById('leadModalId').value = lead ? lead.id : '';
   document.getElementById('leadName').value = client ? client.name : (lead ? lead.name : '');
   document.getElementById('leadCompany').value = client ? (client.company || '') : (lead ? (lead.company || '') : '');
   document.getElementById('leadTelegram').value = client ? (client.telegram || '') : (lead ? (lead.telegram || '') : '');
   document.getElementById('leadPhone').value = client ? (client.phone || '') : (lead ? (lead.phone || '') : '');
-  renderLeadProductPills(product);
+  renderLeadProductPills(products);
   const cname = client ? client.name : (lead ? lead.name : '');
   document.getElementById('leadTitle').value = lead && lead.title && lead.title !== cname ? lead.title : '';
   _leadTitleShown = document.getElementById('leadTitle').value;
@@ -3968,11 +3991,11 @@ function renderLeadDeals() {
   } else {
     const client = clientById(currentClientId);
     list.innerHTML = deals.map(d => {
-      const p = pipeById(dealPipe(d));
+      const ps = dealProducts(d).map(pipeById);
       const st = dealStatusDef(d);
       const title = d.title && d.title !== (client ? client.name : d.name) ? d.title : '';
       return '<button type="button" class="deal-row'+(d.id === currentLeadId ? ' active' : '')+'" onclick="switchDeal(\''+d.id+'\')">'
-        + '<span class="chip chip-product'+(p.none ? ' none' : '')+'" style="--_c:'+p.color+'">'+escapeHtml(p.short)+'</span>'
+        + (ps.length ? ps.map(p => '<span class="chip chip-product" style="--_c:'+p.color+'">'+escapeHtml(p.short)+'</span>').join('') : '<span class="chip chip-product none">Без продукта</span>')
         + '<span class="deal-row-status" style="--_c:'+(st.color || '#9ca3af')+'">'+escapeHtml(st.name || '')+'</span>'
         + '<span class="deal-row-title">'+escapeHtml(title)+'</span>'
         + (d.potential_chek_rub ? '<span class="deal-row-amount">'+fmtMoneyRubShort(d.potential_chek_rub)+'</span>' : '')
@@ -4057,7 +4080,7 @@ function saveLeadInternal(closeModal) {
     telegram: document.getElementById('leadTelegram').value.trim(),
     phone: document.getElementById('leadPhone').value.trim()
   };
-  const product = document.getElementById('leadProduct').value || '';
+  const products = leadProductValues();
   const flow = document.getElementById('leadFlow').value.trim();
   const cohorts = document.getElementById('leadCohorts').value.split(',').map(x => x.trim()).filter(Boolean);
   const titleRaw = document.getElementById('leadTitle').value.trim();
@@ -4103,7 +4126,7 @@ function saveLeadInternal(closeModal) {
   const leads = loadLeads();
   const existing = currentLeadId ? leads.find(l => l.id === currentLeadId) : null;
   if (existing) {
-    existing.product = product;
+    setDealProducts(existing, products);
     existing.client_id = client.id;
     existing.flow = flow;
     const statusChanged = existing.status !== newStatus;
@@ -4135,7 +4158,7 @@ function saveLeadInternal(closeModal) {
     existing.updated_at = now;
     saveLeads(leads);
   } else {
-    const newLead = Object.assign(newDealRecord(client, { id: genLeadId(), product, flow, title: titleRaw }), mirror, dealFields(), {
+    const newLead = Object.assign(newDealRecord(client, { id: genLeadId(), products, flow, title: titleRaw }), mirror, dealFields(), {
       potential_chek_rub: chek,
       status: newStatus,
       closed_at: leadStatusKind(newStatus) !== 'active' ? now : null
@@ -4796,7 +4819,7 @@ function saveProductsFromModal() {
   saveProducts(_productsDraft);
   closeProductsModal();
   const pills = document.getElementById('leadProductPills');
-  if (pills && document.getElementById('leadModalBg').classList.contains('show')) renderLeadProductPills(document.getElementById('leadProduct').value);
+  if (pills && document.getElementById('leadModalBg').classList.contains('show')) renderLeadProductPills(leadProductValues());
   render();
   toast('Продукты сохранены');
 }
@@ -5565,6 +5588,7 @@ function generateLeadsMarkdown(allLeads) {
         md += '#### '+l.name+(l.company ? ' — '+l.company : '')+(l.title && l.title !== l.name ? ' · '+l.title : '')+'\n';
         md += '- channel: '+(CHANNEL_LABELS[l.channel]||l.channel)+(l.potential_chek_rub ? ', chek: '+l.potential_chek_rub.toLocaleString('ru-RU')+' ₽' : '')+'\n';
         if (l.telegram || l.phone) md += '- контакт:'+(l.telegram ? ' TG '+l.telegram : '')+(l.phone ? ' тел '+l.phone : '')+'\n';
+        if (dealProducts(l).length > 1) md += '- продукты: '+dealProducts(l).map(id => pipeById(id).name).join(', ')+'\n';
         if (l.flow) md += '- поток: '+l.flow+'\n';
         if (l.next_action) md += '- next: '+l.next_action+(l.next_action_date ? ' ('+l.next_action_date+')' : '')+'\n';
         md += '- обновлён: '+new Date(l.updated_at).toISOString().slice(0,10)+'\n\n';
