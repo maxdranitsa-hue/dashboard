@@ -1107,6 +1107,34 @@
   .waitlist-member-side { display:flex; align-items:center; gap:10px; flex-shrink:0; }
   .waitlist-member-chek { font-size:12px; font-weight:700; color:var(--text-2); }
   .waitlist-member-status { --_c:#9ca3af; font-size:11px; font-weight:700; padding:3px 10px; border-radius:999px; background:color-mix(in srgb, var(--_c) 15%, transparent); color:var(--_c); border:1px solid color-mix(in srgb, var(--_c) 35%, transparent); }
+  /* ===== Страница «Воронки» ===== */
+  .pipes-wrap { display:grid; grid-template-columns:320px 1fr; gap:16px; align-items:start; }
+  @media (max-width: 1100px) { .pipes-wrap { grid-template-columns:1fr; } }
+  .pipes-side { position:sticky; top:16px; }
+  .pipe-item { --_c:#9ca3af; display:flex; align-items:center; gap:9px; padding:10px 11px; border-radius:12px; border:1.5px solid transparent; background:var(--bg); margin-bottom:7px; cursor:pointer; transition:border-color .15s ease, background .15s ease; }
+  .pipe-item:hover { background:var(--green-bg-soft); }
+  .pipe-item.active { border-color:color-mix(in srgb, var(--_c) 60%, transparent); background:color-mix(in srgb, var(--_c) 8%, var(--surface)); }
+  .pipe-item-handle { color:var(--text-3); font-size:12px; cursor:grab; flex-shrink:0; }
+  .pipe-item-dot { width:9px; height:9px; border-radius:50%; background:var(--_c); flex-shrink:0; }
+  .pipe-item-name { font-size:13px; font-weight:600; color:var(--text); flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .pipe-item-count { font-size:11px; font-weight:700; color:var(--text-2); background:var(--surface); border:1px solid var(--border-2); border-radius:999px; padding:1px 8px; white-space:nowrap; }
+  .pipes-hint { margin-top:14px; padding:12px 13px; background:var(--bg); border-radius:12px; font-size:11.5px; line-height:1.55; color:var(--text-2); display:flex; flex-direction:column; gap:7px; }
+  .pipes-hint b { color:var(--text); font-size:12px; }
+  .pipe-head { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:4px; }
+  .pipe-name-input { flex:1; min-width:180px; font-size:18px; font-weight:700; color:var(--text); border:1.5px solid transparent; border-radius:9px; padding:6px 9px; background:transparent; font-family:inherit; outline:none; }
+  .pipe-name-input:hover { border-color:var(--border-2); }
+  .pipe-name-input:focus { border-color:var(--green-dark); background:#fff; }
+  .pipe-color { width:34px; height:34px; border-radius:10px; border:1px solid var(--border-2); cursor:pointer; position:relative; overflow:hidden; flex-shrink:0; }
+  .pipe-color input { position:absolute; inset:-4px; opacity:0; cursor:pointer; }
+  .pipe-sub { font-size:12px; color:var(--text-2); margin:2px 0 14px; }
+  .pipe-danger { margin-top:18px; padding-top:14px; border-top:1px solid var(--border); }
+  .pipe-danger-box { margin-top:10px; background:var(--red-bg); border-radius:12px; padding:12px 13px; font-size:12.5px; color:#991b1b; line-height:1.5; }
+  .pipe-danger-box select { margin-top:8px; width:100%; border:1.5px solid #fecaca; border-radius:8px; padding:8px 10px; font-family:inherit; font-size:13px; background:#fff; color:var(--text); outline:none; }
+  .pipe-danger-actions { display:flex; gap:8px; justify-content:flex-end; margin-top:10px; }
+  .leads-phase-hint { font-size:11.5px; color:var(--text-3); margin:-4px 0 10px; }
+  .leads-phase-hint a { color:var(--green-dark); font-weight:600; text-decoration:none; cursor:pointer; }
+  .leads-phase-hint a:hover { text-decoration:underline; }
+
   /* ===== Сделки клиента в карточке ===== */
   .deals-block { background:var(--bg); border-radius:12px; padding:10px 10px 8px; margin-bottom:14px; }
   .deals-head { display:flex; align-items:center; gap:8px; margin-bottom:8px; padding:0 2px; }
@@ -1320,6 +1348,10 @@
       <svg class="menu-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"/></svg>
       <span class="menu-item-label">Выпускники</span>
       <span class="menu-badge" id="navAlumniBadge">0</span>
+    </div>
+    <div class="menu-item" data-page="pipes" onclick="navTo('pipes')">
+      <svg class="menu-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18"/><path d="M6 12h12"/><path d="M10 19h4"/></svg>
+      <span class="menu-item-label">Воронки</span>
     </div>
     <div class="menu-item" data-page="waitlists" onclick="navTo('waitlists')">
       <svg class="menu-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -1568,12 +1600,13 @@
           <div class="card-head">
             <div class="card-title">CRM лидов</div>
             <div style="display:flex;gap:8px">
-              <button class="btn btn-secondary" onclick="openLeadStatusesModal()" title="Добавить, удалить, переименовать и переставить колонки воронки">⚙ Колонки</button>
+              <button class="btn btn-secondary" onclick="openPipesPage(leadsPipe)" title="Настроить воронки и их колонки">⚙ Воронки</button>
               <button class="btn btn-secondary leads-dup-btn" id="leadsDupBtn" onclick="openMergeModal()" title="Похожие клиенты: склеить в одну карточку">Дубли<span class="count" id="leadsDupCount" hidden></span></button>
               <button class="btn btn-primary" onclick="openLeadModal()">+ Новый лид</button>
             </div>
           </div>
           <div class="pipe-tabs" id="leadsPipeTabs"></div>
+          <div class="leads-phase-hint" id="leadsPhaseHint"></div>
           <div class="leads-toolbar">
             <div class="leads-search">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -1616,6 +1649,26 @@
             <button class="leads-toggle-stuck" id="alumniExpandToggle" onclick="toggleAllAlumGroups()">Свернуть все</button>
           </div>
           <div class="swim-wrap"><div class="swim-inner" id="alumniBoard"></div></div>
+        </div>
+      </section>
+
+      <!-- ===== PAGE: PIPES (Воронки) ===== -->
+      <section class="page" data-page="pipes">
+        <div class="pipes-wrap">
+          <div class="card pipes-side">
+            <div class="card-head" style="margin-bottom:10px">
+              <div class="card-title">Воронки</div>
+              <button class="btn btn-primary" onclick="addPipeline()" style="padding:7px 12px;font-size:12px">+ Воронка</button>
+            </div>
+            <div id="pipesList"></div>
+            <div class="pipes-hint">
+              <b>Как это принято делать</b>
+              <div>Одна воронка = один продукт со своим путём сделки. «Выиграно» и «Проиграно» системные: они кормят финансы, удалить их нельзя.</div>
+              <div>5-7 стадий достаточно. Называй стадию действием клиента («Думает», «Согласовал»), а не своим («Отправили КП»): так видно, где сделка встала.</div>
+              <div>«Разобрать» это корзина для неразобранного, а не продукт. Она всегда последняя и не удаляется.</div>
+            </div>
+          </div>
+          <div class="card pipes-main" id="pipesMain"></div>
         </div>
       </section>
 
@@ -2181,28 +2234,6 @@
 </div>
 
 <!-- MODAL: LEAD COLUMNS MANAGER -->
-<div class="modal-bg" id="leadStatusesModalBg" onclick="if(event.target===this)closeLeadStatusesModal()">
-  <div class="modal" style="max-width:640px">
-    <div class="lead-modal-head" style="margin-bottom:6px">
-      <div class="lead-modal-title-block">
-        <div class="lead-modal-name">Колонки воронки</div>
-        <div class="lead-modal-company" style="line-height:1.5">Перетаскивай ⋮⋮, чтобы поменять порядок. <b>Фаза</b> решает, в какой колонке вкладки «Все» окажется стадия; <b>Выиграно</b> идёт в финансы и «Купившие».</div>
-      </div>
-      <button class="lead-modal-close" onclick="closeLeadStatusesModal()" title="Закрыть">✕</button>
-    </div>
-    <div class="lead-field-mini" style="margin:12px 0 4px">
-      <label>Воронка</label>
-      <select id="stagesPipeSelect" onchange="onStagesPipeChange(this)"></select>
-    </div>
-    <div id="leadStatusesList" style="margin-top:12px;display:flex;flex-direction:column;gap:8px"></div>
-    <button onclick="addLeadStatus()" style="width:100%;margin-top:10px;padding:11px;background:var(--bg);border:1px dashed var(--border-2);border-radius:10px;color:var(--text-2);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer">+ Добавить колонку</button>
-    <div style="display:flex;gap:10px;margin-top:18px;justify-content:flex-end;flex-wrap:wrap">
-      <button class="modal-btn cancel" onclick="resetLeadStatusesToDefault()" style="margin-right:auto">Сбросить к стандарту</button>
-      <button class="modal-btn cancel" onclick="closeLeadStatusesModal()">Отмена</button>
-      <button class="modal-btn primary" onclick="saveLeadStatusesFromModal()">Сохранить</button>
-    </div>
-  </div>
-</div>
 
 <!-- MODAL: PROJECT -->
 <div class="modal-bg" id="projectModalBg" onclick="if(event.target===this)closeProjectModal()">
@@ -2356,16 +2387,28 @@ const PIPE_PHASES = [
   { id:'won',   name:'Выиграно',  short:'Выиграно',  color:'#10b981' },
   { id:'lost',  name:'Проиграно', short:'Проиграно', color:'#dc2626' }
 ];
-const PIPELINES = [
+const DEFAULT_PIPELINES = [
   { id:'cc',        name:'Claude Code 160к',            short:'Claude Code',  tpl:'intensive', color:'#d97706' },
   { id:'claude50',  name:'Интенсив Claude 50к',         short:'Интенсив 50к', tpl:'intensive', color:'#f97316' },
   { id:'corp',      name:'Корп обучение',               short:'Корп',         tpl:'b2b',       color:'#0ea5e9' },
   { id:'discovery', name:'Discovery',                   short:'Discovery',    tpl:'b2b',       color:'#10b981' },
   { id:'teens',     name:'Подростки',                   short:'Подростки',    tpl:'intensive', color:'#a855f7' },
   { id:'dev',       name:'Разработка и сопровождение',  short:'Разработка',   tpl:'b2b',       color:'#ef4444' },
-  { id:'inbox',     name:'Разобрать',                   short:'Разобрать',    tpl:'b2b',       color:'#9ca3af', hideIfEmpty:true }
+  { id:'inbox',     name:'Разобрать',                   short:'Разобрать',    tpl:'b2b',       color:'#9ca3af', hideIfEmpty:true, system:true }
 ];
-const PIPELINES_BY_ID = Object.fromEntries(PIPELINES.map(p => [p.id, p]));
+function loadPipelines() {
+  let list = null;
+  try { const a = JSON.parse(localStorage.getItem('pipelines') || 'null'); if (Array.isArray(a) && a.length) list = a; } catch {}
+  list = (list || DEFAULT_PIPELINES).map(p => Object.assign({ tpl:'b2b', color:'#9ca3af' }, p, { short: p.short || p.name }));
+  if (!list.some(p => p.id === 'inbox')) list.push(Object.assign({}, DEFAULT_PIPELINES[DEFAULT_PIPELINES.length - 1]));
+  // «Разобрать» всегда последняя: это не продукт, а корзина для неразобранного
+  return list.filter(p => p.id !== 'inbox').concat(list.filter(p => p.id === 'inbox'));
+}
+let PIPELINES = loadPipelines();
+let PIPELINES_BY_ID = Object.fromEntries(PIPELINES.map(p => [p.id, p]));
+function refreshPipelines() { PIPELINES = loadPipelines(); PIPELINES_BY_ID = Object.fromEntries(PIPELINES.map(p => [p.id, p])); }
+function savePipelines(list) { localStorage.setItem('pipelines', JSON.stringify(list)); refreshPipelines(); }
+function pipeShort(name) { const n = String(name || '').trim(); return n.length > 16 ? n.slice(0, 15) + '…' : n; }
 function pipeById(id) { return PIPELINES_BY_ID[id] || PIPELINES_BY_ID.inbox; }
 function dealPipe(l) { return (l && PIPELINES_BY_ID[l.product]) ? l.product : 'inbox'; }
 // Стадии воронки: свои из «⚙ Колонки», иначе шаблон
@@ -2992,6 +3035,7 @@ function navTo(page) {
     home: { t:'Главная', s:'План, выполнение, фокус — на одном экране.' },
     leads: { t:'Лиды', s:'CRM, канбан и движение по воронке.' },
     alumni: { t:'Выпускники', s:'База участников интенсивов. Резервуар касаний, не воронка.' },
+    pipes: { t:'Воронки', s:'Продукты, их стадии и порядок колонок на доске.' },
     waitlists: { t:'Списки ожидания', s:'Очереди клиентов на конкретное событие или когорту.' },
     today: { t:'Сегодня', s:'Чек-лист, касания и встречи дня.' },
     finance: { t:'Финансы', s:'Сделки месяца, клиенты, распределение прибыли.' },
@@ -3003,6 +3047,7 @@ function navTo(page) {
   document.getElementById('pageTitle').textContent = info.t;
   document.getElementById('pageSub').textContent = info.s;
   localStorage.setItem('activeTab', page);
+  if (page === 'pipes') renderPipes();
   window.scrollTo({ top:0, behavior:'smooth' });
 }
 
@@ -3433,6 +3478,12 @@ function setDealPipe(dealId, pipeId) {
 function renderLeadsKanban() {
   fillLeadsFilterChannel();
   renderLeadsPipeTabs();
+  const hintEl = document.getElementById('leadsPhaseHint');
+  if (hintEl) {
+    hintEl.innerHTML = leadsPipe === 'all'
+      ? 'Колонки вкладки «Все» это общие фазы всех продуктов, добавить сюда свою нельзя. Стадии живут внутри воронки: выбери продукт выше или открой <a onclick="openPipesPage()">настройку воронок</a>.'
+      : 'Колонки этой воронки настраиваются в <a onclick="openPipesPage(\''+leadsPipe+'\')">разделе «Воронки»</a>: добавить, удалить, переименовать, переставить.';
+  }
   updateDupCount();
   const all = loadLeads();
   const leads = filterLeads(all).filter(l => leadsPipe === 'all' || dealPipe(l) === leadsPipe);
@@ -3639,6 +3690,7 @@ function guessPipe(l) {
 // поэтому синк не плодит дублей. updated_at сдвигается на 1 мс, чтобы разложенная
 // версия выиграла у старой при слиянии и при этом «свежесть» карточек не сбилась.
 function ensurePipelines() {
+  refreshPipelines();
   PIPE_STAGES = loadPipeStages();
   rebuildStatusRegistry();
   const leads = loadLeadsRaw();
@@ -5563,27 +5615,164 @@ const LEAD_KIND_OPTIONS = [
 ];
 let _leadStatusesDraft = null;
 let _leadStatusesSortable = null;
+let _pipesSortable = null;
 let _stagesPipe = 'cc';
+let _pipeDeleteMode = false;
 function genStageId() { return 's_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+function genPipeId() { return 'p_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
 function phaseKind(ph) { return ph === 'won' ? 'won' : ph === 'lost' ? 'lost' : 'active'; }
-function openLeadStatusesModal() {
-  const sel = document.getElementById('stagesPipeSelect');
-  sel.innerHTML = PIPELINES.map(p => '<option value="'+p.id+'">'+escapeHtml(p.name)+'</option>').join('');
-  _stagesPipe = (leadsPipe && leadsPipe !== 'all' && PIPELINES_BY_ID[leadsPipe]) ? leadsPipe : 'cc';
-  sel.value = _stagesPipe;
-  loadStagesDraft();
-  document.getElementById('leadStatusesModalBg').classList.add('show');
+function dealsByPipe() {
+  const m = {};
+  loadLeads().forEach(l => { const k = dealPipe(l); (m[k] = m[k] || { total: 0, active: 0 }); m[k].total++; if (leadStatusKind(l.status) === 'active') m[k].active++; });
+  return m;
 }
-function loadStagesDraft() {
-  _leadStatusesDraft = pipeStatuses(_stagesPipe).map(st => Object.assign({}, st));
+function openPipesPage(pipeId) {
+  if (pipeId && pipeId !== 'all' && PIPELINES_BY_ID[pipeId]) _stagesPipe = pipeId;
+  navTo('pipes');
+  selectPipe(_stagesPipe);
+}
+function selectPipe(id) {
+  if (!PIPELINES_BY_ID[id]) id = (PIPELINES.find(p => p.id !== 'inbox') || PIPELINES[0]).id;
+  _stagesPipe = id;
+  _pipeDeleteMode = false;
+  loadStagesDraft();
+  renderPipes();
+}
+function loadStagesDraft() { _leadStatusesDraft = pipeStatuses(_stagesPipe).map(st => Object.assign({}, st)); }
+
+// не перерисовываем страницу, пока в неё что-то печатают
+function renderPipesSafe() {
+  const a = document.activeElement;
+  if (a && (a.id === 'pipeNameInput' || (a.closest && a.closest('#leadStatusesList')))) return;
+  const page = document.querySelector('.page[data-page="pipes"]');
+  if (!page || !page.classList.contains('active')) return;
+  renderPipes();
+}
+function renderPipes() {
+  const side = document.getElementById('pipesList');
+  const main = document.getElementById('pipesMain');
+  if (!side || !main) return;
+  if (!PIPELINES_BY_ID[_stagesPipe]) _stagesPipe = (PIPELINES.find(p => p.id !== 'inbox') || PIPELINES[0]).id;
+  if (!_leadStatusesDraft) loadStagesDraft();
+  const counts = dealsByPipe();
+  side.innerHTML = PIPELINES.map(p => {
+    const c = counts[p.id] || { total: 0, active: 0 };
+    const handle = p.id === 'inbox'
+      ? '<span class="pipe-item-handle" style="opacity:.25" title="«Разобрать» всегда последняя">⋮⋮</span>'
+      : '<span class="pipe-item-handle" title="Перетащить">⋮⋮</span>';
+    return '<div class="pipe-item' + (p.id === _stagesPipe ? ' active' : '') + '" style="--_c:' + p.color + '" data-pipe="' + p.id + '" onclick="selectPipe(\'' + p.id + '\')">'
+      + handle
+      + '<span class="pipe-item-dot"></span>'
+      + '<span class="pipe-item-name">' + escapeHtml(p.name) + '</span>'
+      + '<span class="pipe-item-count" title="В работе из всех сделок">' + c.active + ' / ' + c.total + '</span>'
+      + '</div>';
+  }).join('');
+  if (_pipesSortable) { try { _pipesSortable.destroy(); } catch {} _pipesSortable = null; }
+  if (typeof Sortable !== 'undefined') {
+    _pipesSortable = Sortable.create(side, {
+      handle: '.pipe-item-handle', animation: 150, ghostClass: 'sortable-ghost', dragClass: 'sortable-drag',
+      onEnd: () => {
+        const order = [...side.querySelectorAll('.pipe-item')].map(e => e.dataset.pipe);
+        const list = order.map(id => PIPELINES_BY_ID[id]).filter(Boolean).map(x => Object.assign({}, x));
+        savePipelines(list);
+        render(); renderPipes();
+      }
+    });
+  }
+
+  const p = PIPELINES_BY_ID[_stagesPipe];
+  const c = counts[p.id] || { total: 0, active: 0 };
+  const tplName = pipeById(p.id).tpl === 'intensive' ? 'интенсив' : 'B2B';
+  const others = PIPELINES.filter(x => x.id !== p.id);
+  main.innerHTML =
+    '<div class="pipe-head">'
+    + '<label class="pipe-color" style="background:' + p.color + '" title="Цвет воронки"><input type="color" value="' + p.color + '" oninput="setPipeColor(this.value)"></label>'
+    + '<input class="pipe-name-input" id="pipeNameInput" type="text" value="' + escapeHtml(p.name) + '" ' + (p.system ? 'disabled title="Системная воронка"' : 'onchange="renamePipeline(this.value)"') + '>'
+    + '</div>'
+    + '<div class="pipe-sub">Сделок: <b>' + c.total + '</b>, из них в работе <b>' + c.active + '</b>. Шаблон стадий: ' + tplName + '.</div>'
+    + '<div class="deal-section-label">Колонки воронки</div>'
+    + '<div id="leadStatusesList" style="display:flex;flex-direction:column;gap:8px"></div>'
+    + '<button onclick="addLeadStatus()" style="width:100%;margin-top:10px;padding:11px;background:var(--bg);border:1px dashed var(--border-2);border-radius:10px;color:var(--text-2);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer">+ Добавить колонку</button>'
+    + '<div style="display:flex;gap:10px;margin-top:16px;justify-content:flex-end;flex-wrap:wrap">'
+    + '<button class="modal-btn cancel" onclick="resetLeadStatusesToDefault()" style="margin-right:auto">Сбросить к стандарту</button>'
+    + '<button class="modal-btn cancel" onclick="selectPipe(\'' + p.id + '\')">Отменить правки</button>'
+    + '<button class="modal-btn primary" onclick="saveLeadStatusesFromModal()">Сохранить колонки</button>'
+    + '</div>'
+    + (p.id === 'inbox' ? '' :
+      '<div class="pipe-danger">'
+      + (_pipeDeleteMode
+        ? '<div class="pipe-danger-box"><b>Удалить воронку «' + escapeHtml(p.name) + '»?</b><br>'
+          + (c.total ? 'В ней сделок: ' + c.total + '. Они не удалятся, а переедут в выбранную воронку, стадия подберётся по фазе.' : 'Сделок в ней нет.')
+          + '<select id="pipeMoveTarget">' + others.map(x => '<option value="' + x.id + '"' + (x.id === 'inbox' ? ' selected' : '') + '>' + escapeHtml(x.name) + '</option>').join('') + '</select>'
+          + '<div class="pipe-danger-actions"><button class="modal-btn cancel" onclick="cancelDeletePipe()">Отмена</button>'
+          + '<button class="modal-btn primary" style="background:var(--red)" onclick="confirmDeletePipe()">Удалить и перенести</button></div></div>'
+        : '<button class="modal-btn cancel" style="color:var(--red);border:1px solid #fecaca" onclick="startDeletePipe()">Удалить воронку</button>')
+      + '</div>');
   renderLeadStatusesList();
 }
-function onStagesPipeChange(sel) { _stagesPipe = sel.value; loadStagesDraft(); }
-function closeLeadStatusesModal() {
-  document.getElementById('leadStatusesModalBg').classList.remove('show');
-  _leadStatusesDraft = null;
-  if (_leadStatusesSortable) { try { _leadStatusesSortable.destroy(); } catch {} _leadStatusesSortable = null; }
+
+function addPipeline() {
+  const palette = ['#6366f1','#ec4899','#14b8a6','#f59e0b','#8b5cf6','#0ea5e9','#22c55e','#ef4444'];
+  const used = new Set(PIPELINES.map(x => x.color));
+  const color = palette.find(x => !used.has(x)) || palette[0];
+  const tpl = confirm('Короткий цикл, как у интенсивов (Интерес → Пригласил → Думает → Оплатил)?\n\nОК — интенсив. Отмена — B2B (Новый → Созвон → КП → Переговоры → Выиграно).') ? 'intensive' : 'b2b';
+  const np = { id: genPipeId(), name: 'Новая воронка', short: 'Новая воронка', tpl, color };
+  const list = PIPELINES.map(x => Object.assign({}, x));
+  const at = list.findIndex(x => x.id === 'inbox');
+  if (at >= 0) list.splice(at, 0, np); else list.push(np);
+  savePipelines(list);
+  selectPipe(np.id);
+  render();
+  setTimeout(() => { const el = document.getElementById('pipeNameInput'); if (el) { el.focus(); el.select(); } }, 50);
 }
+function renamePipeline(val) {
+  const name = String(val || '').trim();
+  if (!name) { renderPipes(); return; }
+  const list = PIPELINES.map(x => Object.assign({}, x));
+  const p = list.find(x => x.id === _stagesPipe);
+  if (!p) return;
+  p.name = name; p.short = pipeShort(name);
+  savePipelines(list);
+  render(); renderPipes();
+  toast('Воронка переименована');
+}
+function setPipeColor(val) {
+  const list = PIPELINES.map(x => Object.assign({}, x));
+  const p = list.find(x => x.id === _stagesPipe);
+  if (!p) return;
+  p.color = val;
+  savePipelines(list);
+  render(); renderPipes();
+}
+function startDeletePipe() { _pipeDeleteMode = true; renderPipes(); }
+function cancelDeletePipe() { _pipeDeleteMode = false; renderPipes(); }
+function confirmDeletePipe() {
+  const p = PIPELINES_BY_ID[_stagesPipe];
+  if (!p || p.id === 'inbox') return;
+  const target = (document.getElementById('pipeMoveTarget') || {}).value || 'inbox';
+  if (!PIPELINES_BY_ID[target]) return;
+  const leads = loadLeadsRaw();
+  let moved = 0;
+  for (const l of leads) {
+    if (l.deleted || dealPipe(l) !== p.id) continue;
+    l.product = target;
+    l.status = mapStatusToPipe(l.status, target, true);
+    l.updated_at = tsPlus1(l.updated_at);
+    moved++;
+  }
+  if (moved) saveLeads(leads);
+  const stages = Object.assign({}, PIPE_STAGES);
+  delete stages[p.id];
+  PIPE_STAGES = stages;
+  localStorage.setItem('pipe_stages', JSON.stringify(stages));
+  savePipelines(PIPELINES.filter(x => x.id !== p.id).map(x => Object.assign({}, x)));
+  if (leadsPipe === p.id) { leadsPipe = 'all'; try { localStorage.setItem('_leads_pipe', 'all'); } catch {} }
+  rebuildStatusRegistry();
+  selectPipe((PIPELINES.find(x => x.id !== 'inbox') || PIPELINES[0]).id);
+  render();
+  toast(moved ? 'Воронка удалена, сделок перенесено: ' + moved : 'Воронка удалена');
+}
+
 function renderLeadStatusesList() {
   const list = document.getElementById('leadStatusesList');
   if (!list || !_leadStatusesDraft) return;
@@ -5591,27 +5780,27 @@ function renderLeadStatusesList() {
   loadLeads().filter(l => dealPipe(l) === _stagesPipe).forEach(l => { counts[l.status] = (counts[l.status] || 0) + 1; });
   list.innerHTML = _leadStatusesDraft.map((st, i) => {
     const phaseOpts = PIPE_PHASES.map(ph =>
-      '<option value="'+ph.id+'"'+(st.phase === ph.id ? ' selected' : '')+'>'+(ph.id === 'won' ? 'Выиграно · в финансы' : ph.name)+'</option>'
+      '<option value="' + ph.id + '"' + (st.phase === ph.id ? ' selected' : '') + '>' + (ph.id === 'won' ? 'Выиграно · в финансы' : ph.name) + '</option>'
     ).join('');
     const n = counts[st.id] || 0;
-    return '<div class="alum-status-row" data-idx="'+i+'">'+
-      '<span class="alum-status-handle" title="Перетащить">⋮⋮</span>'+
-      '<label class="alum-status-color" style="background:'+st.color+'" title="Сменить цвет">'+
-        '<input type="color" value="'+st.color+'" oninput="updateLeadStatus('+i+', \'color\', this.value); this.parentNode.style.background=this.value">'+
-      '</label>'+
-      '<input class="alum-status-name" type="text" value="'+escapeHtml(st.name)+'" placeholder="Название" oninput="updateLeadStatus('+i+', \'name\', this.value)">'+
-      (n ? '<span class="stage-count" title="Сделок в этой колонке">'+n+'</span>' : '')+
-      '<select class="alum-status-kind" onchange="updateLeadStatus('+i+', \'phase\', this.value)">'+phaseOpts+'</select>'+
-      '<button class="alum-status-del" onclick="removeLeadStatusDraft('+i+')" title="Удалить колонку">✕</button>'+
-    '</div>';
+    const system = st.phase === 'won' || st.phase === 'lost';
+    return '<div class="alum-status-row" data-idx="' + i + '">'
+      + '<span class="alum-status-handle" title="Перетащить">⋮⋮</span>'
+      + '<label class="alum-status-color" style="background:' + st.color + '" title="Сменить цвет">'
+      + '<input type="color" value="' + st.color + '" oninput="updateLeadStatus(' + i + ', \'color\', this.value); this.parentNode.style.background=this.value">'
+      + '</label>'
+      + '<input class="alum-status-name" type="text" value="' + escapeHtml(st.name) + '" placeholder="Название" oninput="updateLeadStatus(' + i + ', \'name\', this.value)">'
+      + (n ? '<span class="stage-count" title="Сделок в этой колонке">' + n + '</span>' : '')
+      + '<select class="alum-status-kind" onchange="updateLeadStatus(' + i + ', \'phase\', this.value)">' + phaseOpts + '</select>'
+      + (system
+        ? '<button class="alum-status-del" style="opacity:.25;cursor:default" title="Системная колонка: кормит финансы, удалить нельзя">✕</button>'
+        : '<button class="alum-status-del" onclick="removeLeadStatusDraft(' + i + ')" title="Удалить колонку">✕</button>')
+      + '</div>';
   }).join('');
   if (_leadStatusesSortable) { try { _leadStatusesSortable.destroy(); } catch {} _leadStatusesSortable = null; }
   if (typeof Sortable !== 'undefined') {
     _leadStatusesSortable = Sortable.create(list, {
-      handle: '.alum-status-handle',
-      animation: 150,
-      ghostClass: 'sortable-ghost',
-      dragClass: 'sortable-drag',
+      handle: '.alum-status-handle', animation: 150, ghostClass: 'sortable-ghost', dragClass: 'sortable-drag',
       onEnd: (evt) => {
         if (evt.oldIndex === evt.newIndex) return;
         const moved = _leadStatusesDraft.splice(evt.oldIndex, 1)[0];
@@ -5625,14 +5814,13 @@ function updateLeadStatus(i, key, val) {
   if (!_leadStatusesDraft || !_leadStatusesDraft[i]) return;
   _leadStatusesDraft[i][key] = val;
   if (key === 'name') _leadStatusesDraft[i].short = val;
-  if (key === 'phase') _leadStatusesDraft[i].kind = phaseKind(val);
+  if (key === 'phase') { _leadStatusesDraft[i].kind = phaseKind(val); renderLeadStatusesList(); }
 }
 function addLeadStatus() {
   if (!_leadStatusesDraft) return;
   const palette = ['#3b82f6','#f97316','#a855f7','#10b981','#eab308','#ec4899','#0ea5e9','#6366f1','#dc2626','#9ca3af'];
   const used = new Set(_leadStatusesDraft.map(st => st.color));
-  const color = palette.find(c => !used.has(c)) || palette[Math.floor(Math.random()*palette.length)];
-  // новая колонка встаёт перед первой закрывающей (Выиграно / Проиграно)
+  const color = palette.find(c => !used.has(c)) || palette[Math.floor(Math.random() * palette.length)];
   const at = _leadStatusesDraft.findIndex(st => st.phase === 'won' || st.phase === 'lost');
   const row = { id: genStageId(), name: 'Новая колонка', short: 'Новая колонка', color, phase: 'work', kind: 'active' };
   if (at >= 0) _leadStatusesDraft.splice(at, 0, row); else _leadStatusesDraft.push(row);
@@ -5696,8 +5884,9 @@ function saveLeadStatusesFromModal() {
     saveLeads(leads);
   }
   const pname = pipeById(_stagesPipe).name;
-  closeLeadStatusesModal();
+  loadStagesDraft();
   render();
+  renderPipes();
   toast(moves.length ? 'Колонки «' + pname + '» сохранены. Перенесено сделок: ' + moves.length : 'Колонки «' + pname + '» сохранены');
 }
 
@@ -5979,6 +6168,7 @@ function renderWaitlists() {
 
 function render() {
   ensurePipelines();
+  renderPipesSafe();
   renderMetrics();
   renderWeekBars();
   renderRecentList();
@@ -6888,7 +7078,7 @@ migrateTranscripts();
 ensurePipelines();
 seedProjectsIfEmpty();
 const savedPage = localStorage.getItem('activeTab') || 'home';
-navTo(['home','leads','alumni','waitlists','today','finance','history','projects','events'].includes(savedPage) ? savedPage : 'home');
+navTo(['home','leads','pipes','alumni','waitlists','today','finance','history','projects','events'].includes(savedPage) ? savedPage : 'home');
 render();
 setInterval(render, 60000);
 // Первый заход без кэша — подтянуть курируемую ленту из GitHub; дальше обновляет кнопка (живой поиск)
