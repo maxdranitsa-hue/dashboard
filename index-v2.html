@@ -332,7 +332,7 @@
   /* ============ METRICS ROW ============ */
   .metrics-row {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1.7fr;
+    grid-template-columns: 1.55fr 1fr 1fr 1fr;
     gap: 14px;
   }
   @media (max-width: 1180px) {
@@ -1297,6 +1297,55 @@
     .metrics-row { grid-template-columns: 1fr; }
     .bars-row { gap: 8px; }
   }
+
+  /* ============ HOME: обзор по референсу (hm-) ============ */
+  .hm-grid2 { display:grid; grid-template-columns:1.45fr 1fr; gap:14px; align-items:start; }
+  .hm-sub { font-size:12px; color:var(--text-3); margin-top:3px; font-weight:400; }
+  .hm-legend { display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
+  .hm-legend-item { display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--text-2); font-weight:500; }
+  .hm-legend-sw { width:10px; height:10px; border-radius:3px; flex-shrink:0; }
+  .hm-chart svg { display:block; width:100%; height:auto; overflow:visible; }
+  .hm-ax-line { stroke:var(--border-2); stroke-width:1; }
+  .hm-grid-line { stroke:var(--border); stroke-width:1; stroke-dasharray:3 4; }
+  .hm-ax-text { font-size:11px; fill:var(--text-3); font-weight:500; }
+  .hm-val-text { font-size:11px; fill:var(--text-2); font-weight:700; }
+  .hm-hit { fill:transparent; cursor:pointer; }
+  .hm-funnel { display:flex; flex-direction:column; gap:10px; }
+  .hm-fn-row { display:grid; grid-template-columns:92px 1fr 92px; align-items:center; gap:12px; cursor:pointer; }
+  .hm-fn-name { font-size:12.5px; font-weight:600; color:var(--text-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .hm-fn-track { height:34px; background:var(--fill); border-radius:9px; display:flex; align-items:center; min-width:0; }
+  .hm-fn-bar { height:100%; border-radius:9px; display:flex; align-items:center; padding:0 11px; color:#fff; font-size:12.5px; font-weight:700; font-variant-numeric:tabular-nums; white-space:nowrap; transition:width .7s var(--ease), filter .15s var(--ease); }
+  .hm-fn-row:hover .hm-fn-bar { filter:brightness(1.06); }
+  .hm-fn-out { margin-left:9px; font-size:12.5px; font-weight:700; color:var(--text-2); white-space:nowrap; font-variant-numeric:tabular-nums; }
+  .hm-fn-conv { font-size:11.5px; color:var(--text-3); font-weight:600; text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .hm-fn-conv b { color:var(--text-2); }
+  .hm-tbl-wrap { overflow-x:auto; }
+  .hm-tbl { width:100%; border-collapse:collapse; }
+  .hm-tbl th { text-align:left; font-size:10.5px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:.9px; padding:0 12px 10px; white-space:nowrap; }
+  .hm-tbl td { padding:11px 12px; border-top:1px solid var(--border); font-size:13px; vertical-align:middle; }
+  .hm-tbl tbody tr { transition:background .12s var(--ease); cursor:pointer; }
+  .hm-tbl tbody tr:hover { background:var(--fill); }
+  .hm-tbl .num { text-align:right; font-variant-numeric:tabular-nums; font-weight:600; white-space:nowrap; }
+  .hm-tbl-name { font-weight:600; }
+  .hm-tbl-sub { font-size:11.5px; color:var(--text-3); }
+  .hm-status { display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:700; padding:3px 9px; border-radius:999px; white-space:nowrap; }
+  .hm-status.warn { background:rgba(199,119,0,.13); color:#c77700; }
+  .hm-status.bad { background:rgba(215,0,21,.1); color:#d70015; }
+  .hm-empty { color:var(--text-3); text-align:center; padding:26px 12px; font-size:13px; }
+  .hm-rank { display:flex; flex-direction:column; gap:14px; }
+  .hm-rank-row { display:flex; align-items:center; gap:12px; cursor:pointer; }
+  .hm-rank-ava { width:34px; height:34px; border-radius:11px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#fff; letter-spacing:.3px; }
+  .hm-rank-body { flex:1; min-width:0; }
+  .hm-rank-top { display:flex; justify-content:space-between; gap:10px; align-items:baseline; }
+  .hm-rank-name { font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .hm-rank-val { font-size:12.5px; font-weight:700; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .hm-rank-track { height:7px; border-radius:999px; background:var(--fill); margin-top:7px; overflow:hidden; }
+  .hm-rank-fill { height:100%; border-radius:999px; transition:width .7s var(--ease); }
+  .hm-rank-sub { font-size:11px; color:var(--text-3); margin-top:5px; }
+  .hm-link { background:none; border:none; font-family:inherit; font-size:12px; font-weight:600; color:var(--green-mid); cursor:pointer; padding:0; white-space:nowrap; }
+  .hm-link:hover { text-decoration:underline; }
+  @media (max-width:1180px) { .hm-grid2 { grid-template-columns:1fr; } }
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 </head>
@@ -1392,7 +1441,7 @@
       <header class="page-header">
         <div>
           <h1 class="page-title" id="pageTitle">Главная</h1>
-          <div class="page-sub" id="pageSub">План, выполнение, фокус — на одном экране.</div>
+          <div class="page-sub" id="pageSub"></div>
         </div>
         <div class="page-actions" id="pageActions">
           <button class="btn btn-primary" onclick="openLeadModal()">
@@ -1407,6 +1456,26 @@
 
         <!-- 4 метрики: 3 обычные + hero справа -->
         <div class="metrics-row">
+          <div class="metric-card hero clickable" onclick="navTo('finance')" title="К Финансам">
+            <div class="hero-left">
+              <div class="hero-label" id="heroMonthLabel">Сделки месяца</div>
+              <div class="hero-value" id="metricRevenueK">0 ₽</div>
+              <div class="hero-meta">
+                <span class="metric-trend-chip" id="metricRevenueChip">старт</span>
+                <span id="metricRevenueSub">0% к 2 млн ₽</span>
+              </div>
+            </div>
+            <div class="hero-ring-big">
+              <svg viewBox="0 0 100 100">
+                <circle class="hero-ring-big-bg" cx="50" cy="50" r="44"/>
+                <circle class="hero-ring-big-fill" id="metricRevenueRing" cx="50" cy="50" r="44" stroke-dasharray="276" stroke-dashoffset="276"/>
+              </svg>
+              <div class="hero-ring-big-center">
+                <div class="hero-ring-big-pct" id="metricRevenueRingPct">0%</div>
+                <div class="hero-ring-big-lbl">к цели</div>
+              </div>
+            </div>
+          </div>
           <div class="metric-card clickable" onclick="openLeadsWithFilter('closed')" title="Открыть закрытые сделки">
             <div class="metric-head">
               <div class="metric-label">Закрытые лиды</div>
@@ -1443,25 +1512,31 @@
             </div>
           </div>
 
-          <div class="metric-card hero clickable" onclick="navTo('finance')" title="К Финансам">
-            <div class="hero-left">
-              <div class="hero-label" id="heroMonthLabel">Сделки месяца</div>
-              <div class="hero-value" id="metricRevenueK">0 ₽</div>
-              <div class="hero-meta">
-                <span class="metric-trend-chip" id="metricRevenueChip">старт</span>
-                <span id="metricRevenueSub">0% к 2 млн ₽</span>
-              </div>
+        </div>
+
+        <!-- Обзор по референсу демо-панели: график, воронка, застрявшие, продукты -->
+        <div class="hm-grid2">
+          <div class="card">
+            <div class="card-head">
+              <div><div class="card-title">Оплаты по месяцам</div><div class="hm-sub">Закрытые сделки, млн ₽ · цель <span id="hmGoalLabel">2,0 млн ₽</span> в месяц</div></div>
+              <div class="hm-legend"><span class="hm-legend-item"><span class="hm-legend-sw" style="background:#d7dce3"></span>Цель</span><span class="hm-legend-item"><span class="hm-legend-sw" style="background:var(--green-mid)"></span>Факт</span></div>
             </div>
-            <div class="hero-ring-big">
-              <svg viewBox="0 0 100 100">
-                <circle class="hero-ring-big-bg" cx="50" cy="50" r="44"/>
-                <circle class="hero-ring-big-fill" id="metricRevenueRing" cx="50" cy="50" r="44" stroke-dasharray="276" stroke-dashoffset="276"/>
-              </svg>
-              <div class="hero-ring-big-center">
-                <div class="hero-ring-big-pct" id="metricRevenueRingPct">0%</div>
-                <div class="hero-ring-big-lbl">к цели</div>
-              </div>
-            </div>
+            <div class="hm-chart" id="hmChart"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div><div class="card-title">Воронка сделок</div><div class="hm-sub">Сколько доходит до следующего шага, без отказов</div></div></div>
+            <div class="hm-funnel" id="hmFunnel"></div>
+          </div>
+        </div>
+
+        <div class="hm-grid2">
+          <div class="card">
+            <div class="card-head"><div><div class="card-title">Что горит сегодня</div><div class="hm-sub">Активные сделки без движения дольше 10 дней</div></div><button class="hm-link" onclick="hmOpenStuck()">все застрявшие →</button></div>
+            <div class="hm-tbl-wrap"><table class="hm-tbl"><thead><tr><th>Клиент</th><th>Стадия</th><th>Продукт</th><th class="num">Чек</th><th class="num">Без движения</th></tr></thead><tbody id="hmStuckRows"></tbody></table></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div><div class="card-title">Продукты</div><div class="hm-sub" id="hmProductsSub">Оплачено в этом месяце</div></div></div>
+            <div class="hm-rank" id="hmProducts"></div>
           </div>
         </div>
 
@@ -2696,7 +2771,7 @@ function navTo(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.toggle('active', p.dataset.page === page));
   document.querySelectorAll('.menu-item').forEach(m => m.classList.toggle('active', m.dataset.page === page));
   const titles = {
-    home: { t:'Главная', s:'План, выполнение, фокус — на одном экране.' },
+    home: { t:'Главная', s:hmHomeSubtitle() },
     leads: { t:'Лиды', s:'Одна доска: все сделки, продукт как метка.' },
     today: { t:'Сегодня', s:'Чек-лист, касания и встречи дня.' },
     finance: { t:'Финансы', s:'Сделки месяца, клиенты, распределение прибыли.' },
@@ -5016,10 +5091,143 @@ function saveInterestTagsFromModal() {
   toast(cleaned ? 'Теги сохранены. Почищено ссылок у лидов: '+cleaned : 'Теги сохранены');
 }
 
+
+// ===== HOME: обзор по референсу демо-панели (график, воронка, застрявшие, продукты) =====
+const HM_MONTHS_NOM = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+const HM_MONTHS_SHORT = ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
+function hmMln(v) { return (v / 1e6).toFixed(1).replace('.', ',') + ' млн ₽'; }
+function hmAxis(v) { return (v / 1e6).toLocaleString('ru-RU', { maximumFractionDigits: 2 }); }
+function hmNiceStep(x) { if (x <= 0) return 1; const p = Math.pow(10, Math.floor(Math.log10(x))); const f = x / p; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p; }
+function hmLastMonths(n) {
+  const out = [], now = new Date();
+  for (let i = n - 1; i >= 0; i--) { const d = new Date(now.getFullYear(), now.getMonth() - i, 1); out.push({ y: d.getFullYear(), m: d.getMonth() }); }
+  return out;
+}
+function hmHomeSubtitle() { const d = new Date(); return HM_MONTHS_NOM[d.getMonth()] + ' ' + d.getFullYear() + ' · цель месяца ' + fmtMoneyRub(GOAL_RUB); }
+function hmDrawChart() {
+  const host = document.getElementById('hmChart'); if (!host) return;
+  const data = hmLastMonths(6).map(x => ({ y: x.y, m: x.m, plan: GOAL_RUB, fact: getMonthRevenueFromLeads(x.y, x.m) }));
+  const W = 620, H = 250, padL = 40, padR = 8, padB = 30, padT = 14;
+  const stepR = hmNiceStep(Math.max(GOAL_RUB, ...data.map(d => d.fact)) * 1.15 / 4);
+  const max = Math.max(stepR, Math.ceil(Math.max(GOAL_RUB, ...data.map(d => d.fact)) * 1.15 / stepR) * stepR);
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+  const step = plotW / data.length, barW = Math.min(26, step / 2 - 6);
+  const y = v => padT + plotH - (v / max) * plotH;
+  let svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Оплаты по месяцам: цель и факт">';
+  for (let g = 0; g <= max + 1; g += stepR) {
+    svg += '<line class="hm-grid-line" x1="' + padL + '" x2="' + (W - padR) + '" y1="' + y(g) + '" y2="' + y(g) + '"/>'
+         + '<text class="hm-ax-text" x="' + (padL - 8) + '" y="' + (y(g) + 4) + '" text-anchor="end">' + hmAxis(g) + '</text>';
+  }
+  data.forEach((d, i) => {
+    const cx = padL + step * i + step / 2, x1 = cx - barW - 1, x2 = cx + 1;
+    svg += '<rect x="' + x1 + '" y="' + y(d.plan) + '" width="' + barW + '" height="' + (padT + plotH - y(d.plan)) + '" rx="4" fill="#d7dce3"/>';
+    svg += '<rect x="' + x2 + '" y="' + y(d.fact) + '" width="' + barW + '" height="' + Math.max(0, padT + plotH - y(d.fact)) + '" rx="4" fill="var(--green-mid)"/>';
+    if (i === data.length - 1) svg += '<text class="hm-val-text" x="' + (x2 + barW / 2) + '" y="' + (y(d.fact) - 7) + '" text-anchor="middle">' + (d.fact / 1e6).toFixed(1).replace('.', ',') + '</text>';
+    svg += '<text class="hm-ax-text" x="' + cx + '" y="' + (H - 10) + '" text-anchor="middle">' + HM_MONTHS_SHORT[d.m] + '</text>';
+    svg += '<rect class="hm-hit" x="' + (cx - step / 2) + '" y="' + padT + '" width="' + step + '" height="' + plotH + '" data-i="' + i + '"/>';
+  });
+  svg += '<line class="hm-ax-line" x1="' + padL + '" x2="' + (W - padR) + '" y1="' + (padT + plotH) + '" y2="' + (padT + plotH) + '"/></svg>';
+  host.innerHTML = svg;
+  host.querySelectorAll('.hm-hit').forEach(h => {
+    h.addEventListener('mousemove', e => {
+      const d = data[+h.dataset.i], diff = d.fact - d.plan;
+      showTip('<b>' + HM_MONTHS_NOM[d.m] + ' ' + d.y + '</b>'
+        + '<div class="tip-row"><span class="tip-k"><span class="tip-sw" style="background:#d7dce3"></span>Цель</span><span class="tip-v">' + fmtMoneyRub(d.plan) + '</span></div>'
+        + '<div class="tip-row"><span class="tip-k"><span class="tip-sw" style="background:#1a5d3f"></span>Факт</span><span class="tip-v">' + fmtMoneyRub(d.fact) + '</span></div>'
+        + '<div class="tip-row"><span class="tip-k">Отклонение</span><span class="tip-v">' + (diff >= 0 ? '+' : '−') + fmtMoneyRub(Math.abs(diff)) + '</span></div>', e.clientX, e.clientY);
+    });
+    h.addEventListener('mouseleave', hideTip);
+  });
+  const goal = document.getElementById('hmGoalLabel'); if (goal) goal.textContent = hmMln(GOAL_RUB);
+}
+function hmDrawFunnel() {
+  const host = document.getElementById('hmFunnel'); if (!host) return;
+  const order = STAGES.filter(st => st.kind !== 'lost').map(st => st.id);
+  const list = loadLeads().filter(l => !leadIsLost(l));
+  const idx = id => order.indexOf(id);
+  const rows = order.map(id => {
+    const st = leadStatusById(id);
+    const inStage = list.filter(l => idx(l.status) >= idx(id));
+    return { st, n: inStage.length, sum: inStage.reduce((a, l) => a + (l.potential_chek_rub || 0), 0) };
+  });
+  const top = Math.max(1, rows[0].n);
+  host.innerHTML = rows.map((r, i) => {
+    const w = Math.max(14, (r.n / top) * 100);
+    const label = r.n + ' ' + pluralRu(r.n, 'сделка', 'сделки', 'сделок');
+    const conv = i === 0 ? '' : (rows[i - 1].n ? Math.round(r.n / rows[i - 1].n * 100) : 0) + '%';
+    return '<div class="hm-fn-row" onclick="navTo(\'leads\')" title="Открыть доску">'
+      + '<div class="hm-fn-name">' + escapeHtml(r.st.name) + '</div>'
+      + '<div class="hm-fn-track"><div class="hm-fn-bar" style="width:' + w + '%; background:' + r.st.color + '">' + (w >= 40 ? label : '') + '</div>' + (w >= 40 ? '' : '<span class="hm-fn-out">' + label + '</span>') + '</div>'
+      + '<div class="hm-fn-conv">' + (conv ? '<b>' + conv + '</b> дошло' : escapeHtml(fmtMoneyRubShort(r.sum))) + '</div>'
+      + '</div>';
+  }).join('');
+}
+function hmDrawStuck() {
+  const host = document.getElementById('hmStuckRows'); if (!host) return;
+  const clientsMap = new Map(loadClientsRaw().map(c => [c.id, c]));
+  const rows = loadLeads()
+    .filter(l => leadStatusKind(l.status) === 'active')
+    .map(l => ({ l, days: daysSince(l.updated_at) }))
+    .filter(x => x.days != null && x.days >= 10)
+    .sort((a, b) => b.days - a.days)
+    .slice(0, 8);
+  if (!rows.length) { host.innerHTML = '<tr><td colspan="5" class="hm-empty">Всё движется, зависших сделок нет</td></tr>'; return; }
+  host.innerHTML = rows.map(({ l, days }) => {
+    const c = clientsMap.get(l.client_id);
+    const name = (c && c.name) || l.name || 'Без имени';
+    const company = (c && c.company) || l.company || '';
+    const st = leadStatusById(l.status);
+    const prods = dealProducts(l).map(pipeById);
+    return '<tr onclick="openLeadModal(\'' + l.id + '\')">'
+      + '<td><div class="hm-tbl-name">' + escapeHtml(name) + '</div>' + (company ? '<div class="hm-tbl-sub">' + escapeHtml(company) + '</div>' : '') + '</td>'
+      + '<td><span class="chip chip-product" style="--_c:' + st.color + '">' + escapeHtml(st.short) + '</span></td>'
+      + '<td>' + (prods.length ? prods.map(p => '<span class="chip chip-product" style="--_c:' + p.color + '">' + escapeHtml(p.short) + '</span>').join(' ') : '<span class="hm-tbl-sub">—</span>') + '</td>'
+      + '<td class="num">' + (l.potential_chek_rub ? escapeHtml(fmtMoneyRubShort(l.potential_chek_rub)) : '<span class="hm-tbl-sub">—</span>') + '</td>'
+      + '<td class="num"><span class="hm-status ' + (days >= 14 ? 'bad' : 'warn') + '">' + days + ' ' + pluralRu(days, 'день', 'дня', 'дней') + '</span></td>'
+      + '</tr>';
+  }).join('');
+}
+function hmOpenStuck() {
+  navTo('leads');
+  if (typeof leadsFilterStuckOn !== 'undefined' && !leadsFilterStuckOn) toggleStuckFilter(); else renderLeadsKanban();
+}
+function hmOpenProduct(id) {
+  leadsPipe = id;
+  try { localStorage.setItem('_leads_pipe', id); } catch {}
+  navTo('leads');
+  setTimeout(() => renderLeadsKanban(), 0);
+}
+function hmDrawProducts() {
+  const host = document.getElementById('hmProducts'); if (!host) return;
+  const now = new Date(), Y = now.getFullYear(), M = now.getMonth();
+  const leads = loadLeads();
+  const wonNow = leads.filter(l => leadIsWon(l) && l.closed_at).filter(l => { const d = new Date(l.closed_at); return d.getFullYear() === Y && d.getMonth() === M; });
+  const rows = PRODUCTS.map(p => {
+    const mine = wonNow.filter(l => dealPipe(l) === p.id);
+    const v = mine.reduce((a, l) => a + (l.potential_chek_rub || 0), 0);
+    const active = leads.filter(l => leadStatusKind(l.status) === 'active' && dealProducts(l).includes(p.id)).length;
+    return { p, v, n: mine.length, active };
+  });
+  const inbox = wonNow.filter(l => dealPipe(l) === 'inbox');
+  if (inbox.length) rows.push({ p: NO_PRODUCT, v: inbox.reduce((a, l) => a + (l.potential_chek_rub || 0), 0), n: inbox.length, active: leads.filter(l => leadStatusKind(l.status) === 'active' && !dealHasProduct(l)).length });
+  rows.sort((a, b) => b.v - a.v || b.active - a.active);
+  const max = Math.max(1, ...rows.map(r => r.v));
+  const sub = document.getElementById('hmProductsSub'); if (sub) sub.textContent = 'Оплачено: ' + HM_MONTHS_NOM[M].toLowerCase() + ' ' + Y;
+  host.innerHTML = rows.map(r => '<div class="hm-rank-row" onclick="hmOpenProduct(\'' + r.p.id + '\')" title="Открыть доску по продукту">'
+    + '<div class="hm-rank-ava" style="background:' + r.p.color + '">' + escapeHtml(r.p.short.replace(/[^A-Za-zА-Яа-яЁё]/g, '').slice(0, 2).toUpperCase() || '·') + '</div>'
+    + '<div class="hm-rank-body">'
+    +   '<div class="hm-rank-top"><span class="hm-rank-name">' + escapeHtml(r.p.name) + '</span><span class="hm-rank-val">' + escapeHtml(fmtMoneyRubShort(r.v)) + '</span></div>'
+    +   '<div class="hm-rank-track"><div class="hm-rank-fill" style="width:' + Math.round(r.v / max * 100) + '%; background:' + r.p.color + '"></div></div>'
+    +   '<div class="hm-rank-sub">' + r.n + ' ' + pluralRu(r.n, 'оплата', 'оплаты', 'оплат') + ' · ' + r.active + ' в работе</div>'
+    + '</div></div>').join('');
+}
+function renderHomeOverview() { hmDrawChart(); hmDrawFunnel(); hmDrawStuck(); hmDrawProducts(); }
+
 // ===== WAITLIST MODAL (создание/редактирование одного списка) =====
 function render() {
   ensureModel();
   renderMetrics();
+  renderHomeOverview();
   renderWeekBars();
   renderRecentList();
   renderReminder();
