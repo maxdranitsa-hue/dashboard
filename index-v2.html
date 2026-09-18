@@ -10,14 +10,18 @@
 <style>
   *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
   :root {
-    --bg: #eef0f3;
+    --bg: #f2f2f6;
     --surface: #ffffff;
     --sidebar-bg: #ffffff;
+    --fill: #f4f4f7;
     --border: #ececef;
     --border-2: #e2e4e8;
-    --text: #1a1c1f;
-    --text-2: #6b7280;
-    --text-3: #9ca3af;
+    --hair: rgba(0,0,0,.05);
+    --text: #1c1c1e;
+    --text-2: #6e6e73;
+    --text-3: #a1a1a8;
+    --ring: rgba(13,58,44,.16);
+    --ease: cubic-bezier(.2,.8,.2,1);
 
     --green-dark: #0d3a2c;
     --green-darker: #082821;
@@ -39,12 +43,13 @@
     --r-lg: 20px;
     --r: 14px;
     --r-sm: 10px;
-    --shadow: 0 1px 2px rgba(15,30,20,.04);
-    --shadow-lg: 0 10px 30px -10px rgba(15,30,20,.12);
+    --shadow: 0 1px 1px rgba(0,0,0,.03), 0 1px 3px rgba(0,0,0,.04);
+    --shadow-lg: 0 2px 6px rgba(0,0,0,.05), 0 16px 40px -16px rgba(0,0,0,.22);
   }
   html, body { height:100%; }
   body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', system-ui, sans-serif;
+    font-feature-settings: 'cv11', 'ss01';
     background: var(--bg);
     color: var(--text);
     font-size: 14px;
@@ -91,11 +96,12 @@
     cursor: pointer; user-select: none;
     font-size: 13.5px; font-weight: 500;
     border-radius: 11px;
-    transition: all .12s;
+    transition: background .15s var(--ease), color .15s var(--ease), transform .1s var(--ease);
     position: relative;
     margin-bottom: 2px;
   }
-  .menu-item:hover { background: var(--bg); color: var(--text); }
+  .menu-item:hover { background: var(--fill); color: var(--text); }
+  .menu-item:active { transform: scale(.98); }
   .menu-item.active {
     background: var(--green-bg-soft);
     color: var(--green-dark);
@@ -242,22 +248,23 @@
     display: flex; justify-content: space-between; align-items: flex-end;
     gap: 20px; flex-wrap: wrap;
   }
-  .page-title { font-size: 26px; font-weight: 700; color: var(--text); line-height: 1.1; letter-spacing: -.5px; }
+  .page-title { font-size: 26px; font-weight: 700; color: var(--text); line-height: 1.1; letter-spacing: -.022em; }
   .page-sub { font-size: 13px; color: var(--text-2); margin-top: 6px; }
   .page-actions { display: flex; gap: 10px; flex-wrap: wrap; }
   .btn {
     border: none; cursor: pointer;
-    font-family: inherit; font-size: 13px; font-weight: 600;
-    padding: 11px 20px;
-    border-radius: 12px;
-    transition: all .12s;
+    font-family: inherit; font-size: 13px; font-weight: 600; letter-spacing: -.005em;
+    padding: 10px 18px;
+    border-radius: 11px;
+    transition: background .15s var(--ease), color .15s var(--ease), box-shadow .15s var(--ease), transform .1s var(--ease);
     display: inline-flex; align-items: center; gap: 7px;
     white-space: nowrap;
   }
-  .btn-primary { background: var(--green-dark); color: #fff; }
+  .btn:active { transform: scale(.97); }
+  .btn-primary { background: var(--green-dark); color: #fff; box-shadow: 0 1px 2px rgba(13,58,44,.25); }
   .btn-primary:hover { background: var(--green-darker); }
-  .btn-secondary { background: transparent; color: var(--text); border: 1.5px solid var(--border-2); }
-  .btn-secondary:hover { border-color: var(--text); }
+  .btn-secondary { background: var(--fill); color: var(--text); }
+  .btn-secondary:hover { background: var(--border-2); }
   .btn-icon { width: 14px; height: 14px; }
 
   /* ============ PAGES ============ */
@@ -494,12 +501,13 @@
     background: var(--sidebar-bg);
     border-radius: var(--r-lg);
     padding: 22px 24px;
+    box-shadow: 0 0 0 1px var(--hair), var(--shadow);
   }
   .card-head {
     display: flex; align-items: center; justify-content: space-between;
     margin-bottom: 18px; gap: 12px;
   }
-  .card-title { font-size: 16px; font-weight: 700; color: var(--text); letter-spacing: -.2px; }
+  .card-title { font-size: 16px; font-weight: 700; color: var(--text); letter-spacing: -.015em; }
   .card-action-chip {
     background: var(--green-dark);
     color: #fff;
@@ -715,153 +723,92 @@
   .tracker-btn.danger { background: var(--red); }
 
   /* ============ LEAD KANBAN ============ */
-  .leads-toolbar { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; align-items:center; }
-  .leads-search { flex:1; min-width:220px; background:var(--bg); border-radius:10px; padding:9px 14px; display:flex; align-items:center; gap:10px; }
+  /* ===== ДОСКА: тулбар, сегмент-контрол, колонки, плитки, чипсы ===== */
+  .leads-toolbar { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; align-items:center; }
+  .leads-search { flex:1; min-width:220px; background:var(--fill); border-radius:10px; padding:8px 12px; display:flex; align-items:center; gap:9px; transition:box-shadow .15s var(--ease), background .15s var(--ease); }
+  .leads-search:focus-within { background:#fff; box-shadow:0 0 0 3px var(--ring); }
   .leads-search svg { width:14px; height:14px; color:var(--text-3); flex-shrink:0; }
   .leads-search input { flex:1; background:transparent; border:none; outline:none; font-family:inherit; font-size:13px; color:var(--text); }
-  .leads-filter-select { background:var(--bg); border:none; border-radius:10px; padding:9px 14px; font-family:inherit; font-size:13px; color:var(--text); cursor:pointer; outline:none; }
-  .leads-toggle-stuck { background:var(--bg); border:none; border-radius:10px; padding:9px 14px; font-family:inherit; font-size:13px; color:var(--text-2); cursor:pointer; transition:all .12s; }
-  .leads-toggle-stuck.active { background:#fef3c7; color:#92400e; font-weight:600; }
+  .leads-filter-select { background:var(--fill); border:none; border-radius:10px; padding:8px 28px 8px 12px; font-family:inherit; font-size:13px; font-weight:500; color:var(--text); cursor:pointer; outline:none; appearance:none; -webkit-appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%236e6e73' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; }
+  .leads-filter-select:focus { box-shadow:0 0 0 3px var(--ring); }
+  .leads-toggle-stuck { background:var(--fill); border:none; border-radius:10px; padding:8px 12px; font-family:inherit; font-size:13px; font-weight:500; color:var(--text-2); cursor:pointer; transition:background .15s var(--ease), color .15s var(--ease), transform .1s var(--ease); }
+  .leads-toggle-stuck:active { transform:scale(.97); }
+  .leads-toggle-stuck.active { background:#fff3d6; color:#9a5b00; font-weight:600; }
+  .leads-menu { position:absolute; top:calc(100% + 6px); right:104px; z-index:40; background:rgba(255,255,255,.86); backdrop-filter:blur(18px) saturate(160%); -webkit-backdrop-filter:blur(18px) saturate(160%); border:1px solid var(--hair); border-radius:12px; box-shadow:var(--shadow-lg); padding:6px; min-width:230px; display:flex; flex-direction:column; gap:2px; }
+  .leads-menu[hidden] { display:none; }
+  .leads-menu button { display:flex; align-items:center; gap:8px; width:100%; text-align:left; background:transparent; border:none; border-radius:8px; padding:9px 10px; font-family:inherit; font-size:13px; color:var(--text); cursor:pointer; }
+  .leads-menu button:hover { background:var(--fill); }
+  .leads-menu .count { font-size:11px; font-weight:700; background:var(--orange-bg); color:#92400e; padding:1px 7px; border-radius:999px; margin-left:auto; }
 
-  .kanban { display:grid; grid-template-columns:repeat(var(--kanban-cols, 7), 240px); gap:12px; overflow-x:auto; padding-bottom:8px; }
-  .pipe-tabs { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
-  .pipe-tab { --_c:#9ca3af; display:inline-flex; align-items:center; gap:7px; padding:7px 13px; border-radius:999px; border:1px solid var(--border-2); background:var(--surface); font-family:inherit; font-size:13px; font-weight:600; color:var(--text-2); cursor:pointer; transition:background .15s ease, border-color .15s ease, color .15s ease; }
-  .pipe-tab:hover { border-color:color-mix(in srgb, var(--_c) 45%, var(--border-2)); color:var(--text); }
-  .pipe-tab.active { background:color-mix(in srgb, var(--_c) 12%, #fff); border-color:color-mix(in srgb, var(--_c) 55%, transparent); color:color-mix(in srgb, var(--_c) 70%, #111827); }
-  .pipe-tab-dot { width:7px; height:7px; border-radius:50%; background:var(--_c); flex-shrink:0; }
-  .pipe-tab-count { font-size:11px; font-weight:700; background:rgba(0,0,0,.05); padding:1px 7px; border-radius:999px; line-height:1.6; }
-  .pipe-tab.all { --_c:var(--green-dark); }
-  .lead-card-tags { display:flex; flex-wrap:wrap; gap:4px; margin-top:6px; }
-  .lead-card-pipe { --_c:#9ca3af; font-size:10px; font-weight:700; padding:2px 7px; border-radius:999px; background:color-mix(in srgb, var(--_c) 14%, transparent); color:color-mix(in srgb, var(--_c) 75%, #111827); white-space:nowrap; }
-  .lead-card-more { font-size:10px; font-weight:700; padding:2px 7px; border-radius:999px; background:var(--bg); color:var(--text-2); border:1px solid var(--border-2); white-space:nowrap; }
+  .seg { display:flex; align-items:center; gap:2px; flex-wrap:wrap; padding:3px; background:var(--fill); border-radius:12px; margin-bottom:14px; }
+  .seg-tab { --_c:#9ca3af; display:inline-flex; align-items:center; gap:7px; padding:7px 12px; border-radius:9px; border:none; background:transparent; font-family:inherit; font-size:13px; font-weight:600; letter-spacing:-.005em; color:var(--text-2); cursor:pointer; transition:background .18s var(--ease), color .18s var(--ease), box-shadow .18s var(--ease), transform .1s var(--ease); }
+  .seg-tab:hover { color:var(--text); }
+  .seg-tab:active { transform:scale(.97); }
+  .seg-tab.active { background:#fff; color:var(--text); box-shadow:0 1px 2px rgba(0,0,0,.08), 0 3px 8px -2px rgba(0,0,0,.08); }
+  .seg-tab.muted { color:var(--text-3); }
+  .seg-tab.grad { --_c:var(--green-dark); }
+  .seg-dot { width:7px; height:7px; border-radius:50%; background:var(--_c); flex-shrink:0; }
+  .seg-count { font-size:11px; font-weight:700; color:var(--text-3); padding:0 6px; border-radius:999px; background:rgba(0,0,0,.05); line-height:1.7; font-variant-numeric:tabular-nums; }
+  .seg-tab.active .seg-count { color:var(--text-2); }
+  .seg-gap { flex:1; min-width:6px; }
+
+  .seg-pills { display:flex; flex-wrap:wrap; gap:5px; }
+  .seg-pill { --_c:#9ca3af; display:inline-flex; align-items:center; gap:6px; padding:5px 10px; border-radius:999px; border:1px solid var(--border-2); background:#fff; font-family:inherit; font-size:12px; font-weight:600; color:var(--text-2); cursor:pointer; transition:background .15s var(--ease), border-color .15s var(--ease), color .15s var(--ease), transform .1s var(--ease); }
+  .seg-pill:hover { border-color:color-mix(in srgb, var(--_c) 45%, var(--border-2)); color:var(--text); }
+  .seg-pill:active { transform:scale(.96); }
+  .seg-pill.active { background:color-mix(in srgb, var(--_c) 12%, #fff); border-color:color-mix(in srgb, var(--_c) 55%, transparent); color:color-mix(in srgb, var(--_c) 72%, #111); }
+  .seg-pill.none.active { background:var(--fill); border-color:var(--text-3); color:var(--text); }
+
+  .kanban { display:grid; gap:10px; overflow-x:auto; padding-bottom:8px; align-items:start; }
+  .kanban-col { --_lead-color:#9ca3af; background:var(--fill); border-radius:var(--r); padding:10px 8px; min-height:320px; display:flex; flex-direction:column; transition:background .2s var(--ease); }
+  .kanban-col.kind-won { background:color-mix(in srgb, var(--_lead-color) 7%, var(--fill)); }
+  .kanban-col.kind-lost { background:color-mix(in srgb, var(--_lead-color) 4%, var(--fill)); }
+  .kanban-col-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; padding:2px 4px 0; gap:6px; }
+  .kanban-col-title { font-size:12.5px; font-weight:700; letter-spacing:-.01em; display:flex; align-items:center; gap:7px; color:var(--text); white-space:nowrap; }
+  .kanban-col-dot { width:8px; height:8px; border-radius:50%; background:var(--_lead-color); box-shadow:0 0 0 3px color-mix(in srgb, var(--_lead-color) 18%, transparent); flex-shrink:0; }
+  .kanban-col-count { font-size:11px; font-weight:700; background:#fff; padding:2px 7px; border-radius:999px; color:var(--text-2); box-shadow:0 1px 1px rgba(0,0,0,.04); font-variant-numeric:tabular-nums; }
+  .kanban-col-sum { font-size:11px; font-weight:700; color:color-mix(in srgb, var(--_lead-color) 70%, #111); white-space:nowrap; font-variant-numeric:tabular-nums; }
+  .kanban-col-head-right { display:flex; align-items:center; gap:4px; }
+  .kanban-col-add, .kanban-col-fold { width:22px; height:22px; border-radius:7px; border:none; background:transparent; color:var(--text-3); cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; line-height:1; transition:background .15s var(--ease), color .15s var(--ease), transform .1s var(--ease); }
+  .kanban-col-add { font-size:16px; font-weight:600; }
+  .kanban-col-fold svg { width:13px; height:13px; }
+  .kanban-col-add:hover, .kanban-col-fold:hover { background:#fff; color:var(--text); }
+  .kanban-col-add:active, .kanban-col-fold:active { transform:scale(.9); }
+  .kanban-col-body { flex:1; min-height:60px; border-radius:10px; }
+  .kanban-col-empty { font-size:11px; color:var(--text-3); text-align:center; padding:18px 4px; opacity:.7; }
+  .kanban-col.collapsed { padding:8px 6px; cursor:pointer; }
+  .kanban-col.collapsed:hover { background:color-mix(in srgb, var(--_lead-color) 12%, var(--fill)); }
+  .kanban-col-collapsed { display:flex; flex-direction:column; align-items:center; gap:10px; padding-top:6px; }
+  .kanban-col-vtitle { writing-mode:vertical-rl; transform:rotate(180deg); font-size:12.5px; font-weight:700; color:var(--text); letter-spacing:-.01em; white-space:nowrap; }
+  .kanban-col-vsum { writing-mode:vertical-rl; transform:rotate(180deg); font-size:11px; font-weight:700; color:color-mix(in srgb, var(--_lead-color) 70%, #111); white-space:nowrap; }
+  .kanban-col.collapsed .kanban-col-body { min-height:140px; }
+  .kanban-drop-only .lead-card { display:none; }
+
+  .lead-card { background:#fff; border-radius:12px; padding:10px 12px 10px 14px; margin-bottom:8px; cursor:grab; position:relative; box-shadow:0 0 0 1px var(--hair), 0 1px 2px rgba(0,0,0,.04); transition:box-shadow .2s var(--ease), transform .2s var(--ease); }
+  .lead-card::before { content:''; position:absolute; left:0; top:10px; bottom:10px; width:3px; border-radius:0 3px 3px 0; background:transparent; }
+  .lead-card:hover { box-shadow:0 0 0 1px var(--hair), 0 2px 4px rgba(0,0,0,.04), 0 12px 28px -12px rgba(0,0,0,.22); transform:translateY(-1px); }
+  .lead-card:active { cursor:grabbing; transform:scale(.985); }
+  .lead-card.fresh::before { background:var(--green-mid); }
+  .lead-card.medium::before { background:#ff9500; }
+  .lead-card.stuck::before { background:#ff3b30; }
+  .lead-card-name { font-size:13.5px; font-weight:600; color:var(--text); line-height:1.3; letter-spacing:-.01em; }
+  .lead-card-company { font-size:11.5px; color:var(--text-2); margin-top:2px; line-height:1.3; }
+  .lead-card-tags { display:flex; flex-wrap:wrap; gap:4px; margin-top:7px; }
+  .lead-card-meta { display:flex; justify-content:space-between; align-items:center; margin-top:8px; gap:6px; }
+  .lead-card-amount { font-size:12px; font-weight:700; color:var(--green-dark); font-variant-numeric:tabular-nums; }
+  .lead-card-days { font-size:10.5px; color:var(--text-3); font-weight:600; }
+  .lead-card-days.warn { color:#c77700; }
+  .lead-card-days.bad { color:#d70015; }
   .lead-card-assign { margin-top:8px; width:100%; font-family:inherit; font-size:11px; font-weight:600; border:1px dashed var(--border-2); border-radius:8px; padding:5px 8px; background:transparent; color:var(--text-2); cursor:pointer; appearance:none; -webkit-appearance:none; outline:none; }
   .lead-card-assign:hover { border-color:var(--green-light-2); color:var(--green-dark); background:var(--green-bg-soft); }
-  .leads-menu { position:absolute; top:calc(100% + 6px); right:132px; z-index:40; background:var(--surface); border:1px solid var(--border-2); border-radius:12px; box-shadow:var(--shadow-lg); padding:6px; min-width:210px; display:flex; flex-direction:column; gap:2px; }
-  .leads-menu button { display:flex; align-items:center; gap:8px; width:100%; text-align:left; background:transparent; border:none; border-radius:8px; padding:9px 10px; font-family:inherit; font-size:13px; color:var(--text); cursor:pointer; }
-  .leads-menu button:hover { background:var(--bg); }
-  .leads-menu .count { font-size:11px; font-weight:700; background:var(--orange-bg); color:#92400e; padding:1px 7px; border-radius:999px; margin-left:auto; }
-  .kanban-col { background:var(--bg); border-radius:var(--r); padding:12px 10px; min-height:300px; display:flex; flex-direction:column; }
-  .kanban-col-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; padding:0 4px; }
-  .kanban-col-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; display:flex; align-items:center; gap:6px; color:var(--_lead-color, var(--text-2)); }
-  .kanban-col-dot { width:8px; height:8px; border-radius:50%; background:var(--_lead-color, #9ca3af); }
-  .kanban-col-count { font-size:10px; font-weight:700; background:var(--surface); padding:2px 7px; border-radius:8px; color:var(--text-2); }
-  .kanban-col-head-right { display:flex; align-items:center; gap:6px; }
-  .kanban-col-add {
-    width:22px; height:22px;
-    border-radius:7px;
-    border:none;
-    background:var(--surface);
-    color:var(--text-3);
-    font-size:15px; font-weight:700;
-    cursor:pointer;
-    display:flex; align-items:center; justify-content:center;
-    line-height:1; padding:0;
-    transition: all .15s;
-  }
-  .kanban-col-add:hover { background:var(--green-dark); color:#fff; transform: scale(1.08); }
-  .kanban-col-body { flex:1; min-height:50px; }
-  .kanban-col-empty { font-size:11px; color:var(--text-3); text-align:center; padding:14px 4px; font-style:italic; opacity:.6; }
 
-  .lead-card {
-    background: var(--surface);
-    border-radius: var(--r-sm);
-    padding: 11px 12px;
-    margin-bottom: 8px;
-    cursor: grab;
-    transition: box-shadow .12s, transform .12s;
-    border-left: 3px solid transparent;
-    position: relative;
-  }
-  .lead-card:hover { box-shadow: var(--shadow-lg); }
-  .lead-card:active { cursor: grabbing; }
-  .lead-card.fresh { border-left-color: var(--green-mid); }
-  .lead-card.medium { border-left-color: var(--orange); }
-  .lead-card.stuck { border-left-color: #dc2626; }
-  .lead-card-name { font-size:13px; font-weight:700; color:var(--text); line-height:1.3; }
-  .lead-card-company { font-size:11px; color:var(--text-3); margin-top:2px; line-height:1.3; }
-  .lead-card-meta { display:flex; justify-content:space-between; align-items:center; margin-top:8px; gap:6px; }
-  .lead-card-amount { font-size:11px; font-weight:700; color:var(--green-dark); }
-  .lead-card-days { font-size:10px; color:var(--text-3); font-weight:600; }
-  .lead-card-days.warn { color:var(--orange); }
-  .lead-card-days.bad { color:#dc2626; }
-
-  /* ===== ВЫПУСКНИКИ (свимлейны: потоки × стадии) ===== */
-  .swim-wrap { overflow-x:auto; padding-bottom:6px; }
-  .swim-inner { min-width:1120px; }
-
-  .swim-lane { border:1px solid var(--border-2); border-radius:var(--r); margin-bottom:12px; overflow:hidden; background:var(--surface); }
-  .swim-lane-head { display:flex; align-items:center; gap:12px; padding:13px 16px; cursor:pointer; user-select:none; transition:background .15s ease; }
-  .swim-lane-head:hover { background:var(--bg); }
-  .swim-lane-caret { font-size:10px; color:var(--text-3); transition:transform .2s cubic-bezier(.32,.72,0,1); flex-shrink:0; width:10px; }
-  .swim-lane.open .swim-lane-caret { transform:rotate(90deg); }
-  .swim-lane-name { font-size:14px; font-weight:700; color:var(--text); letter-spacing:-.01em; flex:1; }
-  .swim-lane-stat { font-size:11px; color:var(--text-2); font-weight:600; white-space:nowrap; background:var(--bg); border-radius:999px; padding:3px 10px; }
-  .swim-lane-bar { width:90px; height:5px; border-radius:999px; background:var(--bg); overflow:hidden; flex-shrink:0; }
-  .swim-lane-bar-fill { height:100%; background:var(--green-mid); border-radius:999px; transition:width .3s cubic-bezier(.32,.72,0,1); }
-  .swim-lane-body { display:none; grid-template-columns:repeat(var(--alum-col-count, 5), minmax(200px,1fr)); gap:10px; padding:12px; border-top:1px solid var(--border); }
-  .swim-lane.open .swim-lane-body { display:grid; }
-
-  /* колонка-стадия внутри дорожки: свой заголовок в каждом потоке */
-  .swim-col {
-    --_alum-color:#9ca3af;
-    display:flex; flex-direction:column; min-width:0;
-    background:color-mix(in srgb, var(--_alum-color) 5%, var(--bg));
-    border:1px solid color-mix(in srgb, var(--_alum-color) 15%, transparent);
-    border-radius:14px;
-    padding:10px 9px 9px;
-    transition:background .2s ease, border-color .2s ease;
-  }
-  .swim-col-head { display:flex; align-items:center; gap:7px; margin-bottom:9px; padding:0 3px; min-width:0; }
-  .swim-col-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; background:var(--_alum-color); box-shadow:0 0 0 3px color-mix(in srgb, var(--_alum-color) 20%, transparent); }
-  .swim-col-title {
-    font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.6px;
-    color:color-mix(in srgb, var(--_alum-color) 72%, #111827);
-    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0;
-  }
-  .swim-col-count {
-    margin-left:auto; flex-shrink:0;
-    font-size:10px; font-weight:700; color:var(--text-2);
-    background:rgba(255,255,255,.78); border:1px solid rgba(0,0,0,.04);
-    padding:1px 7px; border-radius:999px; line-height:1.6;
-  }
-  .swim-cell { min-height:44px; }
-
-  /* карточка выпускника — один в один с карточкой лида */
-  .alum-card {
-    background:var(--surface);
-    border-radius:var(--r-sm);
-    padding:11px 12px;
-    margin-bottom:8px;
-    cursor:grab;
-    transition:box-shadow .12s, transform .12s;
-    border-left:3px solid transparent;
-    position:relative;
-  }
-  .alum-card:last-child { margin-bottom:0; }
-  .alum-card:hover { box-shadow:var(--shadow-lg); }
-  .alum-card:active { cursor:grabbing; }
-  .alum-card.fresh { border-left-color:var(--green-mid); }
-  .alum-card.medium { border-left-color:var(--orange); }
-  .alum-card.stuck { border-left-color:#dc2626; }
-  .alum-card-name { font-size:13px; font-weight:700; color:var(--text); line-height:1.3; display:flex; align-items:center; gap:6px; }
-  .alum-card-company { font-size:11px; color:var(--text-3); margin-top:2px; line-height:1.3; }
-  .alum-card-user { font-size:11px; margin-top:2px; line-height:1.3; }
-  .alum-card-amount { font-size:11px; font-weight:700; color:var(--green-dark); }
-  .alum-card-user a { color:var(--blue); text-decoration:none; }
-  .alum-card-user a:hover { text-decoration:underline; }
-  .alum-card-user .muted { color:var(--text-3); }
-  .alum-card-note { font-size:11px; color:var(--text-2); margin-top:6px; line-height:1.35; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-  .alum-card-meta { display:flex; justify-content:space-between; align-items:center; margin-top:8px; gap:6px; }
-  .alum-card-touch { font-size:10px; color:var(--text-3); font-weight:600; }
-  .alum-card-touch.bad { color:#dc2626; } .alum-card-touch.warn { color:var(--orange); }
-  .waitlist-member-kind { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.4px; color:var(--text-2); background:var(--bg); border:1px solid var(--border-2); padding:1px 6px; border-radius:6px; white-space:nowrap; }
-  .alum-conv-badge { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.4px; color:var(--green-dark); background:var(--green-light); padding:2px 6px; border-radius:6px; white-space:nowrap; cursor:pointer; }
-
-  .swim-cell-empty { font-size:11px; color:var(--text-3); text-align:center; padding:12px 4px; font-style:italic; opacity:.55; }
-  .swim-lane-add { padding:2px 16px 14px; }
-  .swim-lane-add button { font-size:12px; font-weight:600; color:var(--green-dark); background:transparent; border:1px dashed var(--border-2); border-radius:10px; padding:7px 13px; cursor:pointer; transition:background .15s ease, border-color .15s ease; }
-  .swim-lane-add button:hover { background:var(--green-bg-soft); border-color:var(--green-light-2); }
-  .alumni-empty-state { font-size:13px; color:var(--text-3); text-align:center; padding:40px 16px; font-style:italic; }
+  .chip { --_c:#9ca3af; display:inline-flex; align-items:center; gap:4px; font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:999px; white-space:nowrap; line-height:1.6; }
+  .chip-product { background:color-mix(in srgb, var(--_c) 13%, #fff); color:color-mix(in srgb, var(--_c) 72%, #111); }
+  .chip-product.none { background:var(--fill); color:var(--text-3); font-weight:600; }
+  .chip-flow { background:#fff4e0; color:#8a4b00; }
+  .chip-flow::before { content:'⏳'; font-size:9px; }
+  .chip-grad { background:var(--green-bg-soft); color:var(--green-dark); padding:2px 6px; }
+  .chip-more { background:var(--fill); color:var(--text-2); font-weight:600; }
 
   /* Управление колонками выпускников */
   .stage-count { font-size:11px; font-weight:700; color:var(--text-2); background:var(--surface); border:1px solid var(--border-2); border-radius:999px; padding:1px 8px; white-space:nowrap; }
@@ -878,8 +825,8 @@
   .alum-status-kind { background:var(--surface); border:1px solid var(--border-2); border-radius:8px; padding:8px 10px; font-family:inherit; font-size:12px; color:var(--text-2); outline:none; cursor:pointer; flex-shrink:0; }
   .alum-status-del { width:30px; height:30px; border-radius:8px; background:transparent; border:none; color:var(--text-3); cursor:pointer; font-size:16px; line-height:1; flex-shrink:0; transition:background .15s, color .15s; }
   .alum-status-del:hover { background:rgba(220,38,38,.1); color:#dc2626; }
-  .sortable-ghost { opacity:.4; }
-  .sortable-drag { box-shadow: 0 10px 30px rgba(0,0,0,.18); }
+  .sortable-ghost { opacity:.3; }
+  .sortable-drag { box-shadow:0 16px 40px -8px rgba(0,0,0,.35) !important; transform:rotate(1.5deg) scale(1.02); }
 
   /* ============ CHECKLIST / LOGS ============ */
   .checklist { list-style: none; }
@@ -1044,9 +991,12 @@
   .alert b { color:#78350f; }
 
   /* ============ MODAL ============ */
-  .modal-bg { display:none; position:fixed; inset:0; background:rgba(13,58,44,.55); z-index:100; justify-content:center; align-items:flex-start; padding:40px 20px; overflow-y:auto; }
-  .modal-bg.show { display:flex; }
-  .modal { background:#fff; border-radius:18px; padding:24px; width:100%; max-width:520px; box-shadow:var(--shadow-lg); margin:auto; }
+  .modal-bg { display:none; position:fixed; inset:0; background:rgba(20,24,22,.32); backdrop-filter:blur(10px) saturate(140%); -webkit-backdrop-filter:blur(10px) saturate(140%); z-index:100; justify-content:center; align-items:flex-start; padding:40px 20px; overflow-y:auto; }
+  .modal-bg.show { display:flex; animation:scrimIn .2s var(--ease); }
+  .modal { background:#fff; border-radius:20px; padding:24px; width:100%; max-width:520px; box-shadow:0 0 0 1px var(--hair), 0 30px 80px -20px rgba(0,0,0,.4); margin:auto; }
+  .modal-bg.show .modal { animation:modalIn .26s var(--ease); }
+  @keyframes scrimIn { from { opacity:0; } to { opacity:1; } }
+  @keyframes modalIn { from { opacity:0; transform:translateY(10px) scale(.98); } to { opacity:1; transform:none; } }
   .modal.compact { padding:20px; max-width:460px; }
   .modal h3 { font-size:18px; margin-bottom:18px; font-weight:700; letter-spacing:-.2px; }
 
@@ -1060,16 +1010,16 @@
   .lead-fields-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px 12px; margin-bottom:14px; }
   .lead-field-mini { display:flex; flex-direction:column; gap:3px; min-width:0; }
   .lead-field-mini label { font-size:10px; color:var(--text-3); text-transform:uppercase; letter-spacing:.4px; font-weight:600; }
-  .lead-field-mini select, .lead-field-mini input { width:100%; border:1.5px solid var(--border-2); border-radius:8px; padding:7px 10px; font-size:13px; font-family:inherit; outline:none; background:#fff; }
-  .lead-field-mini select:focus, .lead-field-mini input:focus { border-color:var(--green-dark); }
+  .lead-field-mini select, .lead-field-mini input { width:100%; border:1px solid var(--border-2); border-radius:9px; padding:8px 10px; font-size:13px; font-family:inherit; outline:none; background:#fff; color:var(--text); transition:border-color .15s var(--ease), box-shadow .15s var(--ease); }
+  .lead-field-mini select:focus, .lead-field-mini input:focus { border-color:var(--green-dark); box-shadow:0 0 0 3px var(--ring); }
   .lead-field-mini.full { grid-column: span 2; }
   .lead-field-mini textarea { width:100%; border:1.5px solid var(--border-2); border-radius:8px; padding:7px 10px; font-size:13px; font-family:inherit; line-height:1.45; outline:none; background:#fff; resize:vertical; min-height:56px; box-sizing:border-box; color:var(--text); }
   .lead-field-mini textarea:focus { border-color:var(--green-dark); }
   .lead-icon-tr { color:var(--text-3); }
-  .lead-icon-input { display:flex; align-items:center; gap:7px; width:100%; border:1.5px solid var(--border-2); border-radius:8px; padding:0 10px; background:#fff; box-sizing:border-box; }
-  .lead-icon-input:focus-within { border-color:var(--green-dark); }
+  .lead-icon-input { display:flex; align-items:center; gap:7px; width:100%; border:1px solid var(--border-2); border-radius:9px; padding:0 10px; background:#fff; box-sizing:border-box; transition:border-color .15s var(--ease), box-shadow .15s var(--ease); }
+  .lead-icon-input:focus-within { border-color:var(--green-dark); box-shadow:0 0 0 3px var(--ring); }
   .lead-icon-input svg { width:15px; height:15px; flex-shrink:0; }
-  .lead-icon-input input { flex:1; width:auto; border:none; background:transparent; outline:none; padding:7px 0; font-size:13px; font-family:inherit; color:var(--text); min-width:0; }
+  .lead-icon-input input { flex:1; width:auto; border:none; background:transparent; outline:none; padding:8px 0; font-size:13px; font-family:inherit; color:var(--text); min-width:0; }
   .lead-icon-tg { color:#26A5E4; }
   .lead-icon-ph { color:var(--green-dark); }
   .lead-icon-co { color:var(--text-3); }
@@ -1089,61 +1039,13 @@
   .lead-tags-empty { font-size:11.5px; color:var(--text-3); font-style:italic; padding:4px 0; }
   .lead-card-interests { display:flex; flex-wrap:wrap; gap:4px; margin-top:6px; }
   .lead-card-interest { --_c:#9ca3af; font-size:10px; font-weight:600; padding:2px 7px; border-radius:999px; background:color-mix(in srgb, var(--_c) 18%, transparent); color:var(--_c); border:1px solid color-mix(in srgb, var(--_c) 40%, transparent); }
-  /* Waitlists page */
-  .waitlist-empty { padding:24px; text-align:center; color:var(--text-3); font-size:13px; font-style:italic; background:var(--bg); border-radius:12px; }
-  .waitlist-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; margin-bottom:14px; overflow:hidden; box-shadow:var(--shadow-sm); }
-  .waitlist-card.closed { opacity:.6; }
-  .waitlist-head { padding:14px 18px; background:var(--bg); border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; cursor:pointer; }
-  .waitlist-head:hover { background:var(--border); }
-  .waitlist-name { font-size:15px; font-weight:700; color:var(--text); }
-  .waitlist-closed-tag { font-size:11px; font-weight:700; color:var(--text-3); background:var(--border); padding:2px 8px; border-radius:999px; text-transform:uppercase; letter-spacing:.3px; }
-  .waitlist-sub { font-size:12px; color:var(--text-2); margin-top:3px; }
-  .waitlist-edit { background:transparent; border:none; color:var(--text-3); font-size:16px; width:32px; height:32px; border-radius:8px; cursor:pointer; }
-  .waitlist-edit:hover { background:var(--border); color:var(--text); }
-  .waitlist-members { display:flex; flex-direction:column; }
-  .waitlist-member { display:flex; justify-content:space-between; align-items:center; gap:14px; padding:12px 18px; border-bottom:1px solid var(--border); cursor:pointer; transition:background .12s; }
-  .waitlist-member:last-child { border-bottom:none; }
-  .waitlist-member:hover { background:var(--bg); }
-  .waitlist-member-main { min-width:0; flex:1; }
-  .waitlist-member-name { font-size:14px; font-weight:600; color:var(--text); }
-  .waitlist-member-company { font-weight:400; color:var(--text-2); font-size:13px; }
-  .waitlist-member-side { display:flex; align-items:center; gap:10px; flex-shrink:0; }
-  .waitlist-member-chek { font-size:12px; font-weight:700; color:var(--text-2); }
-  .waitlist-member-status { --_c:#9ca3af; font-size:11px; font-weight:700; padding:3px 10px; border-radius:999px; background:color-mix(in srgb, var(--_c) 15%, transparent); color:var(--_c); border:1px solid color-mix(in srgb, var(--_c) 35%, transparent); }
-  /* ===== Страница «Воронки» ===== */
-  .pipes-wrap { display:grid; grid-template-columns:320px 1fr; gap:16px; align-items:start; }
-  @media (max-width: 1100px) { .pipes-wrap { grid-template-columns:1fr; } }
-  .pipes-side { position:sticky; top:16px; }
-  .pipe-item { --_c:#9ca3af; display:flex; align-items:center; gap:9px; padding:10px 11px; border-radius:12px; border:1.5px solid transparent; background:var(--bg); margin-bottom:7px; cursor:pointer; transition:border-color .15s ease, background .15s ease; }
-  .pipe-item:hover { background:var(--green-bg-soft); }
-  .pipe-item.active { border-color:color-mix(in srgb, var(--_c) 60%, transparent); background:color-mix(in srgb, var(--_c) 8%, var(--surface)); }
-  .pipe-item-handle { color:var(--text-3); font-size:12px; cursor:grab; flex-shrink:0; }
-  .pipe-item-dot { width:9px; height:9px; border-radius:50%; background:var(--_c); flex-shrink:0; }
-  .pipe-item-name { font-size:13px; font-weight:600; color:var(--text); flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .pipe-item-count { font-size:11px; font-weight:700; color:var(--text-2); background:var(--surface); border:1px solid var(--border-2); border-radius:999px; padding:1px 8px; white-space:nowrap; }
-  .pipes-hint { margin-top:14px; padding:12px 13px; background:var(--bg); border-radius:12px; font-size:11.5px; line-height:1.55; color:var(--text-2); display:flex; flex-direction:column; gap:7px; }
-  .pipes-hint b { color:var(--text); font-size:12px; }
-  .pipe-head { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:4px; }
-  .pipe-name-input { flex:1; min-width:180px; font-size:18px; font-weight:700; color:var(--text); border:1.5px solid transparent; border-radius:9px; padding:6px 9px; background:transparent; font-family:inherit; outline:none; }
-  .pipe-name-input:hover { border-color:var(--border-2); }
-  .pipe-name-input:focus { border-color:var(--green-dark); background:#fff; }
-  .pipe-color { width:34px; height:34px; border-radius:10px; border:1px solid var(--border-2); cursor:pointer; position:relative; overflow:hidden; flex-shrink:0; }
-  .pipe-color input { position:absolute; inset:-4px; opacity:0; cursor:pointer; }
-  .pipe-sub { font-size:12px; color:var(--text-2); margin:2px 0 14px; }
-  .pipe-danger { margin-top:18px; padding-top:14px; border-top:1px solid var(--border); }
-  .pipe-danger-box { margin-top:10px; background:var(--red-bg); border-radius:12px; padding:12px 13px; font-size:12.5px; color:#991b1b; line-height:1.5; }
-  .pipe-danger-box select { margin-top:8px; width:100%; border:1.5px solid #fecaca; border-radius:8px; padding:8px 10px; font-family:inherit; font-size:13px; background:#fff; color:var(--text); outline:none; }
-  .pipe-danger-actions { display:flex; gap:8px; justify-content:flex-end; margin-top:10px; }
-  .leads-phase-hint { font-size:11.5px; color:var(--text-3); margin:-4px 0 10px; }
-  .leads-phase-hint a { color:var(--green-dark); font-weight:600; text-decoration:none; cursor:pointer; }
-  .leads-phase-hint a:hover { text-decoration:underline; }
-
   /* ===== Сделки клиента в карточке ===== */
-  .deals-block { background:var(--bg); border-radius:12px; padding:10px 10px 8px; margin-bottom:14px; }
+  .deals-block { background:var(--fill); border-radius:12px; padding:10px 10px 8px; margin-bottom:14px; }
   .deals-head { display:flex; align-items:center; gap:8px; margin-bottom:8px; padding:0 2px; }
   .deals-title { font-size:12px; font-weight:700; color:var(--text-2); text-transform:uppercase; letter-spacing:.4px; }
   .deals-head .lm-add-select { margin-left:auto; background:var(--surface); width:112px; text-align:center; text-align-last:center; }
-  .deal-row { display:flex; align-items:center; gap:8px; width:100%; border:1.5px solid transparent; background:var(--surface); border-radius:9px; padding:7px 9px; margin-bottom:5px; cursor:pointer; font-family:inherit; text-align:left; transition:border-color .15s ease, box-shadow .15s ease; }
+  .deal-row { display:flex; align-items:center; gap:8px; width:100%; border:1.5px solid transparent; background:var(--surface); border-radius:9px; padding:7px 9px; margin-bottom:5px; cursor:pointer; font-family:inherit; text-align:left; box-shadow:0 0 0 1px var(--hair); transition:border-color .15s var(--ease), box-shadow .15s var(--ease), transform .1s var(--ease); }
+  .deal-row:active { transform:scale(.99); }
   .deal-row:last-child { margin-bottom:0; }
   .deal-row:hover { box-shadow:var(--shadow-lg); }
   .deal-row.active { border-color:var(--green-dark); cursor:default; box-shadow:none; }
@@ -1253,10 +1155,11 @@
   .modal-field input:focus, .modal-field textarea:focus, .modal-field select:focus { border-color:var(--green-dark); }
   .modal-field textarea { resize:vertical; min-height:60px; }
   .modal-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:20px; }
-  .modal-btn { padding:11px 22px; border-radius:10px; border:none; font-size:13px; font-weight:600; cursor:pointer; transition:all .12s; font-family:inherit; }
+  .modal-btn { padding:10px 20px; border-radius:10px; border:none; font-size:13px; font-weight:600; cursor:pointer; transition:background .15s var(--ease), transform .1s var(--ease); font-family:inherit; }
+  .modal-btn:active { transform:scale(.97); }
   .modal-btn.primary { background:var(--green-dark); color:#fff; }
   .modal-btn.primary:hover { background:var(--green-darker); }
-  .modal-btn.cancel { background:var(--bg); color:var(--text-2); }
+  .modal-btn.cancel { background:var(--fill); color:var(--text-2); }
   .modal-btn.cancel:hover { background:var(--border); }
 
   /* ============ CALC ============ */
@@ -1301,8 +1204,8 @@
   .calc-history-del:hover { color:var(--red); }
 
   /* ============ TOAST ============ */
-  .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:var(--green-dark); color:#fff; padding:13px 24px; border-radius:12px; font-weight:600; font-size:13px; box-shadow:0 8px 24px rgba(13,58,44,.3); opacity:0; transition:opacity .3s; z-index:1000; pointer-events:none; }
-  .toast.show { opacity:1; }
+  .toast { position:fixed; bottom:24px; left:50%; transform:translate(-50%, 8px); background:rgba(28,28,30,.9); backdrop-filter:blur(14px) saturate(140%); -webkit-backdrop-filter:blur(14px) saturate(140%); color:#fff; padding:12px 22px; border-radius:14px; font-weight:600; font-size:13px; letter-spacing:-.005em; box-shadow:0 12px 32px -8px rgba(0,0,0,.4); opacity:0; transition:opacity .25s var(--ease), transform .25s var(--ease); z-index:1000; pointer-events:none; }
+  .toast.show { opacity:1; transform:translate(-50%, 0); }
 
   /* ============ RESPONSIVE ============ */
   @media (max-width: 1280px) {
@@ -1313,7 +1216,21 @@
     .metrics-row { grid-template-columns: repeat(2, 1fr); }
     .dashboard-grid { grid-template-columns: 1fr; }
     .grid-col:nth-child(3) { grid-column: span 1; }
-    .kanban { grid-template-columns: 1fr; }
+    .kanban { grid-template-columns: 1fr !important; }
+    .kanban-col.collapsed { min-height:0; }
+    .kanban-col.collapsed .kanban-col-collapsed { flex-direction:row; padding:4px 6px; }
+    .kanban-col-vtitle, .kanban-col-vsum { writing-mode:horizontal-tb; transform:none; }
+    .kanban-col.collapsed .kanban-col-body { min-height:0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration:.01ms !important; transition-duration:.01ms !important; }
+    .lead-card:hover { transform:none; }
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .modal-bg, .toast, .leads-menu { backdrop-filter:none; -webkit-backdrop-filter:none; }
+    .modal-bg { background:rgba(20,24,22,.6); }
+    .toast { background:#1c1c1e; }
+    .leads-menu { background:#fff; }
   }
   @media (max-width: 720px) {
     .app { padding: 8px; gap: 8px; }
@@ -1346,20 +1263,6 @@
       <svg class="menu-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11H5a2 2 0 00-2 2v6a2 2 0 002 2h14a2 2 0 002-2v-6a2 2 0 00-2-2h-4"/><path d="M9 7l3-3 3 3"/><path d="M12 4v12"/></svg>
       <span class="menu-item-label">Лиды</span>
       <span class="menu-badge" id="navLeadsBadge">0</span>
-    </div>
-    <div class="menu-item" data-page="alumni" onclick="navTo('alumni')">
-      <svg class="menu-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"/></svg>
-      <span class="menu-item-label">Выпускники</span>
-      <span class="menu-badge" id="navAlumniBadge">0</span>
-    </div>
-    <div class="menu-item" data-page="pipes" onclick="navTo('pipes')">
-      <svg class="menu-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18"/><path d="M6 12h12"/><path d="M10 19h4"/></svg>
-      <span class="menu-item-label">Воронки</span>
-    </div>
-    <div class="menu-item" data-page="waitlists" onclick="navTo('waitlists')">
-      <svg class="menu-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      <span class="menu-item-label">Waitlists</span>
-      <span class="menu-badge" id="navWaitlistsBadge">0</span>
     </div>
     <div class="menu-item" data-page="today" onclick="navTo('today')">
       <svg class="menu-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
@@ -1435,7 +1338,7 @@
         <div class="page-actions" id="pageActions">
           <button class="btn btn-primary" onclick="openLeadModal()">
             <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Новый лид
+            Новая сделка
           </button>
         </div>
       </header>
@@ -1601,85 +1504,32 @@
       <section class="page" data-page="leads">
         <div class="card">
           <div class="card-head">
-            <div class="card-title">CRM лидов</div>
+            <div class="card-title">Сделки</div>
             <div style="display:flex;gap:8px;position:relative">
               <button class="btn btn-secondary" onclick="toggleLeadsMenu(event)" title="Ещё">⋯</button>
               <div class="leads-menu" id="leadsMenu" hidden>
-                <button onclick="closeLeadsMenu(); openPipesPage(leadsPipe)">⚙ Воронки и колонки</button>
                 <button onclick="closeLeadsMenu(); openMergeModal()">Похожие клиенты<span class="count" id="leadsDupCount" hidden></span></button>
+                <button onclick="closeLeadsMenu(); toggleClosedColumns()">Свернуть / развернуть «Оплатил» и «Отказ»</button>
               </div>
-              <button class="btn btn-primary" onclick="openLeadModal()">+ Новый лид</button>
+              <button class="btn btn-primary" onclick="openLeadModal()">+ Сделка</button>
             </div>
           </div>
-          <div class="pipe-tabs" id="leadsPipeTabs"></div>
-          <div class="leads-phase-hint" id="leadsPhaseHint"></div>
+          <div class="seg" id="leadsPipeTabs"></div>
           <div class="leads-toolbar">
             <div class="leads-search">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              <input id="leadsSearchInput" placeholder="Поиск по имени, компании, истории…" oninput="renderLeadsKanban()">
+              <input id="leadsSearchInput" placeholder="Имя, компания, история…" oninput="renderLeadsKanban()">
             </div>
+            <select class="leads-filter-select" id="leadsFilterFlow" onchange="renderLeadsKanban()">
+              <option value="">Все потоки</option>
+            </select>
             <select class="leads-filter-select" id="leadsFilterChannel" onchange="renderLeadsKanban()">
               <option value="">Все каналы</option>
             </select>
-            <button class="leads-toggle-stuck" id="leadsFilterStuck" onclick="toggleStuckFilter()">⏰ Только застрявшие</button>
+            <button class="leads-toggle-stuck" id="leadsFilterStuck" onclick="toggleStuckFilter()">⏰ Застрявшие</button>
           </div>
           <div id="leadsActiveFilterBanner" style="display:none;"></div>
           <div class="kanban" id="leadsBoard"></div>
-        </div>
-      </section>
-
-      <!-- ===== PAGE: ALUMNI (Выпускники) ===== -->
-      <section class="page" data-page="alumni">
-        <div class="card">
-          <div class="card-head">
-            <div class="card-title">Выпускники интенсивов</div>
-            <div style="display:flex;gap:8px">
-              <button class="btn btn-secondary" onclick="openAlumStatusesModal()" title="Управление колонками">⚙ Колонки</button>
-              <button class="btn btn-primary" onclick="openAlumModal()">+ Выпускник</button>
-            </div>
-          </div>
-          <div class="leads-toolbar">
-            <div class="leads-search">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              <input id="alumniSearchInput" placeholder="Поиск по имени, @username, заметке…" oninput="renderAlumni()">
-            </div>
-            <button class="leads-toggle-stuck" id="alumniExpandToggle" onclick="toggleAllAlumGroups()">Свернуть все</button>
-          </div>
-          <div class="swim-wrap"><div class="swim-inner" id="alumniBoard"></div></div>
-        </div>
-      </section>
-
-      <!-- ===== PAGE: PIPES (Воронки) ===== -->
-      <section class="page" data-page="pipes">
-        <div class="pipes-wrap">
-          <div class="card pipes-side">
-            <div class="card-head" style="margin-bottom:10px">
-              <div class="card-title">Воронки</div>
-              <button class="btn btn-primary" onclick="addPipeline()" style="padding:7px 12px;font-size:12px">+ Воронка</button>
-            </div>
-            <div id="pipesList"></div>
-            <div class="pipes-hint">
-              <b>Как это принято делать</b>
-              <div>Одна воронка = один продукт со своим путём сделки. «Выиграно» и «Проиграно» системные: они кормят финансы, удалить их нельзя.</div>
-              <div>5-7 стадий достаточно. Называй стадию действием клиента («Думает», «Согласовал»), а не своим («Отправили КП»): так видно, где сделка встала.</div>
-              <div>«Разобрать» это корзина для неразобранного, а не продукт. Она всегда последняя и не удаляется.</div>
-            </div>
-          </div>
-          <div class="card pipes-main" id="pipesMain"></div>
-        </div>
-      </section>
-
-      <!-- ===== PAGE: WAITLISTS ===== -->
-      <section class="page" data-page="waitlists">
-        <div class="card">
-          <div class="card-head">
-            <div class="card-title">Списки ожидания</div>
-            <div style="display:flex;gap:8px">
-              <button class="btn btn-primary" onclick="openWaitlistModal()">+ Новый список</button>
-            </div>
-          </div>
-          <div style="font-size:13px;color:var(--text-2);margin:0 0 14px;line-height:1.5">Waitlist — очередь клиентов на конкретное событие или когорту. Пример: «Интенсив июль 2026», «Коучинг Q3». Заводится один раз, лид добавляется из карточки. Когда запускаешь событие — открываешь список и обзваниваешь.</div>
-          <div id="waitlistsContainer"></div>
         </div>
       </section>
 
@@ -1850,6 +1700,7 @@
     <div class="lead-modal-head">
       <div class="lead-modal-title-block">
         <input type="text" id="leadName" class="lead-modal-name" style="border:none;padding:0;background:transparent;width:100%;outline:none" placeholder="Имя и фамилия">
+        <div class="lead-modal-company" id="leadGradLine" style="display:none"></div>
       </div>
       <button class="lead-modal-close" onclick="closeLeadModal()" title="Закрыть">✕</button>
     </div>
@@ -1882,6 +1733,11 @@
     <!-- Выбранная сделка: только то, что нужно каждый раз -->
     <div class="deal-section-label" id="leadDealLabel">Сделка</div>
     <div class="lead-fields-grid">
+      <div class="lead-field-mini full">
+        <label>Продукт</label>
+        <div class="seg-pills" id="leadProductPills"></div>
+        <input type="hidden" id="leadProduct">
+      </div>
       <div class="lead-field-mini">
         <label>Стадия</label>
         <select id="leadStatus"></select>
@@ -1889,6 +1745,15 @@
       <div class="lead-field-mini">
         <label>Чек (₽)</label>
         <input type="number" id="leadChek" placeholder="0">
+      </div>
+      <div class="lead-field-mini">
+        <label>Поток</label>
+        <input type="text" id="leadFlow" list="leadFlowList" placeholder="26 сентября, октябрь…" autocomplete="off">
+        <datalist id="leadFlowList"></datalist>
+      </div>
+      <div class="lead-field-mini">
+        <label>Дата next action</label>
+        <input type="date" id="leadDeadline">
       </div>
       <div class="lead-field-mini full">
         <label>Next action</label>
@@ -1912,8 +1777,8 @@
             </div>
           </div>
           <div class="lead-field-mini">
-            <label>Дата next action</label>
-            <input type="date" id="leadDeadline">
+            <label>Выпускник потока</label>
+            <input type="text" id="leadCohorts" placeholder="поток январь, поток март" autocomplete="off">
           </div>
           <div class="lead-field-mini full">
             <label>Компания</label>
@@ -1921,10 +1786,6 @@
               <svg class="lead-icon-co" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
               <input type="text" id="leadCompany" placeholder="Компания (опционально)" autocomplete="off">
             </div>
-          </div>
-          <div class="lead-field-mini full">
-            <label>Продукт</label>
-            <select id="leadProduct" onchange="onLeadProductChange()"></select>
           </div>
           <div class="lead-field-mini full">
             <label>Пометка к сделке</label>
@@ -1996,173 +1857,6 @@
   </div>
 </div>
 
-<!-- MODAL: ALUMNI (Выпускник) -->
-<div class="modal-bg" id="alumModalBg" onclick="if(event.target===this)closeAlumModal()">
-  <div class="modal compact">
-    <input type="hidden" id="alumModalId">
-    <div class="lead-modal-head">
-      <div class="lead-modal-title-block">
-        <input type="text" id="alumName" class="lead-modal-name" style="border:none;padding:0;background:transparent;width:100%;outline:none" placeholder="Имя и фамилия">
-      </div>
-      <button class="lead-modal-close" onclick="closeAlumModal()" title="Закрыть">✕</button>
-    </div>
-
-    <!-- Контакты -->
-    <div class="lead-fields-grid" style="margin-bottom:14px">
-      <div class="lead-field-mini">
-        <label>Telegram</label>
-        <div class="lead-icon-input">
-          <svg class="lead-icon-tg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
-          <input type="text" id="alumTelegram" placeholder="@username" autocomplete="off">
-          <button type="button" class="lead-copy-btn" onclick="copyLeadField('alumTelegram')" title="Скопировать ник">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          </button>
-        </div>
-      </div>
-      <div class="lead-field-mini">
-        <label>Телефон</label>
-        <div class="lead-icon-input">
-          <svg class="lead-icon-ph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-          <input type="tel" id="alumPhone" placeholder="+7 900 000-00-00" inputmode="tel" autocomplete="off">
-        </div>
-      </div>
-      <div class="lead-field-mini full">
-        <label>Компания</label>
-        <div class="lead-icon-input">
-          <svg class="lead-icon-co" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-          <input type="text" id="alumCompany" placeholder="Компания (опционально)" autocomplete="off">
-        </div>
-      </div>
-    </div>
-
-    <!-- Поток и стадия -->
-    <div class="lead-fields-grid">
-      <div class="lead-field-mini full">
-        <label>Поток (откуда пришёл)</label>
-        <input type="text" id="alumGroup" list="alumGroupList" placeholder="Напр.: Интенсив Сколково · поток январь">
-        <datalist id="alumGroupList"></datalist>
-      </div>
-      <div class="lead-field-mini">
-        <label>Стадия</label>
-        <select id="alumStatus"></select>
-      </div>
-      <div class="lead-field-mini">
-        <label>Чек (₽)</label>
-        <input type="number" id="alumChek" placeholder="0">
-      </div>
-      <div class="lead-field-mini full">
-        <label>Next action</label>
-        <input type="text" id="alumAction" placeholder="Что дальше: позвать на интенсив, созвон, пинг…">
-      </div>
-      <div class="lead-field-mini">
-        <label>Дата next action</label>
-        <input type="date" id="alumDeadline">
-      </div>
-      <div class="lead-field-mini full">
-        <label>Короткая заметка</label>
-        <input type="text" id="alumNote" placeholder="Контекст: чем занимается, статус одной строкой…">
-      </div>
-    </div>
-
-    <div class="lead-meta-row" id="alumMetaRow" style="display:none">
-      <span><b>Добавлен:</b> <span id="alumMetaCreated">—</span></span>
-      <span><b>Обновлён:</b> <span id="alumMetaUpdated">—</span></span>
-      <span><b>Последнее касание:</b> <span id="alumMetaTouch">—</span></span>
-    </div>
-
-    <!-- Интересы -->
-    <div class="lead-tags-section">
-      <div class="lead-tags-head">
-        <div class="lead-tags-title">Интересно ещё</div>
-        <button class="lead-tags-manage-btn" onclick="openInterestTagsModal()" title="Управление тегами интереса">⚙</button>
-      </div>
-      <div class="lead-tags-chips" id="alumInterestChips"></div>
-    </div>
-
-    <!-- Списки ожидания -->
-    <div class="lead-tags-section">
-      <div class="lead-tags-head">
-        <div class="lead-tags-title">В списках ожидания</div>
-        <button class="lead-tags-manage-btn" onclick="navTo('waitlists'); closeAlumModal();" title="Перейти к спискам ожидания">↗</button>
-      </div>
-      <div class="lead-tags-chips" id="alumWaitlistChips"></div>
-    </div>
-
-
-    <!-- Транскрипты разговоров -->
-    <div class="lm-section" id="alumTrSection">
-      <div class="lm-sec-head" onclick="toggleLmSection('alumTrSection')">
-        <span class="lm-sec-caret">▶</span>
-        <span class="lm-sec-title">Транскрипты</span>
-        <span class="lm-sec-count" id="alumTrCount">0</span>
-        <button type="button" class="lm-sec-btn" onclick="event.stopPropagation(); openTrForm('alum')">+ Транскрипт</button>
-      </div>
-      <div class="lm-sec-body">
-        <div class="lm-form" id="alumTrForm">
-          <input type="url" id="alumTrUrl" placeholder="Ссылка на транскрипт" autocomplete="off">
-          <textarea id="alumTrNote" placeholder="О чём был разговор, коротко"></textarea>
-          <div class="lm-form-actions">
-            <button class="modal-btn cancel" onclick="closeTrForm('alum')">Отмена</button>
-            <button class="modal-btn primary" onclick="addTranscript('alum')">Добавить</button>
-          </div>
-        </div>
-        <div class="lm-scroll" id="alumTrList"></div>
-      </div>
-    </div>
-
-    <!-- История -->
-    <div class="lm-section" id="alumHistSection">
-      <div class="lm-sec-head" onclick="toggleLmSection('alumHistSection')">
-        <span class="lm-sec-caret">▶</span>
-        <span class="lm-sec-title">История касаний</span>
-        <span class="lm-sec-count" id="alumHistCount">0</span>
-        <button type="button" class="lm-sec-btn" onclick="event.stopPropagation(); openHistForm('alum')">+ Запись</button>
-      </div>
-      <div class="lm-sec-body">
-        <div class="lead-history-form" id="alumHistoryForm">
-          <textarea id="alumHistoryText" placeholder="Что написал, что ответил, о чём договорились. Дата проставится сама."></textarea>
-          <div class="lead-history-form-actions">
-            <button class="modal-btn cancel" onclick="toggleAlumHistoryForm(false)">Отмена</button>
-            <button class="modal-btn primary" onclick="addAlumHistoryEntry()">Сохранить запись</button>
-          </div>
-        </div>
-        <div class="lm-scroll"><div class="lead-history-list" id="alumHistoryList"></div></div>
-      </div>
-    </div>
-
-    <div class="lead-modal-actions">
-      <div class="lead-modal-actions-left">
-        <button class="danger" id="alumDeleteBtn" onclick="deleteAlumFromModal()" style="display:none">Удалить</button>
-        <button class="modal-btn" id="alumConvertBtn" onclick="convertAlumFromModal()" style="display:none;border:1px solid var(--green-light-2);color:var(--green-dark)">→ в Лиды</button>
-      </div>
-      <div class="lead-modal-actions-right">
-        <button class="modal-btn cancel" onclick="closeAlumModal()">Закрыть</button>
-        <button class="modal-btn primary" onclick="saveAlum()">Сохранить</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL: ALUMNI COLUMNS MANAGER -->
-<div class="modal-bg" id="alumStatusesModalBg" onclick="if(event.target===this)closeAlumStatusesModal()">
-  <div class="modal" style="max-width:560px">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
-      <div>
-        <h3 style="margin:0;font-size:18px;font-weight:700">Колонки канбана</h3>
-        <div style="font-size:12px;color:var(--text-2);margin-top:4px">Перетягивай за ⋮⋮ чтобы менять порядок. Тип определяет, как колонка влияет на счётчики «затронуто/прогресс».</div>
-      </div>
-      <button onclick="closeAlumStatusesModal()" style="background:var(--bg);border:none;border-radius:50%;width:32px;height:32px;cursor:pointer;color:var(--text-2);font-size:18px;line-height:1">✕</button>
-    </div>
-    <div id="alumStatusesList" style="margin-top:14px;display:flex;flex-direction:column;gap:8px"></div>
-    <button onclick="addAlumStatus()" style="width:100%;margin-top:10px;padding:11px;background:var(--bg);border:1px dashed var(--border-2);border-radius:10px;color:var(--text-2);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer">+ Добавить колонку</button>
-    <div style="display:flex;gap:10px;margin-top:18px;justify-content:flex-end">
-      <button class="modal-btn cancel" onclick="resetAlumStatusesToDefault()" style="margin-right:auto">Сбросить к стандарту</button>
-      <button class="modal-btn cancel" onclick="closeAlumStatusesModal()">Отмена</button>
-      <button class="modal-btn primary" onclick="saveAlumStatusesFromModal()">Сохранить</button>
-    </div>
-  </div>
-</div>
-
 <!-- MODAL: INTEREST TAGS MANAGER -->
 <div class="modal-bg" id="interestTagsModalBg" onclick="if(event.target===this)closeInterestTagsModal()">
   <div class="modal" style="max-width:520px">
@@ -2182,47 +1876,6 @@
     </div>
   </div>
 </div>
-
-<!-- MODAL: WAITLIST EDIT -->
-<div class="modal-bg" id="waitlistModalBg" onclick="if(event.target===this)closeWaitlistModal()">
-  <div class="modal compact">
-    <input type="hidden" id="waitlistModalId">
-    <div class="lead-modal-head">
-      <div class="lead-modal-title-block">
-        <input type="text" id="waitlistName" class="lead-modal-name" style="border:none;padding:0;background:transparent;width:100%;outline:none" placeholder="Название (напр. Интенсив июль 2026)">
-      </div>
-      <button class="lead-modal-close" onclick="closeWaitlistModal()">✕</button>
-    </div>
-    <div class="lead-fields-grid">
-      <div class="lead-field-mini">
-        <label>Дата события</label>
-        <input type="date" id="waitlistDate">
-      </div>
-      <div class="lead-field-mini">
-        <label>Статус</label>
-        <select id="waitlistClosed">
-          <option value="0">Открыт (собираем)</option>
-          <option value="1">Закрыт (событие прошло)</option>
-        </select>
-      </div>
-      <div class="lead-field-mini full">
-        <label>Заметка</label>
-        <input type="text" id="waitlistNote" placeholder="Контекст: цена, лимит мест, куда звать…">
-      </div>
-    </div>
-    <div class="lead-modal-actions">
-      <div class="lead-modal-actions-left">
-        <button class="danger" id="waitlistDeleteBtn" onclick="deleteWaitlistFromModal()" style="display:none">Удалить</button>
-      </div>
-      <div class="lead-modal-actions-right">
-        <button class="modal-btn cancel" onclick="closeWaitlistModal()">Отмена</button>
-        <button class="modal-btn primary" onclick="saveWaitlistFromModal()">Сохранить</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL: LEAD COLUMNS MANAGER -->
 
 <!-- MODAL: PROJECT -->
 <div class="modal-bg" id="projectModalBg" onclick="if(event.target===this)closeProjectModal()">
@@ -2325,126 +1978,53 @@ const MONTHS_RU = ['января','февраля','марта','апреля','
 const MONTHS_FULL = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
 const DAYS_FULL = ['воскресенье','понедельник','вторник','среда','четверг','пятница','суббота'];
 const DAYS_SHORT = ['В','П','В','С','Ч','П','С'];
-// Дефолтные колонки лидов. При первом запуске сохраняются в localStorage.
-// kind: 'active' — активная воронка; 'won' — победа (запускает win-flow, попадает в финансы); 'lost' — отказ/закрыто.
-const DEFAULT_LEAD_STATUSES = [
-  { id:'new',           name:'Новый',          short:'Новые',          color:'#9ca3af', kind:'active' },
-  { id:'first_contact', name:'Первый контакт', short:'Первый контакт', color:'#3b82f6', kind:'active' },
-  { id:'in_progress',   name:'В диалоге',      short:'В диалоге',      color:'#f97316', kind:'active' },
-  { id:'proposal_sent', name:'КП отправлено',  short:'КП отправлено',  color:'#a855f7', kind:'active' },
-  { id:'negotiation',   name:'Переговоры',     short:'Переговоры',     color:'#0ea5e9', kind:'active' },
-  { id:'won',           name:'Закрыто (win)',  short:'Won',            color:'#10b981', kind:'won'    },
-  { id:'lost',          name:'Закрыто (lost)', short:'Lost',           color:'#dc2626', kind:'lost'   }
+// ===== ОДНА ДОСКА (с 18.09.2026) =====
+// Сделка = запись в leads: продукт (метка), стадия по общей шкале, чек, поток. Человек живёт в clients.
+const STAGES = [
+  { id:'new',   name:'Новый',      short:'Новый',      color:'#8e8e93', kind:'active', phase:'new'   },
+  { id:'talk',  name:'В диалоге',  short:'В диалоге',  color:'#007aff', kind:'active', phase:'work'  },
+  { id:'offer', name:'Предложил',  short:'Предложил',  color:'#af52de', kind:'active', phase:'work'  },
+  { id:'wait',  name:'Ждёт поток', short:'Ждёт поток', color:'#ff9500', kind:'active', phase:'pause' },
+  { id:'won',   name:'Оплатил',    short:'Оплатил',    color:'#34c759', kind:'won',    phase:'won'   },
+  { id:'lost',  name:'Отказ',      short:'Отказ',      color:'#ff3b30', kind:'lost',   phase:'lost'  }
 ];
-function loadLeadStatuses() {
-  try {
-    const raw = JSON.parse(localStorage.getItem('lead_statuses') || 'null');
-    if (Array.isArray(raw) && raw.length) {
-      return raw.map(s => Object.assign({ color:'#9ca3af', kind:'active' }, s));
-    }
-  } catch {}
-  return DEFAULT_LEAD_STATUSES.map(s => Object.assign({}, s));
-}
-function saveLeadStatuses(arr) { localStorage.setItem('lead_statuses', JSON.stringify(arr)); }
-// ===== ВОРОНКИ ПО ПРОДУКТАМ =====
-// Запись лида = одна сделка (продукт + стадия + чек). Человек живёт в отдельном списке clients.
-// Стадии задаются шаблоном воронки: короткий цикл интенсивов и длинный B2B.
-const PIPE_TEMPLATES = {
-  b2b: [
-    { id:'new',           name:'Новый',      short:'Новый',      color:'#9ca3af', kind:'active', phase:'new'   },
-    { id:'call',          name:'Созвон',     short:'Созвон',     color:'#3b82f6', kind:'active', phase:'work'  },
-    { id:'proposal_sent', name:'КП',         short:'КП',         color:'#a855f7', kind:'active', phase:'work'  },
-    { id:'negotiation',   name:'Переговоры', short:'Переговоры', color:'#0ea5e9', kind:'active', phase:'work'  },
-    { id:'ls_ojs5yu',     name:'На паузе',   short:'На паузе',   color:'#eab308', kind:'active', phase:'pause' },
-    { id:'won',           name:'Выиграно',   short:'Выиграно',   color:'#10b981', kind:'won',    phase:'won'   },
-    { id:'lost',          name:'Проиграно',  short:'Проиграно',  color:'#dc2626', kind:'lost',   phase:'lost'  }
-  ],
-  intensive: [
-    { id:'i_interest', name:'Интерес',   short:'Интерес',   color:'#9ca3af', kind:'active', phase:'new'   },
-    { id:'i_invited',  name:'Пригласил', short:'Пригласил', color:'#3b82f6', kind:'active', phase:'work'  },
-    { id:'i_thinking', name:'Думает',    short:'Думает',    color:'#f97316', kind:'active', phase:'work'  },
-    { id:'i_pause',    name:'На паузе',  short:'На паузе',  color:'#eab308', kind:'active', phase:'pause' },
-    { id:'i_paid',     name:'Оплатил',   short:'Оплатил',   color:'#10b981', kind:'won',    phase:'won'   },
-    { id:'i_declined', name:'Отказ',     short:'Отказ',     color:'#dc2626', kind:'lost',   phase:'lost'  }
-  ]
+// Старые стадии (две шкалы воронок, колонки выпускников, самые первые колонки) → одна шкала
+const STAGE_MAP = {
+  new:'new', i_interest:'new', first_contact:'new', cold:'new', written:'new',
+  call:'talk', i_invited:'talk', in_progress:'talk', replied:'talk',
+  proposal_sent:'offer', negotiation:'offer', i_thinking:'offer', inviting:'offer', st_gt4fh0:'offer',
+  ls_ojs5yu:'wait', i_pause:'wait', st_wv3sy1:'wait',
+  won:'won', i_paid:'won',
+  lost:'lost', i_declined:'lost', declined:'lost'
 };
-// Сводная вкладка «Все»: колонки по фазам, общим для обоих шаблонов
-const PIPE_PHASES = [
-  { id:'new',   name:'Новые',     short:'Новые',     color:'#9ca3af' },
-  { id:'work',  name:'В работе',  short:'В работе',  color:'#3b82f6' },
-  { id:'pause', name:'На паузе',  short:'На паузе',  color:'#eab308' },
-  { id:'won',   name:'Выиграно',  short:'Выиграно',  color:'#10b981' },
-  { id:'lost',  name:'Проиграно', short:'Проиграно', color:'#dc2626' }
+function mapStage(statusId) {
+  if (STAGES.some(st => st.id === statusId)) return statusId;
+  if (STAGE_MAP[statusId]) return STAGE_MAP[statusId];
+  // Своя колонка из старых настроек воронок: смотрим её фазу или тип
+  let old = null;
+  try { Object.values(JSON.parse(localStorage.getItem('pipe_stages') || '{}')).flat().forEach(st => { if (st && st.id === statusId) old = st; }); } catch {}
+  if (!old) { try { (JSON.parse(localStorage.getItem('lead_statuses') || '[]') || []).forEach(st => { if (st && st.id === statusId) old = st; }); } catch {} }
+  const ph = old ? (old.phase || old.kind || '') : '';
+  return ph === 'won' ? 'won' : ph === 'lost' ? 'lost' : ph === 'pause' ? 'wait' : ph === 'work' ? 'talk' : 'new';
+}
+const PRODUCTS = [
+  { id:'cc',        name:'Claude Code 160к',            short:'Claude Code',  color:'#d97706', intensive:true },
+  { id:'claude50',  name:'Интенсив Claude 50к',         short:'Интенсив 50к', color:'#f97316', intensive:true },
+  { id:'corp',      name:'Корп обучение',               short:'Корп',         color:'#0ea5e9' },
+  { id:'discovery', name:'Discovery',                   short:'Discovery',    color:'#10b981' },
+  { id:'teens',     name:'Подростки',                   short:'Подростки',    color:'#a855f7', intensive:true },
+  { id:'dev',       name:'Разработка и сопровождение',  short:'Разработка',   color:'#ef4444' }
 ];
-const DEFAULT_PIPELINES = [
-  { id:'cc',        name:'Claude Code 160к',            short:'Claude Code',  tpl:'intensive', color:'#d97706' },
-  { id:'claude50',  name:'Интенсив Claude 50к',         short:'Интенсив 50к', tpl:'intensive', color:'#f97316' },
-  { id:'corp',      name:'Корп обучение',               short:'Корп',         tpl:'b2b',       color:'#0ea5e9' },
-  { id:'discovery', name:'Discovery',                   short:'Discovery',    tpl:'b2b',       color:'#10b981' },
-  { id:'teens',     name:'Подростки',                   short:'Подростки',    tpl:'intensive', color:'#a855f7' },
-  { id:'dev',       name:'Разработка и сопровождение',  short:'Разработка',   tpl:'b2b',       color:'#ef4444' },
-  { id:'inbox',     name:'Разобрать',                   short:'Разобрать',    tpl:'b2b',       color:'#9ca3af', hideIfEmpty:true, system:true }
-];
-function loadPipelines() {
-  let list = null;
-  try { const a = JSON.parse(localStorage.getItem('pipelines') || 'null'); if (Array.isArray(a) && a.length) list = a; } catch {}
-  list = (list || DEFAULT_PIPELINES).map(p => Object.assign({ tpl:'b2b', color:'#9ca3af' }, p, { short: p.short || p.name }));
-  if (!list.some(p => p.id === 'inbox')) list.push(Object.assign({}, DEFAULT_PIPELINES[DEFAULT_PIPELINES.length - 1]));
-  // «Разобрать» всегда последняя: это не продукт, а корзина для неразобранного
-  return list.filter(p => p.id !== 'inbox').concat(list.filter(p => p.id === 'inbox'));
-}
-let PIPELINES = loadPipelines();
-let PIPELINES_BY_ID = Object.fromEntries(PIPELINES.map(p => [p.id, p]));
-function refreshPipelines() { PIPELINES = loadPipelines(); PIPELINES_BY_ID = Object.fromEntries(PIPELINES.map(p => [p.id, p])); }
-function savePipelines(list) { localStorage.setItem('pipelines', JSON.stringify(list)); refreshPipelines(); }
-function pipeShort(name) { const n = String(name || '').trim(); return n.length > 16 ? n.slice(0, 15) + '…' : n; }
-function pipeById(id) { return PIPELINES_BY_ID[id] || PIPELINES_BY_ID.inbox; }
-function dealPipe(l) { return (l && PIPELINES_BY_ID[l.product]) ? l.product : 'inbox'; }
-// Стадии воронки: свои из «⚙ Колонки», иначе шаблон
-function pipeStatuses(pipeId) {
-  const p = pipeById(pipeId);
-  const c = PIPE_STAGES[p.id];
-  return (Array.isArray(c) && c.length) ? c : PIPE_TEMPLATES[p.tpl];
-}
-function dealStatusDef(l) { return (l && pipeStatuses(dealPipe(l)).find(st => st.id === l.status)) || leadStatusById(l && l.status) || {}; }
-// Старые id колонок → куда их класть в каждом шаблоне
-const STATUS_MAP = {
-  b2b:       { first_contact:'call', in_progress:'call', i_interest:'new', i_invited:'call', i_thinking:'proposal_sent', i_pause:'ls_ojs5yu', i_paid:'won', i_declined:'lost' },
-  intensive: { new:'i_interest', first_contact:'i_invited', call:'i_invited', in_progress:'i_thinking', proposal_sent:'i_thinking', negotiation:'i_thinking', ls_ojs5yu:'i_pause', won:'i_paid', lost:'i_declined' }
-};
-function mapStatusToTpl(statusId, tpl) {
-  const list = PIPE_TEMPLATES[tpl];
-  if (list.some(s => s.id === statusId)) return statusId;
-  const m = STATUS_MAP[tpl][statusId];
-  if (m) return m;
-  return list[0].id;
-}
-// Регистр всех стадий: финансы и метрики спрашивают у него «выиграно или нет»
-function loadPipeStages() {
-  try { const o = JSON.parse(localStorage.getItem('pipe_stages') || '{}'); return (o && typeof o === 'object' && !Array.isArray(o)) ? o : {}; } catch { return {}; }
-}
-let PIPE_STAGES = loadPipeStages();
-function buildStatusRegistry() {
-  const m = new Map();
-  [...PIPE_TEMPLATES.b2b, ...PIPE_TEMPLATES.intensive, ...Object.values(PIPE_STAGES).flat()].forEach(st => { if (st && st.id && !m.has(st.id)) m.set(st.id, st); });
-  return [...m.values()];
-}
-function rebuildStatusRegistry() { LEAD_STATUSES = buildStatusRegistry(); }
-// Стадия сделки → стадия нужной воронки. strict=false (фоновая раскладка): незнакомую стадию не трогаем,
-// она могла прийти с другого устройства раньше настроек колонок.
-function mapStatusToPipe(statusId, pipeId, strict) {
-  const list = pipeStatuses(pipeId);
-  if (list.some(st => st.id === statusId)) return statusId;
-  const viaMap = STATUS_MAP[pipeById(pipeId).tpl][statusId];
-  if (viaMap && list.some(st => st.id === viaMap)) return viaMap;
-  const known = LEAD_STATUSES.find(st => st.id === statusId);
-  const phase = known ? known.phase
-    : ({ first_contact: 'work', in_progress: 'work' })[statusId]
-    || (viaMap ? (LEAD_STATUSES.find(st => st.id === viaMap) || {}).phase : null);
-  if (phase) { const t = list.find(st => st.phase === phase); return t ? t.id : list[0].id; }
-  return strict ? list[0].id : statusId;
-}
-let LEAD_STATUSES = buildStatusRegistry();
+const NO_PRODUCT = { id:'inbox', name:'Без продукта', short:'Без продукта', color:'#9ca3af', none:true };
+const PIPELINES = PRODUCTS.concat([NO_PRODUCT]);
+const PIPELINES_BY_ID = Object.fromEntries(PIPELINES.map(p => [p.id, p]));
+function pipeById(id) { return PIPELINES_BY_ID[id] || NO_PRODUCT; }
+function isProductId(id) { return PRODUCTS.some(p => p.id === id); }
+function dealPipe(l) { return (l && isProductId(l.product)) ? l.product : 'inbox'; }
+function dealHasProduct(l) { return dealPipe(l) !== 'inbox'; }
+function pipeStatuses() { return STAGES; }
+function dealStatusDef(l) { return leadStatusById(l && l.status); }
+const LEAD_STATUSES = STAGES;
 function leadStatusKind(id) { const s = LEAD_STATUSES.find(x => x.id === id); return s ? s.kind : 'active'; }
 function firstStatusIdOfKind(kind) { const s = LEAD_STATUSES.find(x => x.kind === kind); return s ? s.id : null; }
 function leadIsWon(l)  { return leadStatusKind(l && l.status) === 'won'; }
@@ -2486,20 +2066,18 @@ function saveInterestTags(arr) { localStorage.setItem('interest_tags', JSON.stri
 let INTEREST_TAGS = loadInterestTags();
 function interestTagById(id) { return INTEREST_TAGS.find(t => t.id === id) || null; }
 
-// ===== WAITLISTS — списки ожидания на конкретное событие / когорту =====
-// Пример: «Интенсив июль 2026», «Коучинг Q3». Лид попадает в waitlist по кнопке из карточки.
-function loadWaitlists() { return loadWaitlistsRaw().filter(w => !w.deleted); }
-function loadWaitlistsRaw() {
-  try { const raw = JSON.parse(localStorage.getItem('waitlists') || '[]'); return Array.isArray(raw) ? raw : []; }
-  catch { return []; }
+// ===== Списки ожидания: архив. С 18.09.2026 очередь = стадия «Ждёт поток» + поле «Поток» у сделки =====
+function loadWaitlistsRaw() { try { const raw = JSON.parse(localStorage.getItem('waitlists') || '[]'); return Array.isArray(raw) ? raw : []; } catch { return []; } }
+function waitlistNameById(id) { const w = loadWaitlistsRaw().find(x => x.id === id); return w ? (w.name || '') : ''; }
+// Поток: свободная подпись «какой набор» у сделки. Подсказки берём из уже введённых.
+function knownFlows() {
+  const m = new Map();
+  loadLeads().forEach(l => { const f = (l.flow || '').trim(); if (f) m.set(f.toLowerCase(), f); });
+  return [...m.values()].sort((a, b) => a.localeCompare(b, 'ru'));
 }
-function saveWaitlists(arr) { localStorage.setItem('waitlists', JSON.stringify(arr)); }
-function waitlistById(id) { return loadWaitlists().find(w => w.id === id) || null; }
-function genWaitlistId() {
-  const lists = loadWaitlistsRaw();
-  let n = 1;
-  while (lists.find(w => w.id === 'wl_' + String(n).padStart(3,'0'))) n++;
-  return 'wl_' + String(n).padStart(3,'0');
+function fillFlowDatalist() {
+  const dl = document.getElementById('leadFlowList');
+  if (dl) dl.innerHTML = knownFlows().map(f => '<option value="'+escapeHtml(f)+'">').join('');
 }
 
 const PROJECTS_SEED = [
@@ -2972,34 +2550,9 @@ function loadLeadsRaw() {
 }
 function saveLeads(l) { localStorage.setItem('leads', JSON.stringify(l)); }
 
-// ===== ВЫПУСКНИКИ =====
-// Дефолтные колонки. При первом запуске сохраняются в localStorage и оттуда редактируются.
-// kind: 'active' — в работе; 'success' — закрыто положительно; 'rejected' — отказ/пауза.
-const DEFAULT_ALUMNI_STATUSES = [
-  { id:'cold',     name:'Новые',       short:'Новые',       color:'#9ca3af', kind:'active'   },
-  { id:'written',  name:'Написал',     short:'Написал',     color:'#3b82f6', kind:'active'   },
-  { id:'replied',  name:'Ответил',     short:'Ответил',     color:'#f97316', kind:'active'   },
-  { id:'inviting', name:'Зову',        short:'Зову',        color:'#a855f7', kind:'active'   },
-  { id:'declined', name:'Отказ',       short:'Отказ',       color:'#dc2626', kind:'rejected' }
-];
-function loadAlumniStatuses() {
-  try {
-    const raw = JSON.parse(localStorage.getItem('alumni_statuses') || 'null');
-    if (Array.isArray(raw) && raw.length) {
-      // нормализация — у старых записей мог не быть поля color/kind
-      return raw.map(s => Object.assign({ color:'#9ca3af', kind:'active' }, s));
-    }
-  } catch {}
-  return DEFAULT_ALUMNI_STATUSES.map(s => Object.assign({}, s));
-}
-function saveAlumniStatuses(arr) { localStorage.setItem('alumni_statuses', JSON.stringify(arr)); }
-let ALUMNI_STATUSES = loadAlumniStatuses();
-function alumStatusById(id) { return ALUMNI_STATUSES.find(s => s.id === id) || ALUMNI_STATUSES[0]; }
-function alumStatusColor(id) { return (alumStatusById(id) || {}).color || '#9ca3af'; }
-function loadAlumniRaw() { return JSON.parse(localStorage.getItem('alumni') || '[]'); }
-function loadAlumni() { return loadAlumniRaw().filter(a => !a.deleted); }
+// ===== Выпускники: архив. С 18.09.2026 выпускник = клиент с полем cohorts, его касания = сделка на доске =====
+function loadAlumniRaw() { try { const a = JSON.parse(localStorage.getItem('alumni') || '[]'); return Array.isArray(a) ? a : []; } catch { return []; } }
 function saveAlumni(a) { localStorage.setItem('alumni', JSON.stringify(a)); }
-function genAlumId() { return 'alum_' + nowIso().slice(0,10) + '_' + String(Math.floor(Math.random()*9000)+1000); }
 
 function loadHistory() { return JSON.parse(localStorage.getItem('history') || '[]'); }
 function saveHistoryData(h) { localStorage.setItem('history', JSON.stringify(h)); }
@@ -3022,10 +2575,7 @@ function navTo(page) {
   document.querySelectorAll('.menu-item').forEach(m => m.classList.toggle('active', m.dataset.page === page));
   const titles = {
     home: { t:'Главная', s:'План, выполнение, фокус — на одном экране.' },
-    leads: { t:'Лиды', s:'CRM, канбан и движение по воронке.' },
-    alumni: { t:'Выпускники', s:'База участников интенсивов. Резервуар касаний, не воронка.' },
-    pipes: { t:'Воронки', s:'Продукты, их стадии и порядок колонок на доске.' },
-    waitlists: { t:'Списки ожидания', s:'Очереди клиентов на конкретное событие или когорту.' },
+    leads: { t:'Лиды', s:'Одна доска: все сделки, продукт как метка.' },
     today: { t:'Сегодня', s:'Чек-лист, касания и встречи дня.' },
     finance: { t:'Финансы', s:'Сделки месяца, клиенты, распределение прибыли.' },
     projects: { t:'Проекты', s:'Идеи и заметки по твоим проектам.' },
@@ -3036,7 +2586,6 @@ function navTo(page) {
   document.getElementById('pageTitle').textContent = info.t;
   document.getElementById('pageSub').textContent = info.s;
   localStorage.setItem('activeTab', page);
-  if (page === 'pipes') renderPipes();
   window.scrollTo({ top:0, behavior:'smooth' });
 }
 
@@ -3236,7 +2785,7 @@ function renderReminder() {
   const el = document.getElementById('reminderContent');
   const lastCall = (state.day.callLog || [])[0];
   const activeLead = loadLeads()
-    .filter(l => dealStatusDef(l).phase === 'work' && l.next_action_date)
+    .filter(l => leadStatusKind(l.status) === 'active' && l.next_action_date)
     .sort((a,b) => new Date(a.next_action_date) - new Date(b.next_action_date))[0];
   if (activeLead) {
     const d = new Date(activeLead.next_action_date);
@@ -3403,92 +2952,113 @@ function fillLeadsFilterChannel() {
       sel.appendChild(opt);
     });
   }
-  // Интересы — обновляем всегда, потому что список редактируется через модал
-  const isel = document.getElementById('leadsFilterInterest');
-  if (isel) {
-    const cur = isel.value;
-    isel.innerHTML = '<option value="">Все интересы</option>';
-    INTEREST_TAGS.forEach(t => {
-      const opt = document.createElement('option');
-      opt.value = t.id; opt.textContent = t.name;
-      isel.appendChild(opt);
-    });
-    if (cur && INTEREST_TAGS.find(t => t.id === cur)) isel.value = cur;
+  // Потоки: список живой, пересобираем при каждом рендере
+  const fsel = document.getElementById('leadsFilterFlow');
+  if (fsel) {
+    const cur = fsel.value;
+    const flows = knownFlows();
+    fsel.innerHTML = '<option value="">Все потоки</option>' + flows.map(f => '<option value="'+escapeHtml(f)+'">'+escapeHtml(f)+'</option>').join('');
+    if (cur && flows.includes(cur)) fsel.value = cur;
+    fsel.style.display = flows.length ? '' : 'none';
   }
 }
 function filterLeads(leads) {
   const q = (document.getElementById('leadsSearchInput')?.value || '').trim().toLowerCase();
   const channel = document.getElementById('leadsFilterChannel')?.value || '';
-  const interest = document.getElementById('leadsFilterInterest')?.value || '';
+  const flow = document.getElementById('leadsFilterFlow')?.value || '';
   const cMap = new Map(loadClientsRaw().map(c => [c.id, c]));
   return leads.filter(l => {
     const c = cMap.get(l.client_id);
     if (channel && l.channel !== channel) return false;
-    if (interest && !(c && Array.isArray(c.interests) && c.interests.includes(interest))) return false;
+    if (flow && (l.flow || '').trim() !== flow) return false;
     if (leadsFilterStuckOn && daysSince(l.updated_at) <= 7) return false;
     if (q) {
-      const hay = (l.name+' '+(l.title||'')+' '+(l.company||'')+' '+(c ? (c.name+' '+(c.company||'')) : '')+' '+(l.telegram||'')+' '+(l.phone||'')+' '+(l.history||[]).map(h=>h.text).join(' ')).toLowerCase();
+      const hay = (l.name+' '+(l.title||'')+' '+(l.flow||'')+' '+(l.company||'')+' '+(c ? (c.name+' '+(c.company||'')) : '')+' '+(l.telegram||'')+' '+(l.phone||'')+' '+(l.history||[]).map(h=>h.text).join(' ')).toLowerCase();
       if (!hay.includes(q)) return false;
     }
     return true;
   });
 }
-// Выбранная воронка во вкладке «Лиды» (локальная настройка, в синк не уходит)
+// ===== ДОСКА =====
+// Вкладка: 'all' | id продукта | 'inbox' (без продукта) | 'grads' (выпускники). Локальная настройка, в синк не уходит.
 let leadsPipe = (function () { try { return localStorage.getItem('_leads_pipe') || 'all'; } catch { return 'all'; } })();
 function setLeadsPipe(id) {
   leadsPipe = id;
   try { localStorage.setItem('_leads_pipe', id); } catch {}
   renderLeadsKanban();
 }
-function renderLeadsPipeTabs() {
+// Свёрнутые колонки: по умолчанию «Оплатил» и «Отказ», чтобы доска показывала работу, а не архив
+let kanbanCollapsed = (function () {
+  try { const a = JSON.parse(localStorage.getItem('_kanban_collapsed') || 'null'); return new Set(Array.isArray(a) ? a : ['won', 'lost']); }
+  catch { return new Set(['won', 'lost']); }
+})();
+function saveKanbanCollapsed() { try { localStorage.setItem('_kanban_collapsed', JSON.stringify([...kanbanCollapsed])); } catch {} }
+function toggleKanbanCol(id) {
+  if (kanbanCollapsed.has(id)) kanbanCollapsed.delete(id); else kanbanCollapsed.add(id);
+  saveKanbanCollapsed(); renderLeadsKanban();
+}
+function toggleClosedColumns() {
+  const closed = STAGES.filter(st => st.kind !== 'active').map(st => st.id);
+  const allCollapsed = closed.every(id => kanbanCollapsed.has(id));
+  closed.forEach(id => allCollapsed ? kanbanCollapsed.delete(id) : kanbanCollapsed.add(id));
+  saveKanbanCollapsed(); renderLeadsKanban();
+}
+// Выпускник = клиент с потоками (cohorts) или с оплаченным интенсивом
+function graduateClientIds(leads) {
+  const ids = new Set();
+  loadClientsRaw().forEach(c => { if (!c.deleted && Array.isArray(c.cohorts) && c.cohorts.length) ids.add(c.id); });
+  (leads || loadLeads()).forEach(l => { if (leadIsWon(l) && pipeById(dealPipe(l)).intensive) ids.add(l.client_id); });
+  return ids;
+}
+function leadInTab(l, grads) {
+  if (leadsPipe === 'all') return true;
+  if (leadsPipe === 'grads') return grads.has(l.client_id);
+  if (leadsPipe === 'inbox') return !dealHasProduct(l);
+  return dealPipe(l) === leadsPipe;
+}
+function renderLeadsPipeTabs(all, grads) {
   const el = document.getElementById('leadsPipeTabs');
   if (!el) return;
-  const all = loadLeads();
-  const activeIn = id => all.filter(l => dealPipe(l) === id && leadStatusKind(l.status) === 'active').length;
-  const totalIn = id => all.filter(l => dealPipe(l) === id).length;
-  if (leadsPipe !== 'all' && (!PIPELINES_BY_ID[leadsPipe] || (PIPELINES_BY_ID[leadsPipe].hideIfEmpty && !totalIn(leadsPipe)))) leadsPipe = 'all';
-  const allActive = all.filter(l => leadStatusKind(l.status) === 'active').length;
-  let html = '<button class="pipe-tab all'+(leadsPipe === 'all' ? ' active' : '')+'" onclick="setLeadsPipe(\'all\')"><span class="pipe-tab-dot"></span>Все<span class="pipe-tab-count">'+allActive+'</span></button>';
-  PIPELINES.forEach(p => {
-    const total = totalIn(p.id);
-    if (p.hideIfEmpty && !total) return;
-    const n = p.id === 'inbox' ? total : activeIn(p.id);
-    html += '<button class="pipe-tab'+(leadsPipe === p.id ? ' active' : '')+'" style="--_c:'+p.color+'" onclick="setLeadsPipe(\''+p.id+'\')" title="'+escapeHtml(p.name)+'">'
-      + '<span class="pipe-tab-dot"></span>'+escapeHtml(p.short)
-      + (n ? '<span class="pipe-tab-count">'+n+'</span>' : '')
-      + '</button>';
-  });
+  const isActive = l => leadStatusKind(l.status) === 'active';
+  const cnt = pred => all.filter(l => pred(l) && isActive(l)).length;
+  const inboxTotal = all.filter(l => !dealHasProduct(l)).length;
+  if (leadsPipe === 'inbox' && !inboxTotal) leadsPipe = 'all';
+  if (leadsPipe !== 'all' && leadsPipe !== 'grads' && leadsPipe !== 'inbox' && !isProductId(leadsPipe)) leadsPipe = 'all';
+  const tab = (id, label, n, color, cls) =>
+    '<button class="seg-tab'+(leadsPipe === id ? ' active' : '')+(cls ? ' ' + cls : '')+'"'+(color ? ' style="--_c:'+color+'"' : '')+' onclick="setLeadsPipe(\''+id+'\')">'
+    + (color ? '<span class="seg-dot"></span>' : '') + escapeHtml(label)
+    + (n ? '<span class="seg-count">'+n+'</span>' : '') + '</button>';
+  let html = tab('all', 'Все', cnt(() => true), '');
+  PRODUCTS.forEach(p => { html += tab(p.id, p.short, cnt(l => dealPipe(l) === p.id), p.color); });
+  if (inboxTotal) html += tab('inbox', 'Без продукта', cnt(l => !dealHasProduct(l)), '#9ca3af', 'muted');
+  html += '<span class="seg-gap"></span>' + tab('grads', 'Выпускники', cnt(l => grads.has(l.client_id)), '#0d3a2c', 'grad');
   el.innerHTML = html;
 }
-// Быстрый разбор из «Разобрать»: перенести сделку в воронку прямо с плитки
+// Быстрый разбор: назначить продукт прямо с плитки
 function setDealPipe(dealId, pipeId) {
-  if (!PIPELINES_BY_ID[pipeId]) return;
+  if (!isProductId(pipeId)) return;
   const leads = loadLeadsRaw();
   const l = leads.find(x => x.id === dealId);
   if (!l) return;
   l.product = pipeId;
-  l.status = mapStatusToPipe(l.status, pipeId, true);
   l.updated_at = tsPlus1(l.updated_at);
   saveLeads(leads);
   render();
   toast('→ ' + pipeById(pipeId).name);
 }
+function pluralDeals(n) {
+  return (n % 10 === 1 && n % 100 !== 11) ? 'сделка' : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20)) ? 'сделки' : 'сделок';
+}
 
 function renderLeadsKanban() {
   fillLeadsFilterChannel();
-  renderLeadsPipeTabs();
-  const hintEl = document.getElementById('leadsPhaseHint');
-  if (hintEl) {
-    hintEl.innerHTML = leadsPipe === 'all'
-      ? 'Колонки здесь общие для всех продуктов. Свои стадии у каждой воронки: выбери продукт выше или открой <a onclick="openPipesPage()">настройку воронок</a>.'
-      : '';
-    hintEl.style.display = leadsPipe === 'all' ? '' : 'none';
-  }
-  updateDupCount();
   const all = loadLeads();
-  const leads = filterLeads(all).filter(l => leadsPipe === 'all' || dealPipe(l) === leadsPipe);
+  const grads = graduateClientIds(all);
+  renderLeadsPipeTabs(all, grads);
+  updateDupCount();
   const board = document.getElementById('leadsBoard');
   if (!board) return;
+  const leads = filterLeads(all).filter(l => leadInTab(l, grads));
 
   // Баннер активного статус-фильтра
   const banner = document.getElementById('leadsActiveFilterBanner');
@@ -3512,90 +3082,56 @@ function renderLeadsKanban() {
   }
 
   const visibleStatuses = STATUS_GROUPS[leadsStatusGroup]?.statuses;
-  const isAll = leadsPipe === 'all';
-  const columns = isAll
-    ? PIPE_PHASES.map(ph => ({ id: ph.id, name: ph.name, short: ph.short, color: ph.color,
-        statuses: LEAD_STATUSES.filter(s => s.phase === ph.id).map(s => s.id) }))
-    : pipeStatuses(leadsPipe).map(st => ({ id: st.id, name: st.name, short: st.short, color: st.color, wait: st.wait, statuses: [st.id] }));
   const clientsMap = new Map(loadClientsRaw().map(c => [c.id, c]));
   const perClient = {};
   all.forEach(l => { perClient[l.client_id] = (perClient[l.client_id] || 0) + 1; });
-  const assignOpts = PIPELINES.filter(p => p.id !== 'inbox').map(p => '<option value="'+p.id+'">'+escapeHtml(p.name)+'</option>').join('');
+  const assignOpts = PRODUCTS.map(p => '<option value="'+p.id+'">'+escapeHtml(p.name)+'</option>').join('');
+  const cols = STAGES.filter(st => !visibleStatuses || visibleStatuses.includes(st.id));
 
   board.innerHTML = '';
-  board.style.setProperty('--kanban-cols', columns.length);
-  const knownHere = new Set((isAll ? LEAD_STATUSES : pipeStatuses(leadsPipe)).map(st => st.id));
-  columns.forEach((colDef, colIdx) => {
-    if (visibleStatuses && !colDef.statuses.some(id => visibleStatuses.includes(id))) return;
+  board.style.gridTemplateColumns = cols.map(st => kanbanCollapsed.has(st.id) ? '52px' : 'minmax(212px, 1fr)').join(' ');
+  cols.forEach(st => {
+    const collapsed = kanbanCollapsed.has(st.id);
+    const colLeads = leads.filter(l => l.status === st.id).sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+    const sum = colLeads.reduce((a, l) => a + (l.potential_chek_rub || 0), 0);
     const col = document.createElement('div');
-    col.className = 'kanban-col';
-    col.style.setProperty('--_lead-color', colDef.color || '#9ca3af');
-    col.dataset.status = colDef.id;
-    const colLeads = leads
-      .filter(l => colDef.statuses.includes(l.status) || (colIdx === 0 && !knownHere.has(l.status)))
-      .sort((a,b) => new Date(b.updated_at) - new Date(a.updated_at));
-    const addBtn = isAll
-      ? '<button class="kanban-col-add" onclick="event.stopPropagation(); openLeadModal()" title="Новый лид">+</button>'
-      : '<button class="kanban-col-add" onclick="event.stopPropagation(); openLeadModalForStatus(\''+colDef.id+'\')" title="Добавить лида в «'+escapeHtml(colDef.name)+'»">+</button>';
-    col.innerHTML =
-      '<div class="kanban-col-head">'+
-        '<div class="kanban-col-title"><span class="kanban-col-dot"></span>'+escapeHtml(colDef.short)+(colDef.wait ? ' <span title="Колонка-лист ожидания: карточка тут = человек в списке">⏳</span>' : '')+'</div>'+
-        '<div class="kanban-col-head-right">'+addBtn+
-          '<div class="kanban-col-count">'+colLeads.length+'</div>'+
-        '</div>'+
-      '</div>'+
-      '<div class="kanban-col-body" data-status="'+colDef.id+'"></div>';
-    const body = col.querySelector('.kanban-col-body');
-    if (!colLeads.length) {
-      body.innerHTML = '<div class="kanban-col-empty">Пусто</div>';
-    } else {
-      colLeads.forEach(lead => {
-        const c = clientsMap.get(lead.client_id);
-        const name = (c && c.name) || lead.name;
-        const company = (c && c.company) || lead.company || '';
-        const sub = (lead.title && lead.title.trim() && lead.title !== name) ? lead.title : company;
-        const others = (perClient[lead.client_id] || 1) - 1;
-        const pipe = pipeById(dealPipe(lead));
-        const interests = (c && Array.isArray(c.interests)) ? c.interests : [];
-        const card = document.createElement('div');
-        card.className = 'lead-card ' + freshnessClass(lead.updated_at);
-        card.dataset.leadId = lead.id;
-        const days = daysSince(lead.updated_at);
-        const daysCls = days > 7 ? 'bad' : days > 3 ? 'warn' : '';
-        const daysText = days === 0 ? 'сегодня' : days === 1 ? '1 день' : days < 5 ? days + ' дня' : days + ' дней';
-        const tags = (isAll ? '<span class="lead-card-pipe" style="--_c:'+pipe.color+'">'+escapeHtml(pipe.short)+'</span>' : '')
-          + (others > 0 ? '<span class="lead-card-more" title="У клиента есть и другие сделки">+'+others+' '+(others % 10 === 1 && others % 100 !== 11 ? 'сделка' : (others % 10 >= 2 && others % 10 <= 4 && (others % 100 < 10 || others % 100 >= 20)) ? 'сделки' : 'сделок')+'</span>' : '');
-        const interestBadges = interests.length
-          ? '<div class="lead-card-interests">' + interests.map(id => {
-              const t = interestTagById(id); if (!t) return '';
-              return '<span class="lead-card-interest" style="--_c:'+t.color+'">'+escapeHtml(t.name)+'</span>';
-            }).join('') + '</div>'
-          : '';
-        const assign = (leadsPipe === 'inbox')
-          ? '<select class="lead-card-assign" onclick="event.stopPropagation()" onchange="if(this.value) setDealPipe(\''+lead.id+'\', this.value)"><option value="">→ в воронку…</option>'+assignOpts+'</select>'
-          : '';
-        card.innerHTML =
-          '<div class="lead-card-name">'+escapeHtml(name)+'</div>'+
-          (sub ? '<div class="lead-card-company">'+escapeHtml(sub)+'</div>' : '')+
-          (tags ? '<div class="lead-card-tags">'+tags+'</div>' : '')+
-          interestBadges+
-          '<div class="lead-card-meta">'+
-            (lead.potential_chek_rub ? '<span class="lead-card-amount">'+fmtMoneyRubShort(lead.potential_chek_rub)+'</span>' : '<span></span>')+
-            '<span class="lead-card-days '+daysCls+'">'+daysText+'</span>'+
-          '</div>'+assign;
-        card.onclick = () => openLeadModal(lead.id);
-        body.appendChild(card);
-      });
+    col.className = 'kanban-col kind-' + st.kind + (collapsed ? ' collapsed' : '');
+    col.style.setProperty('--_lead-color', st.color);
+    col.dataset.status = st.id;
+    if (collapsed) {
+      col.innerHTML = '<div class="kanban-col-collapsed" onclick="toggleKanbanCol(\''+st.id+'\')" title="Развернуть «'+escapeHtml(st.name)+'»">'
+        + '<span class="kanban-col-dot"></span>'
+        + '<span class="kanban-col-vtitle">'+escapeHtml(st.short)+'</span>'
+        + '<span class="kanban-col-count">'+colLeads.length+'</span>'
+        + (sum && st.kind === 'won' ? '<span class="kanban-col-vsum">'+escapeHtml(fmtMoneyRubShort(sum))+'</span>' : '')
+        + '</div>'
+        + '<div class="kanban-col-body kanban-drop-only" data-status="'+st.id+'"></div>';
+      board.appendChild(col);
+      return;
     }
+    const fold = '<button class="kanban-col-fold" onclick="event.stopPropagation(); toggleKanbanCol(\''+st.id+'\')" title="Свернуть"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>';
+    const add = st.kind === 'active'
+      ? '<button class="kanban-col-add" onclick="event.stopPropagation(); openLeadModalForStatus(\''+st.id+'\')" title="Добавить в «'+escapeHtml(st.name)+'»">+</button>'
+      : '';
+    col.innerHTML =
+      '<div class="kanban-col-head">'
+      + '<div class="kanban-col-title"><span class="kanban-col-dot"></span>'+escapeHtml(st.short)+'</div>'
+      + '<div class="kanban-col-head-right">'
+      +   (sum && st.kind !== 'lost' ? '<span class="kanban-col-sum">'+escapeHtml(fmtMoneyRubShort(sum))+'</span>' : '')
+      +   '<div class="kanban-col-count">'+colLeads.length+'</div>' + add + fold
+      + '</div></div>'
+      + '<div class="kanban-col-body" data-status="'+st.id+'"></div>';
+    const body = col.querySelector('.kanban-col-body');
+    if (!colLeads.length) body.innerHTML = '<div class="kanban-col-empty">Пусто</div>';
+    colLeads.forEach(lead => body.appendChild(leadCardEl(lead, clientsMap, perClient, grads, assignOpts)));
     board.appendChild(col);
   });
-  // Перетаскивание работает и в воронке, и во «Все». Во «Все» колонка это фаза:
-  // сделка встаёт в первую стадию своей воронки с этой фазой, тост говорит, в какую.
   if (typeof Sortable !== 'undefined') {
     board.querySelectorAll('.kanban-col-body').forEach(body => {
       Sortable.create(body, {
         group: 'leads',
-        animation: 150,
+        animation: 180,
+        easing: 'cubic-bezier(.2,.8,.2,1)',
         ghostClass: 'sortable-ghost',
         dragClass: 'sortable-drag',
         filter: 'select',
@@ -3603,68 +3139,59 @@ function renderLeadsKanban() {
         onEnd: (evt) => {
           const leadId = evt.item.dataset.leadId;
           if (evt.to.dataset.status === evt.from.dataset.status) return;
-          if (!isAll) { handleLeadStatusChange(leadId, evt.to.dataset.status, evt.from.dataset.status); return; }
-          const lead = loadLeads().find(l => l.id === leadId);
-          if (!lead) return;
-          const phase = evt.to.dataset.status;
-          const target = pipeStatuses(dealPipe(lead)).find(st => st.phase === phase);
-          if (!target || target.id === lead.status) { renderLeadsKanban(); return; }
-          handleLeadStatusChange(leadId, target.id, lead.status);
+          handleLeadStatusChange(leadId, evt.to.dataset.status, evt.from.dataset.status);
         }
       });
     });
   }
 }
-// Стадия может быть привязана к списку ожидания: перетащил карточку в колонку — человек в списке
-function applyWaitlistStage(lead, oldStatusId) {
-  if (!lead || !lead.client_id) return;
-  const list = pipeStatuses(dealPipe(lead));
-  const now = (list.find(st => st.id === lead.status) || {}).wait || null;
-  const before = (list.find(st => st.id === oldStatusId) || {}).wait || null;
-  if (!now && !before) return;
-  const clients = loadClientsRaw();
-  const c = clients.find(x => x.id === lead.client_id);
-  if (!c) return;
-  c.waitlists = Array.isArray(c.waitlists) ? c.waitlists : [];
-  let changed = false;
-  if (before && before !== now && c.waitlists.includes(before)) { c.waitlists = c.waitlists.filter(w => w !== before); changed = true; }
-  if (now && !c.waitlists.includes(now)) { c.waitlists.push(now); changed = true; }
-  if (!changed) return;
-  c.updated_at = nowIso();
-  saveClients(clients);
-  const w = waitlistById(now || before);
-  if (w) toast(now ? ('Добавлен в список «' + w.name + '»') : ('Убран из списка «' + w.name + '»'));
+function leadCardEl(lead, clientsMap, perClient, grads, assignOpts) {
+  const c = clientsMap.get(lead.client_id);
+  const name = (c && c.name) || lead.name;
+  const company = (c && c.company) || lead.company || '';
+  const sub = (lead.title && lead.title.trim() && lead.title !== name) ? lead.title : company;
+  const others = (perClient[lead.client_id] || 1) - 1;
+  const pipe = pipeById(dealPipe(lead));
+  const card = document.createElement('div');
+  card.className = 'lead-card ' + freshnessClass(lead.updated_at);
+  card.dataset.leadId = lead.id;
+  const days = daysSince(lead.updated_at);
+  const daysCls = days > 7 ? 'bad' : days > 3 ? 'warn' : '';
+  const daysText = days === 0 ? 'сегодня' : days === 1 ? '1 день' : days < 5 ? days + ' дня' : days + ' дней';
+  const cohorts = (c && Array.isArray(c.cohorts)) ? c.cohorts : [];
+  const chips = (pipe.none ? '' : '<span class="chip chip-product" style="--_c:'+pipe.color+'">'+escapeHtml(pipe.short)+'</span>')
+    + (lead.flow ? '<span class="chip chip-flow" title="Поток">'+escapeHtml(lead.flow)+'</span>' : '')
+    + (grads.has(lead.client_id) ? '<span class="chip chip-grad" title="Выпускник'+(cohorts.length ? ' · '+escapeHtml(cohorts.join(', ')) : '')+'">🎓</span>' : '')
+    + (others > 0 ? '<span class="chip chip-more" title="У клиента есть и другие сделки">+'+others+' '+pluralDeals(others)+'</span>' : '');
+  const assign = !dealHasProduct(lead)
+    ? '<select class="lead-card-assign" onclick="event.stopPropagation()" onchange="if(this.value) setDealPipe(\''+lead.id+'\', this.value)"><option value="">→ продукт…</option>'+assignOpts+'</select>'
+    : '';
+  card.innerHTML =
+    '<div class="lead-card-name">'+escapeHtml(name)+'</div>'
+    + (sub ? '<div class="lead-card-company">'+escapeHtml(sub)+'</div>' : '')
+    + '<div class="lead-card-tags">'+chips+'</div>'
+    + '<div class="lead-card-meta">'
+    +   (lead.potential_chek_rub ? '<span class="lead-card-amount">'+fmtMoneyRubShort(lead.potential_chek_rub)+'</span>' : '<span></span>')
+    +   '<span class="lead-card-days '+daysCls+'">'+daysText+'</span>'
+    + '</div>' + assign;
+  card.onclick = () => openLeadModal(lead.id);
+  return card;
 }
 
 function handleLeadStatusChange(leadId, newStatus, oldStatus) {
   const leads = loadLeads();
   const lead = leads.find(l => l.id === leadId);
   if (!lead) return;
-  const newName = ((pipeStatuses(dealPipe(lead)).find(st => st.id === newStatus)) || leadStatusById(newStatus) || {}).name;
   const kind = leadStatusKind(newStatus);
-  if (kind === 'won') {
-    handleWinFlow(lead, leads, newStatus);
-    applyWaitlistStage(lead, oldStatus);
-  } else if (kind === 'lost') {
-    lead.status = newStatus;
-    lead.status_changed_at = nowIso();
-    lead.updated_at = nowIso();
-    lead.closed_at = nowIso();
-    saveLeads(leads);
-    render();
-    toast('Лид закрыт ('+newName+'). Причину можно дописать в «+ Запись»');
-    applyWaitlistStage(lead, oldStatus);
-  } else {
-    lead.status = newStatus;
-    lead.status_changed_at = nowIso();
-    lead.updated_at = nowIso();
-    // если переходим ИЗ won/lost обратно в active — сбрасываем closed_at
-    if (leadIsClosed({ status: oldStatus }) && !leadIsClosed(lead)) lead.closed_at = null;
-    saveLeads(leads);
-    render();
-    toast('→ ' + newName);
-    applyWaitlistStage(lead, oldStatus);
-  }
+  if (kind === 'won') { handleWinFlow(lead, leads, newStatus); return; }
+  lead.status = newStatus;
+  lead.status_changed_at = nowIso();
+  lead.updated_at = nowIso();
+  if (kind === 'lost') lead.closed_at = nowIso();
+  else if (leadIsClosed({ status: oldStatus })) lead.closed_at = null;
+  saveLeads(leads);
+  render();
+  toast(kind === 'lost' ? 'Отказ. Причину можно дописать в «+ Запись»' : '→ ' + leadStatusById(newStatus).name);
 }
 function handleWinFlow(lead, leads, newStatus) {
   const defaultSum = lead.potential_chek_rub ? Math.round(lead.potential_chek_rub) : '';
@@ -3672,16 +3199,31 @@ function handleWinFlow(lead, leads, newStatus) {
   if (sumStr === null) { renderLeadsKanban(); return; }
   const sum = parseFloat(sumStr.replace(/\s/g, '').replace(',', '.'));
   if (!sum || sum <= 0) { alert('Сумма должна быть положительным числом'); renderLeadsKanban(); return; }
-  lead.status = newStatus || firstStatusIdOfKind('won') || 'won';
+  lead.status = newStatus || 'won';
   lead.status_changed_at = nowIso();
   lead.updated_at = nowIso();
   lead.closed_at = nowIso();
   lead.potential_chek_rub = sum;
   lead.history = lead.history || [];
-  lead.history.unshift({ date: nowIso(), text: 'Сделка закрыта (won): '+fmtMoneyRub(sum) });
+  lead.history.unshift({ date: nowIso(), text: 'Оплатил: '+fmtMoneyRub(sum) });
   saveLeads(leads);
+  markGraduate(lead);
   render();
-  toast('🎉 Сделка закрыта — попала в Купившие клиенты');
+  toast('🎉 Оплатил. Сделка попала в «Купившие»');
+}
+// Оплаченный интенсив с потоком = человек стал выпускником этого потока
+function markGraduate(lead) {
+  if (!lead || !pipeById(dealPipe(lead)).intensive) return;
+  const flow = (lead.flow || '').trim();
+  if (!flow) return;
+  const clients = loadClientsRaw();
+  const c = clients.find(x => x.id === lead.client_id);
+  if (!c) return;
+  c.cohorts = Array.isArray(c.cohorts) ? c.cohorts : [];
+  if (c.cohorts.includes(flow)) return;
+  c.cohorts.push(flow);
+  c.updated_at = nowIso();
+  saveClients(clients);
 }
 
 // ===== КЛИЕНТЫ =====
@@ -3705,31 +3247,57 @@ function guessPipe(l) {
   if (/28 август|26 сентябр|интенсив claude/.test(t)) return 'claude50';
   if (/корп/.test(t)) return 'corp';
   if ((l.potential_chek_rub || 0) === 160000) return 'cc';
-  const wt = (Array.isArray(l.waitlists) ? l.waitlists : []).map(id => ((typeof waitlistById === 'function' && waitlistById(id)) || {}).name || '').join(' ').toLowerCase();
+  const wt = (Array.isArray(l.waitlists) ? l.waitlists : []).map(waitlistNameById).join(' ').toLowerCase();
   if (/claude code/.test(wt)) return 'cc';
-  return 'inbox';
+  return '';
+}
+// Название списка ожидания → продукт (переезд списков в поле «Поток»)
+function flowProductGuess(name) {
+  const t = String(name || '').toLowerCase();
+  if (/claude code|клод код/.test(t)) return 'cc';
+  if (/подрост|детск|школьн/.test(t)) return 'teens';
+  if (/интенсив|онлайн|claude/.test(t)) return 'claude50';
+  return '';
+}
+// Продукт выпускника по переписке (что ему предлагали)
+function alumProductGuess(a) {
+  const t = ((a.history || []).map(h => h.text).join(' ') + ' ' + (a.note || '')).toLowerCase();
+  if (/claude code|клод код/.test(t)) return 'cc';
+  if (/claude-dlya-biznesa|интенсив по бизнес|28 август|26 сентяб/.test(t)) return 'claude50';
+  return '';
+}
+function newDealRecord(c, extra) {
+  const now = nowIso();
+  return Object.assign({
+    id: '', client_id: c.id, product: '', title: '', flow: '',
+    name: c.name || '', company: c.company || '', telegram: c.telegram || '', phone: c.phone || '',
+    channel: '', potential_chek_rub: 0, status: 'new',
+    created_at: now, updated_at: now, status_changed_at: now, closed_at: null,
+    next_action: '', next_action_date: null, history: []
+  }, extra || {});
 }
 
 // Идемпотентно и детерминированно: на любом устройстве даёт одинаковый результат,
 // поэтому синк не плодит дублей. updated_at сдвигается на 1 мс, чтобы разложенная
 // версия выиграла у старой при слиянии и при этом «свежесть» карточек не сбилась.
-function ensurePipelines() {
-  refreshPipelines();
-  PIPE_STAGES = loadPipeStages();
-  rebuildStatusRegistry();
+function ensureModel() {
   const leads = loadLeadsRaw();
   const clients = loadClientsRaw();
   const cById = new Map(clients.map(c => [c.id, c]));
   let lc = 0, cc = 0;
+
+  // 1) Сделки: продукт из шести, стадия по одной шкале, у каждой есть клиент
   for (const l of leads) {
     if (!l || !l.id) continue;
     let touched = false;
-    if (!l.product || !PIPELINES_BY_ID[l.product]) {
+    if (l.product === undefined || l.product === null) {
       l.product = guessPipe(l);
       if (!l.title) l.title = l.name || '';
       touched = true;
+    } else if (l.product && l.product !== 'inbox' && !isProductId(l.product)) {
+      l.product = ''; touched = true;
     }
-    const st = mapStatusToPipe(l.status, l.product, false);
+    const st = mapStage(l.status);
     if (st !== l.status) { l.status = st; touched = true; }
     if (!l.client_id) { l.client_id = 'cl_' + l.id; touched = true; }
     if (!cById.has(l.client_id) && !l.deleted) {
@@ -3739,14 +3307,118 @@ function ensurePipelines() {
         transcripts: Array.isArray(l.transcripts) ? l.transcripts.slice() : [],
         interests: Array.isArray(l.interests) ? l.interests.slice() : [],
         waitlists: Array.isArray(l.waitlists) ? l.waitlists.slice() : [],
-        created_at: base, updated_at: base
+        cohorts: [], created_at: base, updated_at: base
       };
       clients.push(c); cById.set(c.id, c); cc++;
     }
     if (touched) { l.updated_at = tsPlus1(l.updated_at || l.created_at); lc++; }
   }
+
+  // 2) Списки ожидания → поле «Поток» у сделки (и стадия «Ждёт поток», если сделка в работе)
+  for (const c of clients) {
+    if (c.deleted || !Array.isArray(c.waitlists) || !c.waitlists.length) continue;
+    const names = c.waitlists.map(waitlistNameById).filter(Boolean);
+    const byProd = {};
+    names.forEach(n => { const p = flowProductGuess(n); (byProd[p] = byProd[p] || []).push(n); });
+    const mine = () => leads.filter(l => l.client_id === c.id && !l.deleted);
+    for (const prod of Object.keys(byProd)) {
+      const flow = byProd[prod].join(', ');
+      const active = mine().filter(l => leadStatusKind(l.status) === 'active');
+      let d = (prod && active.find(l => dealPipe(l) === prod)) || active.find(l => !dealHasProduct(l)) || null;
+      if (!d && !prod) d = active[0] || null;
+      if (!d) {
+        const closedSame = prod ? mine().find(l => dealPipe(l) === prod) : null;
+        const wonNoProd = mine().find(l => leadIsWon(l) && !dealHasProduct(l));
+        const target = closedSame || wonNoProd;
+        if (target) {
+          if (!target.flow) target.flow = flow;
+          if (!dealHasProduct(target) && prod) target.product = prod;
+          target.updated_at = tsPlus1(target.updated_at); lc++;
+          continue;
+        }
+        const id = 'lead_wl_' + c.id + '_' + (prod || 'none');
+        if (!leads.some(l => l.id === id)) {
+          const base = c.updated_at || nowIso();
+          leads.push(newDealRecord(c, { id, product: prod, status: 'wait', flow, created_at: base, updated_at: base, status_changed_at: base,
+            history: [{ date: base, text: 'Из списка ожидания «' + flow + '»' }] }));
+          lc++;
+        }
+        continue;
+      }
+      if (!dealHasProduct(d) && prod) d.product = prod;
+      if (!d.flow) d.flow = flow;
+      if (d.status !== 'wait') { d.status = 'wait'; d.status_changed_at = tsPlus1(d.updated_at); }
+      d.updated_at = tsPlus1(d.updated_at); lc++;
+    }
+    c.waitlists_archived = c.waitlists.slice();
+    c.waitlists = [];
+    c.updated_at = tsPlus1(c.updated_at); cc++;
+  }
+
+  // 3) Выпускники → клиенты (cohorts) + их касания как сделки на доске
+  const alumni = loadAlumniRaw();
+  let ac = 0;
+  const live = () => clients.filter(c => !c.deleted && !c.merged_into);
+  for (const a of alumni) {
+    if (!a || !a.id || a.deleted || a.merged_client_id) continue;
+    let client = null;
+    const linked = a.lead_id ? leads.find(x => x.id === a.lead_id && !x.deleted) : null;
+    if (linked && cById.has(linked.client_id)) client = cById.get(linked.client_id);
+    if (!client) {
+      const k = normPersonName(a.name);
+      if (k && !isProductLikeName(a.name)) client = live().find(c => normPersonName(c.name) === k) || null;
+    }
+    if (!client) {
+      const base = a.created_at || nowIso();
+      client = { id: 'cl_alum_' + a.id, name: a.name || '', telegram: '', phone: '', company: '', transcripts: [], interests: [], waitlists: [], cohorts: [], created_at: base, updated_at: base };
+      clients.push(client); cById.set(client.id, client);
+    }
+    const tg = a.username ? '@' + String(a.username).replace(/^@/, '') : '';
+    if (!client.telegram && tg) client.telegram = tg;
+    if (!client.phone && a.phone) client.phone = a.phone;
+    if (!client.company && a.company) client.company = a.company;
+    if (!client.note && a.note) client.note = a.note;
+    const group = (a.group || '').trim();
+    client.cohorts = [...new Set([...(client.cohorts || []), ...(group ? [group] : [])])];
+    client.interests = [...new Set([...(client.interests || []), ...(a.interests || [])])];
+    if (Array.isArray(a.transcripts) && a.transcripts.length) {
+      const tr = new Map(); [...(client.transcripts || []), ...a.transcripts].forEach(t => tr.set(t.id || JSON.stringify(t), t));
+      client.transcripts = [...tr.values()];
+    }
+    if (a.last_touch_at && (!client.last_touch_at || a.last_touch_at > client.last_touch_at)) client.last_touch_at = a.last_touch_at;
+    client.updated_at = tsPlus1(client.updated_at); cc++;
+    let deal = linked;
+    if (deal) {
+      const seen = new Set((deal.history || []).map(h => h.date + '|' + h.text));
+      const add = (a.history || []).filter(h => !seen.has(h.date + '|' + h.text));
+      if (add.length) {
+        deal.history = [...(deal.history || []), ...add].sort((x, y) => new Date(y.date) - new Date(x.date));
+        deal.updated_at = tsPlus1(deal.updated_at); lc++;
+      }
+    } else {
+      const id = 'lead_alum_' + a.id;
+      deal = leads.find(x => x.id === id);
+      if (!deal) {
+        const st = mapStage(a.status || 'new');
+        const created = a.created_at || nowIso();
+        const touched = a.last_touch_at || a.updated_at || created;
+        deal = newDealRecord(client, {
+          id, product: alumProductGuess(a), channel: 'alumni', status: st,
+          potential_chek_rub: a.potential_chek_rub || 0,
+          created_at: created, updated_at: a.updated_at || created, status_changed_at: touched,
+          closed_at: leadStatusKind(st) === 'active' ? null : touched,
+          next_action: a.next_action || '', next_action_date: a.next_action_date || null,
+          history: (a.history || []).slice()
+        });
+        leads.push(deal); lc++;
+      }
+    }
+    a.merged_client_id = client.id; a.merged_deal_id = deal.id; a.updated_at = nowIso(); ac++;
+  }
+
   if (lc) saveLeads(leads);
   if (cc) saveClients(clients);
+  if (ac) saveAlumni(alumni);
 }
 
 // Имя, компания и контакты клиента зеркалятся в его сделки: финансы, «Купившие» и leads.md читают их оттуда
@@ -3805,35 +3477,28 @@ function applyLmSections(ctx) {
 function openHistForm(ctx) {
   const sec = document.getElementById(ctx + 'HistSection');
   if (sec && !sec.classList.contains('open')) toggleLmSection(ctx + 'HistSection');
-  if (ctx === 'lead') toggleHistoryForm(true); else toggleAlumHistoryForm(true);
+  toggleHistoryForm(true);
 }
 
 let _leadDraftTranscripts = [];
-let _alumDraftTranscripts = [];
-// У лида транскрипты принадлежат человеку, а не сделке
-function lmCurrentId(ctx) { return ctx === 'lead' ? currentClientId : currentAlumId; }
-function lmLoadList(ctx) { return ctx === 'lead' ? loadClientsRaw() : loadAlumni(); }
-function lmSaveList(ctx, list) { return ctx === 'lead' ? saveClients(list) : saveAlumni(list); }
+// Транскрипты принадлежат человеку, а не сделке
 function lmGetTranscripts(ctx) {
-  const id = lmCurrentId(ctx);
-  if (id) {
-    const e = lmLoadList(ctx).find(x => x.id === id);
+  if (currentClientId) {
+    const e = loadClientsRaw().find(x => x.id === currentClientId);
     return (e && Array.isArray(e.transcripts)) ? e.transcripts.slice() : [];
   }
-  return (ctx === 'lead' ? _leadDraftTranscripts : _alumDraftTranscripts).slice();
+  return _leadDraftTranscripts.slice();
 }
 function lmSetTranscripts(ctx, arr) {
-  const id = lmCurrentId(ctx);
-  if (id) {
-    const list = lmLoadList(ctx);
-    const e = list.find(x => x.id === id);
+  if (currentClientId) {
+    const list = loadClientsRaw();
+    const e = list.find(x => x.id === currentClientId);
     if (!e) return;
     e.transcripts = arr;
     e.updated_at = nowIso();
-    lmSaveList(ctx, list);
+    saveClients(list);
     render();
-  } else if (ctx === 'lead') { _leadDraftTranscripts = arr; }
-  else { _alumDraftTranscripts = arr; }
+  } else { _leadDraftTranscripts = arr; }
 }
 // obsidian:// и http(s) пропускаем как есть, остальное считаем адресом без схемы
 function lmNormUrl(u) {
@@ -3978,7 +3643,7 @@ function renderMergeList() {
     const rows = sorted.map((c, ci) => {
       const deals = (g.dealsBy[c.id] || []).map(d => {
         const p = pipeById(dealPipe(d)); const st = dealStatusDef(d);
-        return '<span class="lead-card-pipe" style="--_c:'+p.color+'">'+escapeHtml(p.short)+' · '+escapeHtml(st.short || st.name || '')+'</span>';
+        return '<span class="chip chip-product'+(p.none ? ' none' : '')+'" style="--_c:'+p.color+'">'+escapeHtml(p.short)+' · '+escapeHtml(st.short || st.name || '')+'</span>';
       }).join('');
       return '<div class="merge-row">'
         + '<input type="checkbox" checked data-g="'+gi+'" data-id="'+c.id+'" title="Это тот же человек">'
@@ -4029,7 +3694,8 @@ function mergeClients(mainId, otherIds) {
     [...(main.transcripts || []), ...(o.transcripts || [])].forEach(t => tr.set(t.id || JSON.stringify(t), t));
     main.transcripts = [...tr.values()].sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
     main.interests = [...new Set([...(main.interests || []), ...(o.interests || [])])];
-    main.waitlists = [...new Set([...(main.waitlists || []), ...(o.waitlists || [])])];
+    main.cohorts = [...new Set([...(main.cohorts || []), ...(o.cohorts || [])])];
+    if (!main.note && o.note) main.note = o.note;
     o.deleted = true; o.merged_into = mainId; o.updated_at = now;
     for (const l of leads) {
       if (l.client_id !== oid) continue;
@@ -4077,12 +3743,11 @@ let currentClientId = null;
 let _leadDirty = false;
 let _leadTitleShown = '';
 // Поля выбранной сделки и контакты: правка любого из них = несохранённые изменения
-const LEAD_FORM_IDS = new Set(['leadName','leadTelegram','leadPhone','leadCompany','leadProduct','leadTitle','leadChannel','leadStatus','leadChek','leadAction','leadDeadline']);
+const LEAD_FORM_IDS = new Set(['leadName','leadTelegram','leadPhone','leadCompany','leadProduct','leadTitle','leadChannel','leadStatus','leadChek','leadFlow','leadCohorts','leadAction','leadDeadline']);
 document.addEventListener('input', e => { if (e.target && LEAD_FORM_IDS.has(e.target.id)) _leadDirty = true; }, true);
 document.addEventListener('change', e => { if (e.target && LEAD_FORM_IDS.has(e.target.id)) _leadDirty = true; }, true);
 // Черновики для нового лида (пока id не выдан). Для существующего — читаем из lead и рендерим сразу.
 let _leadDraftInterests = [];
-let _leadDraftWaitlists = [];
 function renderLeadInterestChips() {
   const el = document.getElementById('leadInterestChips');
   if (!el) return;
@@ -4099,38 +3764,12 @@ function renderLeadInterestChips() {
     + '<option value="">+ интерес</option>' + options + '</select>';
   el.innerHTML = html;
 }
-function renderLeadWaitlistChips() {
-  const el = document.getElementById('leadWaitlistChips');
-  if (!el) return;
-  const selected = getCurrentLeadWaitlists();
-  const lists = loadWaitlists().filter(w => !w.closed);
-  const chosen = lists.filter(w => selected.includes(w.id));
-  const rest = lists.filter(w => !selected.includes(w.id));
-  const label = w => w.name + (w.event_date ? ' · ' + fmtDateShort(w.event_date) : '');
-  const color = () => '#0ea5e9';
-  const total = lists.length;
-  let html = chosen.map(w => '<span class="lm-pill" style="--_c:'+color()+'"><span class="lm-pill-dot"></span>'+escapeHtml(label(w))
-    + '<button class="lm-pill-x" title="Убрать" onclick="toggleLeadWaitlist(\''+w.id+'\')">✕</button></span>').join('');
-  const options = rest.map(w => '<option value="'+escapeHtml(w.id)+'">'+escapeHtml(label(w))+'</option>').join('');
-  if (!total) { el.innerHTML = '<span class="lm-empty">Списков ожидания ещё нет. Нажми ↗, чтобы создать.</span>'; return; }
-  html += '<select class="lm-add-select"'+(rest.length ? '' : ' disabled')
-    + ' onchange="if(this.value){var v=this.value;this.value=\'\';toggleLeadWaitlist(v)}">'
-    + '<option value="">+ список</option>' + options + '</select>';
-  el.innerHTML = html;
-}
 function getCurrentLeadInterests() {
   if (currentClientId) {
     const c = clientById(currentClientId);
     return (c && Array.isArray(c.interests)) ? c.interests.slice() : [];
   }
   return _leadDraftInterests.slice();
-}
-function getCurrentLeadWaitlists() {
-  if (currentClientId) {
-    const c = clientById(currentClientId);
-    return (c && Array.isArray(c.waitlists)) ? c.waitlists.slice() : [];
-  }
-  return _leadDraftWaitlists.slice();
 }
 function toggleLeadInterest(tagId) {
   if (currentClientId) {
@@ -4150,48 +3789,32 @@ function toggleLeadInterest(tagId) {
     renderLeadInterestChips();
   }
 }
-function toggleLeadWaitlist(wlId) {
-  if (currentClientId) {
-    const clients = loadClientsRaw();
-    const c = clients.find(x => x.id === currentClientId);
-    if (!c) return;
-    c.waitlists = Array.isArray(c.waitlists) ? c.waitlists : [];
-    const i = c.waitlists.indexOf(wlId);
-    if (i >= 0) c.waitlists.splice(i, 1); else c.waitlists.push(wlId);
-    c.updated_at = nowIso();
-    saveClients(clients);
-    renderLeadWaitlistChips();
-    render();
-    const w = waitlistById(wlId);
-    if (w) toast(i >= 0 ? ('Убран из «'+w.name+'»') : ('Добавлен в «'+w.name+'»'));
-  } else {
-    const i = _leadDraftWaitlists.indexOf(wlId);
-    if (i >= 0) _leadDraftWaitlists.splice(i, 1); else _leadDraftWaitlists.push(wlId);
-    renderLeadWaitlistChips();
-  }
-}
 function fmtDateShort(iso) {
   if (!iso) return '';
   const d = new Date(iso);
   return d.toLocaleDateString('ru-RU', { day:'numeric', month:'short' });
 }
-function fillLeadSelects() {
-  const prod = document.getElementById('leadProduct');
-  if (prod && !prod.options.length) {
-    prod.innerHTML = PIPELINES.map(p => '<option value="'+p.id+'">'+escapeHtml(p.name)+'</option>').join('');
-  }
+function renderLeadProductPills(value) {
+  const el = document.getElementById('leadProductPills');
+  const hid = document.getElementById('leadProduct');
+  if (!el || !hid) return;
+  const cur = isProductId(value) ? value : '';
+  hid.value = cur;
+  el.innerHTML = PRODUCTS.map(p =>
+    '<button type="button" class="seg-pill'+(p.id === cur ? ' active' : '')+'" style="--_c:'+p.color+'" onclick="setLeadProduct(\''+p.id+'\')"><span class="seg-dot"></span>'+escapeHtml(p.short)+'</button>'
+  ).join('') + '<button type="button" class="seg-pill none'+(cur ? '' : ' active')+'" onclick="setLeadProduct(\'\')">Без продукта</button>';
 }
-function fillLeadStatusSelect(pipeId, value) {
+function setLeadProduct(id) {
+  const hid = document.getElementById('leadProduct');
+  if (!hid || hid.value === id) return;
+  _leadDirty = true;
+  renderLeadProductPills(id);
+}
+function fillLeadStatusSelect(value) {
   const sel = document.getElementById('leadStatus');
   if (!sel) return;
-  const list = pipeStatuses(pipeId);
-  sel.innerHTML = list.map(st => '<option value="'+st.id+'">'+escapeHtml(st.name)+'</option>').join('');
-  sel.value = list.some(st => st.id === value) ? value : list[0].id;
-}
-function onLeadProductChange() {
-  const pipeId = document.getElementById('leadProduct').value || 'inbox';
-  const cur = document.getElementById('leadStatus').value;
-  fillLeadStatusSelect(pipeId, mapStatusToPipe(cur, pipeId, true));
+  sel.innerHTML = STAGES.map(st => '<option value="'+st.id+'">'+escapeHtml(st.name)+'</option>').join('');
+  sel.value = STAGES.some(st => st.id === value) ? value : 'new';
 }
 function fmtDateNice(iso) {
   if (!iso) return '—';
@@ -4204,30 +3827,34 @@ function fmtDateNice(iso) {
   return d.toLocaleDateString('ru-RU', {day:'2-digit', month:'2-digit', year:'2-digit'});
 }
 function openLeadModalForStatus(status) {
-  openLeadModal(null, { product: leadsPipe !== 'all' ? leadsPipe : 'inbox', status });
+  openLeadModal(null, { product: isProductId(leadsPipe) ? leadsPipe : '', status });
 }
 function openLeadModal(id, opts) {
   opts = opts || {};
-  fillLeadSelects();
   const leads = loadLeads();
   const lead = id ? leads.find(l => l.id === id) : null;
   currentLeadId = lead ? lead.id : null;
   currentClientId = lead ? (lead.client_id || null) : (opts.clientId || null);
   const client = currentClientId ? clientById(currentClientId) : null;
   _leadDraftInterests = [];
-  _leadDraftWaitlists = [];
   _leadDraftTranscripts = [];
-  const product = lead ? dealPipe(lead) : (opts.product || (leadsPipe !== 'all' ? leadsPipe : 'inbox'));
+  const product = lead ? (dealHasProduct(lead) ? lead.product : '') : (opts.product || (isProductId(leadsPipe) ? leadsPipe : ''));
   document.getElementById('leadModalId').value = lead ? lead.id : '';
   document.getElementById('leadName').value = client ? client.name : (lead ? lead.name : '');
   document.getElementById('leadCompany').value = client ? (client.company || '') : (lead ? (lead.company || '') : '');
   document.getElementById('leadTelegram').value = client ? (client.telegram || '') : (lead ? (lead.telegram || '') : '');
   document.getElementById('leadPhone').value = client ? (client.phone || '') : (lead ? (lead.phone || '') : '');
-  document.getElementById('leadProduct').value = product;
+  renderLeadProductPills(product);
   const cname = client ? client.name : (lead ? lead.name : '');
   document.getElementById('leadTitle').value = lead && lead.title && lead.title !== cname ? lead.title : '';
   _leadTitleShown = document.getElementById('leadTitle').value;
-  fillLeadStatusSelect(product, lead ? lead.status : opts.status);
+  fillLeadStatusSelect(lead ? lead.status : opts.status);
+  document.getElementById('leadFlow').value = lead ? (lead.flow || '') : '';
+  fillFlowDatalist();
+  const cohorts = client && Array.isArray(client.cohorts) ? client.cohorts : [];
+  document.getElementById('leadCohorts').value = cohorts.join(', ');
+  const grad = document.getElementById('leadGradLine');
+  if (grad) { grad.style.display = cohorts.length ? '' : 'none'; grad.textContent = cohorts.length ? '🎓 Выпускник · ' + cohorts.join(', ') : ''; }
   document.getElementById('leadChannel').value = lead ? channelDisplay(lead.channel) : '';
   document.getElementById('leadChek').value = lead && lead.potential_chek_rub ? lead.potential_chek_rub : '';
   document.getElementById('leadAction').value = lead ? (lead.next_action || '') : '';
@@ -4235,7 +3862,7 @@ function openLeadModal(id, opts) {
   document.getElementById('leadName').placeholder = 'Имя и фамилия';
   document.getElementById('leadCompany').placeholder = 'Компания (опционально)';
   const label = document.getElementById('leadDealLabel');
-  if (label) label.textContent = lead && lead.title && lead.title !== (client ? client.name : lead.name) ? 'Сделка · ' + lead.title : 'Сделка';
+  if (label) label.textContent = lead && lead.title && lead.title !== cname ? 'Сделка · ' + lead.title : 'Сделка';
   // Meta
   const metaRow = document.getElementById('leadMetaRow');
   if (lead) {
@@ -4252,7 +3879,6 @@ function openLeadModal(id, opts) {
   histEdit = { ctx:null, idx:-1 };
   renderHistoryList(lead);
   renderLeadInterestChips();
-  renderLeadWaitlistChips();
   renderLeadDeals();
   fillLeadMergeSelect();
   applyLmSections('lead');
@@ -4284,7 +3910,7 @@ function renderLeadDeals() {
       const st = dealStatusDef(d);
       const title = d.title && d.title !== (client ? client.name : d.name) ? d.title : '';
       return '<button type="button" class="deal-row'+(d.id === currentLeadId ? ' active' : '')+'" onclick="switchDeal(\''+d.id+'\')">'
-        + '<span class="lead-card-pipe" style="--_c:'+p.color+'">'+escapeHtml(p.short)+'</span>'
+        + '<span class="chip chip-product'+(p.none ? ' none' : '')+'" style="--_c:'+p.color+'">'+escapeHtml(p.short)+'</span>'
         + '<span class="deal-row-status" style="--_c:'+(st.color || '#9ca3af')+'">'+escapeHtml(st.name || '')+'</span>'
         + '<span class="deal-row-title">'+escapeHtml(title)+'</span>'
         + (d.potential_chek_rub ? '<span class="deal-row-amount">'+fmtMoneyRubShort(d.potential_chek_rub)+'</span>' : '')
@@ -4292,7 +3918,7 @@ function renderLeadDeals() {
     }).join('');
   }
   if (add) {
-    add.innerHTML = '<option value="">+ сделка</option>' + PIPELINES.filter(p => p.id !== 'inbox').map(p => '<option value="'+p.id+'">'+escapeHtml(p.name)+'</option>').join('');
+    add.innerHTML = '<option value="">+ сделка</option>' + PRODUCTS.map(p => '<option value="'+p.id+'">'+escapeHtml(p.name)+'</option>').join('');
     add.value = '';
   }
 }
@@ -4304,19 +3930,11 @@ function switchDeal(dealId) {
 function addDealFromSelect(sel) {
   const product = sel.value;
   sel.value = '';
-  if (!PIPELINES_BY_ID[product]) return;
+  if (!isProductId(product)) return;
   if (!currentClientId || _leadDirty) { if (!saveLeadInternal(false)) return; }
   const c = clientById(currentClientId);
   if (!c) return;
-  const now = nowIso();
-  const tpl = pipeById(product).tpl;
-  const deal = {
-    id: genLeadId(), client_id: c.id, product, title: '',
-    name: c.name, company: c.company || '', telegram: c.telegram || '', phone: c.phone || '',
-    channel: '', potential_chek_rub: 0, status: pipeStatuses(product)[0].id,
-    created_at: now, updated_at: now, status_changed_at: now, closed_at: null,
-    next_action: '', next_action_date: null, history: []
-  };
+  const deal = newDealRecord(c, { id: genLeadId(), product });
   const leads = loadLeads();
   leads.push(deal);
   saveLeads(leads);
@@ -4377,11 +3995,18 @@ function saveLeadInternal(closeModal) {
     telegram: document.getElementById('leadTelegram').value.trim(),
     phone: document.getElementById('leadPhone').value.trim()
   };
-  const product = document.getElementById('leadProduct').value || 'inbox';
+  const product = document.getElementById('leadProduct').value || '';
+  const flow = document.getElementById('leadFlow').value.trim();
+  const cohorts = document.getElementById('leadCohorts').value.split(',').map(x => x.trim()).filter(Boolean);
   const titleRaw = document.getElementById('leadTitle').value.trim();
   const titleTouched = titleRaw !== (_leadTitleShown || '').trim();
   const newStatus = document.getElementById('leadStatus').value;
   const chek = parseFloat(document.getElementById('leadChek').value) || 0;
+  const dealFields = () => ({
+    channel: document.getElementById('leadChannel').value.trim(),
+    next_action: document.getElementById('leadAction').value.trim(),
+    next_action_date: document.getElementById('leadDeadline').value || null
+  });
 
   // 1) Человек
   const clients = loadClientsRaw();
@@ -4395,18 +4020,18 @@ function saveLeadInternal(closeModal) {
       client = same;
       ['company', 'telegram', 'phone'].forEach(f => { if (!client[f] && contact[f]) client[f] = contact[f]; });
       client.interests = [...new Set([...(client.interests || []), ..._leadDraftInterests])];
-      client.waitlists = [...new Set([...(client.waitlists || []), ..._leadDraftWaitlists])];
       client.transcripts = [..._leadDraftTranscripts, ...(client.transcripts || [])];
     } else {
       client = Object.assign({ id: genClientId(), created_at: now }, contact, {
         transcripts: _leadDraftTranscripts.slice(),
         interests: _leadDraftInterests.slice(),
-        waitlists: _leadDraftWaitlists.slice()
+        waitlists: [], cohorts: []
       });
       clients.push(client);
     }
-    _leadDraftInterests = []; _leadDraftWaitlists = []; _leadDraftTranscripts = [];
+    _leadDraftInterests = []; _leadDraftTranscripts = [];
   }
+  client.cohorts = cohorts;
   client.updated_at = now;
   saveClients(clients);
   currentClientId = client.id;
@@ -4418,16 +4043,15 @@ function saveLeadInternal(closeModal) {
   if (existing) {
     existing.product = product;
     existing.client_id = client.id;
+    existing.flow = flow;
     const statusChanged = existing.status !== newStatus;
     const newKind = leadStatusKind(newStatus);
     const oldKind = leadStatusKind(existing.status);
     if (statusChanged && newKind === 'won') {
+      existing.potential_chek_rub = chek;
       handleWinFlow(existing, leads, newStatus);
-      Object.assign(existing, mirror);
+      Object.assign(existing, mirror, dealFields());
       if (titleTouched) existing.title = titleRaw;
-      existing.channel = document.getElementById('leadChannel').value.trim();
-      existing.next_action = document.getElementById('leadAction').value.trim();
-      existing.next_action_date = document.getElementById('leadDeadline').value || null;
       saveLeads(leads);
       mirrorClientToDeals(client);
       _leadDirty = false;
@@ -4442,34 +4066,17 @@ function saveLeadInternal(closeModal) {
       existing.status_changed_at = now;
       if (oldKind === 'won' || oldKind === 'lost') existing.closed_at = null;
     }
-    const prevStatusForWait = existing.status;
-    Object.assign(existing, mirror);
+    Object.assign(existing, mirror, dealFields());
     if (titleTouched) existing.title = titleRaw;
-    existing.channel = document.getElementById('leadChannel').value.trim();
     existing.potential_chek_rub = chek;
     existing.status = newStatus;
-    existing.next_action = document.getElementById('leadAction').value.trim();
-    existing.next_action_date = document.getElementById('leadDeadline').value || null;
     existing.updated_at = now;
     saveLeads(leads);
-    applyWaitlistStage(existing, prevStatusForWait);
   } else {
-    const newLead = Object.assign({
-      id: genLeadId(),
-      client_id: client.id,
-      product,
-      title: titleRaw
-    }, mirror, {
-      channel: document.getElementById('leadChannel').value.trim(),
+    const newLead = Object.assign(newDealRecord(client, { id: genLeadId(), product, flow, title: titleRaw }), mirror, dealFields(), {
       potential_chek_rub: chek,
       status: newStatus,
-      created_at: now,
-      updated_at: now,
-      status_changed_at: now,
-      closed_at: leadStatusKind(newStatus) !== 'active' ? now : null,
-      next_action: document.getElementById('leadAction').value.trim(),
-      next_action_date: document.getElementById('leadDeadline').value || null,
-      history: []
+      closed_at: leadStatusKind(newStatus) !== 'active' ? now : null
     });
     leads.push(newLead);
     currentLeadId = newLead.id;
@@ -5001,401 +4608,6 @@ document.addEventListener('keydown', e => {
 });
 
 // ===== ВЫПУСКНИКИ: канбан-доска =====
-let currentAlumId = null;
-
-function alumTouchInfo(a) {
-  if (!a.last_touch_at) return { text:'без касаний', cls:'' };
-  const days = daysSince(a.last_touch_at);
-  const cls = days > 14 ? 'bad' : days > 7 ? 'warn' : '';
-  const text = days === 0 ? 'сегодня' : days === 1 ? '1 день назад' : days < 5 ? days + ' дня назад' : days + ' дней назад';
-  return { text, cls };
-}
-function alumUserLink(a) {
-  if (!a.username) return '<span class="alum-card-user"><span class="muted">@ не указан</span></span>';
-  const u = a.username.replace(/^@/, '');
-  return '<span class="alum-card-user"><a href="https://t.me/'+encodeURIComponent(u)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">@'+escapeHtml(u)+'</a></span>';
-}
-function alumLastNote(a) {
-  if (a.history && a.history.length) return a.history[0].text;
-  return a.note || '';
-}
-
-let alumClosedGroups = new Set();
-function alumGroupKey(a) { return (a.group || '').trim() || '__none__'; }
-function alumGroupLabel(key) { return key === '__none__' ? 'Без источника' : key; }
-
-function renderAlumni() {
-  const board = document.getElementById('alumniBoard');
-  if (!board) return;
-  const all = loadAlumni();
-
-  // Бейдж в меню — общее число в базе
-  const badge = document.getElementById('navAlumniBadge');
-  if (badge) badge.textContent = all.length;
-
-  // Datalist источников для модалки
-  const sources = [...new Set(all.map(a => (a.group||'').trim()).filter(Boolean))].sort((x,y)=>x.localeCompare(y,'ru'));
-  const dl = document.getElementById('alumGroupList');
-  if (dl) dl.innerHTML = sources.map(g => '<option value="'+escapeHtml(g)+'">').join('');
-
-  if (!all.length) {
-    board.innerHTML = '<div class="alumni-empty-state">Пусто. Добавь первого выпускника через «+ Выпускник» — укажи поток (Январь, Сколково…), он станет сворачиваемой группой.</div>';
-    return;
-  }
-
-  // Поиск
-  const q = (document.getElementById('alumniSearchInput')?.value || '').toLowerCase().trim();
-  const filtering = !!q;
-  let list = all.slice();
-  if (q) list = list.filter(a => (a.name+' '+(a.username||'')+' '+(a.note||'')+' '+(a.group||'')+' '+((a.history||[]).map(h=>h.text).join(' '))).toLowerCase().includes(q));
-
-  // Группировка по потоку
-  const groups = {};
-  list.forEach(a => { const k = alumGroupKey(a); (groups[k] = groups[k] || []).push(a); });
-  const keys = Object.keys(groups).sort((x,y) => {
-    if (x === '__none__') return 1; if (y === '__none__') return -1;
-    return x.localeCompare(y, 'ru');
-  });
-
-  if (!keys.length) {
-    board.innerHTML = '<div class="alumni-empty-state">Никого не нашлось по фильтрам.</div>';
-    return;
-  }
-
-  const lanesHtml = keys.map(key => {
-    // Прогресс считаем по всему потоку (не по фильтру) — честная картинка
-    const groupAll = all.filter(a => alumGroupKey(a) === key);
-    const total = groupAll.length;
-    const _initialId = (ALUMNI_STATUSES[0] || {}).id || 'cold';
-    const touched = groupAll.filter(a => (a.status||_initialId) !== _initialId).length;
-    const pct = total ? Math.round(touched/total*100) : 0;
-    const isOpen = !alumClosedGroups.has(key) || filtering;
-    const addSrc = key === '__none__' ? '' : key;
-
-    // колонки-стадии внутри дорожки, у каждой свой заголовок
-    const cells = ALUMNI_STATUSES.map(s => {
-      const cellItems = groups[key].filter(a => (a.status||_initialId) === s.id)
-        .sort((a,b) => new Date(b.last_touch_at||b.updated_at||0) - new Date(a.last_touch_at||a.updated_at||0));
-      const cards = cellItems.length
-        ? cellItems.map(a => alumCardHtml(a)).join('')
-        : '<div class="swim-cell-empty">Пусто</div>';
-      return '<div class="swim-col" style="--_alum-color:'+s.color+'" title="'+escapeHtml(s.name)+'">'
-        + '<div class="swim-col-head">'
-        +   '<span class="swim-col-dot"></span>'
-        +   '<span class="swim-col-title">'+escapeHtml(s.short)+'</span>'
-        +   '<span class="swim-col-count">'+cellItems.length+'</span>'
-        + '</div>'
-        + '<div class="swim-cell" data-status="'+s.id+'" data-lane="'+escapeHtml(key)+'">'+cards+'</div>'
-        + '</div>';
-    }).join('');
-
-    return '<div class="swim-lane'+(isOpen?' open':'')+'">'
-      + '<div class="swim-lane-head" data-group-key="'+escapeHtml(key)+'">'
-      +   '<span class="swim-lane-caret">▶</span>'
-      +   '<span class="swim-lane-name">'+escapeHtml(alumGroupLabel(key))+'</span>'
-      +   '<span class="swim-lane-stat">'+touched+' / '+total+'</span>'
-      +   '<span class="swim-lane-bar"><span class="swim-lane-bar-fill" style="width:'+pct+'%"></span></span>'
-      + '</div>'
-      + '<div class="swim-lane-body" style="--alum-col-count:'+ALUMNI_STATUSES.length+'">'+cells+'</div>'
-      + '<div class="swim-lane-add"><button data-add-src="'+escapeHtml(addSrc)+'">+ Добавить в «'+escapeHtml(alumGroupLabel(key))+'»</button></div>'
-      + '</div>';
-  }).join('');
-
-  board.innerHTML = lanesHtml;
-
-  // Раскрытие/сворачивание дорожки
-  board.querySelectorAll('.swim-lane-head').forEach(h => {
-    h.addEventListener('click', () => toggleAlumGroup(h.dataset.groupKey));
-  });
-  // Открыть карточку (но не при клике по ссылке или во время перетаскивания)
-  board.querySelectorAll('.alum-card').forEach(card => {
-    card.addEventListener('click', (e) => {
-      if (e.target.closest('a')) return;
-      if (card.dataset.dragging === '1') { card.dataset.dragging = ''; return; }
-      openAlumModal(card.dataset.alumId);
-    });
-  });
-  board.querySelectorAll('.alum-conv-badge').forEach(b => {
-    b.addEventListener('click', (e) => { e.stopPropagation(); openAlumLead(b.dataset.leadOf); });
-  });
-  board.querySelectorAll('.swim-lane-add button').forEach(btn => {
-    btn.addEventListener('click', () => openAlumModalForGroup(btn.dataset.addSrc || ''));
-  });
-
-  // Перетаскивание карточек по стадиям внутри своей дорожки (поток не меняется)
-  if (typeof Sortable !== 'undefined') {
-    board.querySelectorAll('.swim-lane').forEach(lane => {
-      const laneKey = lane.querySelector('.swim-lane-head')?.dataset.groupKey || '';
-      lane.querySelectorAll('.swim-cell').forEach(cell => {
-        Sortable.create(cell, {
-          group: 'alumlane_' + laneKey,
-          animation: 150,
-          ghostClass: 'sortable-ghost',
-          dragClass: 'sortable-drag',
-          onStart: (evt) => { evt.item.dataset.dragging = '1'; },
-          onEnd: (evt) => {
-            const id = evt.item.dataset.alumId;
-            const newStatus = evt.to.dataset.status;
-            const oldStatus = evt.from.dataset.status;
-            if (newStatus !== oldStatus) setAlumStatus(id, newStatus);
-          }
-        });
-      });
-    });
-  }
-}
-
-function alumCardHtml(a) {
-  const st = alumStatusById(a.status || (ALUMNI_STATUSES[0] || {}).id);
-  const touch = alumTouchInfo(a);
-  const conv = a.converted ? '<span class="alum-conv-badge" data-lead-of="'+escapeHtml(a.id)+'" title="Открыть в Лидах">в лидах ↗</span>' : '';
-  const u = a.username ? a.username.replace(/^@/, '') : '';
-  const userPart = u
-    ? '<a href="https://t.me/'+encodeURIComponent(u)+'" target="_blank" rel="noopener">@'+escapeHtml(u)+'</a>'
-    : '<span class="muted">@ не указан</span>';
-  const note = alumLastNote(a) ? '<div class="alum-card-note">'+escapeHtml(alumLastNote(a))+'</div>' : '';
-  const company = a.company ? '<div class="alum-card-company">'+escapeHtml(a.company)+'</div>' : '';
-  const interestBadges = (Array.isArray(a.interests) && a.interests.length)
-    ? '<div class="lead-card-interests">' + a.interests.map(id => {
-        const t = interestTagById(id); if (!t) return '';
-        return '<span class="lead-card-interest" style="--_c:'+t.color+'">'+escapeHtml(t.name)+'</span>';
-      }).join('') + '</div>'
-    : '';
-  const chek = a.potential_chek_rub ? '<span class="alum-card-amount">'+fmtMoneyRubShort(a.potential_chek_rub)+'</span>' : '<span></span>';
-  const fresh = a.last_touch_at ? freshnessClass(a.last_touch_at) : '';
-  return '<div class="alum-card '+fresh+'" data-alum-id="'+escapeHtml(a.id)+'" style="--_alum-color:'+st.color+'">'
-    + '<div class="alum-card-name">'+escapeHtml(a.name)+conv+'</div>'
-    + company
-    + '<div class="alum-card-user">'+userPart+'</div>'
-    + interestBadges
-    + note
-    + '<div class="alum-card-meta">'+chek
-    +   '<span class="alum-card-touch '+touch.cls+'">'+touch.text+'</span>'
-    + '</div>'
-    + '</div>';
-}
-
-function toggleAlumGroup(key) {
-  if (alumClosedGroups.has(key)) alumClosedGroups.delete(key);
-  else alumClosedGroups.add(key);
-  renderAlumni();
-}
-
-function toggleAllAlumGroups() {
-  const allKeys = [...new Set(loadAlumni().map(a => alumGroupKey(a)))];
-  const allOpen = alumClosedGroups.size === 0;
-  if (allOpen) { allKeys.forEach(k => alumClosedGroups.add(k)); }
-  else { alumClosedGroups.clear(); }
-  const btn = document.getElementById('alumniExpandToggle');
-  if (btn) btn.textContent = allOpen ? 'Развернуть все' : 'Свернуть все';
-  renderAlumni();
-}
-
-function setAlumStatus(id, newStatus) {
-  const list = loadAlumni();
-  const a = list.find(x => x.id === id);
-  if (!a) return;
-  a.status = newStatus;
-  a.last_touch_at = nowIso();
-  a.updated_at = nowIso();
-  saveAlumni(list);
-  render();
-  toast('→ ' + alumStatusById(newStatus).name);
-}
-
-function openAlumModalForGroup(source) {
-  openAlumModal();
-  const inp = document.getElementById('alumGroup');
-  if (inp) inp.value = source || '';
-}
-
-function fillAlumStatusSelect() {
-  const sel = document.getElementById('alumStatus');
-  if (!sel) return;
-  sel.innerHTML = ALUMNI_STATUSES.map(s => '<option value="'+escapeHtml(s.id)+'">'+escapeHtml(s.name)+'</option>').join('');
-}
-// ===== Чипсы выпускника: интересы и списки ожидания (та же механика, что у лида) =====
-let _alumDraftInterests = [];
-let _alumDraftWaitlists = [];
-function getCurrentAlumInterests() {
-  if (currentAlumId) {
-    const a = loadAlumni().find(x => x.id === currentAlumId);
-    return (a && Array.isArray(a.interests)) ? a.interests.slice() : [];
-  }
-  return _alumDraftInterests.slice();
-}
-function getCurrentAlumWaitlists() {
-  if (currentAlumId) {
-    const a = loadAlumni().find(x => x.id === currentAlumId);
-    return (a && Array.isArray(a.waitlists)) ? a.waitlists.slice() : [];
-  }
-  return _alumDraftWaitlists.slice();
-}
-function renderAlumInterestChips() {
-  const el = document.getElementById('alumInterestChips');
-  if (!el) return;
-  const selected = getCurrentAlumInterests();
-  const chosen = INTEREST_TAGS.filter(t => selected.includes(t.id));
-  const rest = INTEREST_TAGS.filter(t => !selected.includes(t.id));
-  const total = INTEREST_TAGS.length;
-  let html = chosen.map(t => '<span class="lm-pill" style="--_c:'+t.color+'"><span class="lm-pill-dot"></span>'+escapeHtml(t.name)
-    + '<button class="lm-pill-x" title="Убрать" onclick="toggleAlumInterest(\''+t.id+'\')">✕</button></span>').join('');
-  const options = rest.map(t => '<option value="'+escapeHtml(t.id)+'">'+escapeHtml(t.name)+'</option>').join('');
-  if (!total) { el.innerHTML = '<span class="lm-empty">Тегов пока нет. Нажми ⚙, чтобы добавить.</span>'; return; }
-  html += '<select class="lm-add-select"'+(rest.length ? '' : ' disabled')
-    + ' onchange="if(this.value){var v=this.value;this.value=\'\';toggleAlumInterest(v)}">'
-    + '<option value="">+ интерес</option>' + options + '</select>';
-  el.innerHTML = html;
-}
-function renderAlumWaitlistChips() {
-  const el = document.getElementById('alumWaitlistChips');
-  if (!el) return;
-  const selected = getCurrentAlumWaitlists();
-  const lists = loadWaitlists().filter(w => !w.closed);
-  const chosen = lists.filter(w => selected.includes(w.id));
-  const rest = lists.filter(w => !selected.includes(w.id));
-  const label = w => w.name + (w.event_date ? ' · ' + fmtDateShort(w.event_date) : '');
-  const color = () => '#0ea5e9';
-  const total = lists.length;
-  let html = chosen.map(w => '<span class="lm-pill" style="--_c:'+color()+'"><span class="lm-pill-dot"></span>'+escapeHtml(label(w))
-    + '<button class="lm-pill-x" title="Убрать" onclick="toggleAlumWaitlist(\''+w.id+'\')">✕</button></span>').join('');
-  const options = rest.map(w => '<option value="'+escapeHtml(w.id)+'">'+escapeHtml(label(w))+'</option>').join('');
-  if (!total) { el.innerHTML = '<span class="lm-empty">Списков ожидания ещё нет. Нажми ↗, чтобы создать.</span>'; return; }
-  html += '<select class="lm-add-select"'+(rest.length ? '' : ' disabled')
-    + ' onchange="if(this.value){var v=this.value;this.value=\'\';toggleAlumWaitlist(v)}">'
-    + '<option value="">+ список</option>' + options + '</select>';
-  el.innerHTML = html;
-}
-function toggleAlumInterest(tagId) {
-  if (currentAlumId) {
-    const list = loadAlumni();
-    const a = list.find(x => x.id === currentAlumId);
-    if (!a) return;
-    a.interests = Array.isArray(a.interests) ? a.interests : [];
-    const i = a.interests.indexOf(tagId);
-    if (i >= 0) a.interests.splice(i, 1); else a.interests.push(tagId);
-    a.updated_at = nowIso();
-    saveAlumni(list);
-    renderAlumInterestChips();
-    render();
-  } else {
-    const i = _alumDraftInterests.indexOf(tagId);
-    if (i >= 0) _alumDraftInterests.splice(i, 1); else _alumDraftInterests.push(tagId);
-    renderAlumInterestChips();
-  }
-}
-function toggleAlumWaitlist(wlId) {
-  if (currentAlumId) {
-    const list = loadAlumni();
-    const a = list.find(x => x.id === currentAlumId);
-    if (!a) return;
-    a.waitlists = Array.isArray(a.waitlists) ? a.waitlists : [];
-    const i = a.waitlists.indexOf(wlId);
-    if (i >= 0) a.waitlists.splice(i, 1); else a.waitlists.push(wlId);
-    a.updated_at = nowIso();
-    saveAlumni(list);
-    renderAlumWaitlistChips();
-    render();
-    const w = waitlistById(wlId);
-    if (w) toast(i >= 0 ? ('Убран из «'+w.name+'»') : ('Добавлен в «'+w.name+'»'));
-  } else {
-    const i = _alumDraftWaitlists.indexOf(wlId);
-    if (i >= 0) _alumDraftWaitlists.splice(i, 1); else _alumDraftWaitlists.push(wlId);
-    renderAlumWaitlistChips();
-  }
-}
-
-function openAlumModal(id) {
-  fillAlumStatusSelect();
-  const list = loadAlumni();
-  const a = id ? list.find(x => x.id === id) : null;
-  const firstStatusId = (ALUMNI_STATUSES[0] || {}).id || 'cold';
-  currentAlumId = a ? a.id : null;
-  _alumDraftInterests = [];
-  _alumDraftWaitlists = [];
-  _alumDraftTranscripts = [];
-  document.getElementById('alumModalId').value = a ? a.id : '';
-  document.getElementById('alumName').value = a ? a.name : '';
-  document.getElementById('alumTelegram').value = a ? (a.username ? '@' + String(a.username).replace(/^@/, '') : '') : '';
-  document.getElementById('alumPhone').value = a ? (a.phone || '') : '';
-  document.getElementById('alumCompany').value = a ? (a.company || '') : '';
-  document.getElementById('alumGroup').value = a ? (a.group || '') : '';
-  document.getElementById('alumStatus').value = a ? (a.status || firstStatusId) : firstStatusId;
-  document.getElementById('alumChek').value = a && a.potential_chek_rub ? a.potential_chek_rub : '';
-  document.getElementById('alumAction').value = a ? (a.next_action || '') : '';
-  document.getElementById('alumDeadline').value = a ? (a.next_action_date || '') : '';
-  document.getElementById('alumNote').value = a ? (a.note || '') : '';
-  const metaRow = document.getElementById('alumMetaRow');
-  const convBtn = document.getElementById('alumConvertBtn');
-  if (a) {
-    metaRow.style.display = 'flex';
-    document.getElementById('alumMetaCreated').textContent = fmtDateNice(a.created_at);
-    document.getElementById('alumMetaUpdated').textContent = fmtDateNice(a.updated_at);
-    document.getElementById('alumMetaTouch').textContent = a.last_touch_at ? fmtDateNice(a.last_touch_at) : '—';
-    document.getElementById('alumDeleteBtn').style.display = '';
-    convBtn.style.display = a.converted ? 'none' : '';
-    convBtn.textContent = '→ в Лиды';
-  } else {
-    metaRow.style.display = 'none';
-    document.getElementById('alumDeleteBtn').style.display = 'none';
-    convBtn.style.display = 'none';
-  }
-  toggleAlumHistoryForm(false);
-  histEdit = { ctx:null, idx:-1 };
-  renderAlumHistoryList(a);
-  renderAlumInterestChips();
-  renderAlumWaitlistChips();
-  applyLmSections('alum');
-  closeTrForm('alum');
-  renderTranscripts('alum');
-  document.getElementById('alumModalBg').classList.add('show');
-  setTimeout(() => { if (!a) document.getElementById('alumName').focus(); }, 50);
-}
-
-function renderAlumHistoryList(a) {
-  const el = document.getElementById('alumHistoryList');
-  const history = (a && a.history) || [];
-  const cnt = document.getElementById('alumHistCount');
-  if (cnt) cnt.textContent = history.length;
-  if (!history.length) {
-    el.innerHTML = '<div class="lead-history-empty">Пока нет записей. Жми «+ Запись» после первого касания.</div>';
-    return;
-  }
-  el.innerHTML = history.map((h,i) => histItemHtml(h, i, 'alum')).join('');
-}
-
-function toggleAlumHistoryForm(force) {
-  const form = document.getElementById('alumHistoryForm');
-  const show = force === undefined ? !form.classList.contains('show') : force;
-  form.classList.toggle('show', show);
-  if (show) {
-    document.getElementById('alumHistoryText').value = '';
-    setTimeout(() => document.getElementById('alumHistoryText').focus(), 30);
-  }
-}
-
-function addAlumHistoryEntry() {
-  const text = document.getElementById('alumHistoryText').value.trim();
-  if (!text) { toggleAlumHistoryForm(false); return; }
-  // Новый выпускник — сначала сохраним
-  if (!currentAlumId) {
-    if (!saveAlumInternal(false)) return;
-  }
-  const list = loadAlumni();
-  const a = list.find(x => x.id === currentAlumId);
-  if (!a) return;
-  a.history = a.history || [];
-  a.history.unshift({ date: nowIso(), text });
-  a.last_touch_at = nowIso();
-  a.updated_at = nowIso();
-  saveAlumni(list);
-  toggleAlumHistoryForm(false);
-  renderAlumHistoryList(a);
-  document.getElementById('alumMetaTouch').textContent = fmtDateNice(a.last_touch_at);
-  render();
-  toast('Касание записано');
-}
-
 // ===== Редактирование записей истории (лиды + выпускники) =====
 let histEdit = { ctx:null, idx:-1 };
 function isoToLocalInput(iso) { const d = new Date(iso); if (isNaN(d)) return ''; const local = new Date(d.getTime() - d.getTimezoneOffset()*60000); return local.toISOString().slice(0,16); }
@@ -5418,8 +4630,8 @@ function histItemHtml(h, i, ctx) {
     + '<div class="lead-history-text">'+escapeHtml(h.text)+'</div></div>';
 }
 function rerenderHist(ctx) {
-  if (ctx === 'lead') { const l = loadLeads().find(x => x.id === currentLeadId); renderHistoryList(l); }
-  else { const a = loadAlumni().find(x => x.id === currentAlumId); renderAlumHistoryList(a); }
+  const l = loadLeads().find(x => x.id === currentLeadId);
+  renderHistoryList(l);
 }
 function startHistEdit(ctx, idx) {
   histEdit = { ctx, idx };
@@ -5434,490 +4646,14 @@ function saveHistEdit(ctx, idx) {
   const text = textEl.value.trim();
   if (!text) { textEl.focus(); return; }
   const iso = dateEl && dateEl.value ? localInputToIso(dateEl.value) : null;
-  if (ctx === 'lead') {
-    const leads = loadLeads(); const lead = leads.find(l => l.id === currentLeadId);
-    if (!lead || !lead.history || !lead.history[idx]) return;
-    lead.history[idx].text = text; if (iso) lead.history[idx].date = iso;
-    lead.updated_at = nowIso(); saveLeads(leads);
-    histEdit = { ctx:null, idx:-1 }; renderHistoryList(lead);
-    const mu = document.getElementById('leadMetaUpdated'); if (mu) mu.textContent = fmtDateNice(lead.updated_at);
-  } else {
-    const list = loadAlumni(); const a = list.find(x => x.id === currentAlumId);
-    if (!a || !a.history || !a.history[idx]) return;
-    a.history[idx].text = text; if (iso) a.history[idx].date = iso;
-    a.last_touch_at = a.history.reduce((mx, h) => (h.date > mx ? h.date : mx), a.history[0].date);
-    a.updated_at = nowIso(); saveAlumni(list);
-    histEdit = { ctx:null, idx:-1 }; renderAlumHistoryList(a);
-    const mt = document.getElementById('alumMetaTouch'); if (mt) mt.textContent = fmtDateNice(a.last_touch_at);
-  }
+  const leads = loadLeads(); const lead = leads.find(l => l.id === currentLeadId);
+  if (!lead || !lead.history || !lead.history[idx]) return;
+  lead.history[idx].text = text; if (iso) lead.history[idx].date = iso;
+  lead.updated_at = nowIso(); saveLeads(leads);
+  histEdit = { ctx:null, idx:-1 }; renderHistoryList(lead);
+  const mu = document.getElementById('leadMetaUpdated'); if (mu) mu.textContent = fmtDateNice(lead.updated_at);
   render();
   toast('Запись обновлена');
-}
-
-function saveAlumInternal(closeAfter) {
-  const name = document.getElementById('alumName').value.trim();
-  if (!name) { alert('Имя обязательно'); return false; }
-  const username = document.getElementById('alumTelegram').value.trim().replace(/^@/, '');
-  const phone = document.getElementById('alumPhone').value.trim();
-  const company = document.getElementById('alumCompany').value.trim();
-  const group = document.getElementById('alumGroup').value.trim();
-  const status = document.getElementById('alumStatus').value;
-  const chek = parseFloat(document.getElementById('alumChek').value) || 0;
-  const nextAction = document.getElementById('alumAction').value.trim();
-  const nextActionDate = document.getElementById('alumDeadline').value || null;
-  const note = document.getElementById('alumNote').value.trim();
-  const list = loadAlumni();
-  const now = nowIso();
-  const initialId = (ALUMNI_STATUSES[0] || {}).id || 'cold';
-  if (currentAlumId) {
-    const a = list.find(x => x.id === currentAlumId);
-    if (!a) return false;
-    const statusChanged = (a.status || initialId) !== status;
-    a.name = name; a.username = username; a.group = group; a.note = note;
-    a.phone = phone; a.company = company;
-    a.potential_chek_rub = chek;
-    a.next_action = nextAction; a.next_action_date = nextActionDate;
-    if (statusChanged) { a.status = status; a.last_touch_at = now; }
-    a.updated_at = now;
-    saveAlumni(list);
-  } else {
-    const newAlum = {
-      id: genAlumId(), name, username, group, status, note,
-      phone, company,
-      potential_chek_rub: chek,
-      next_action: nextAction, next_action_date: nextActionDate,
-      transcripts: _alumDraftTranscripts.slice(),
-      interests: _alumDraftInterests.slice(),
-      waitlists: _alumDraftWaitlists.slice(),
-      converted: false, lead_id: null,
-      created_at: now, updated_at: now,
-      last_touch_at: status !== initialId ? now : null,
-      history: []
-    };
-    list.push(newAlum);
-    currentAlumId = newAlum.id;
-    document.getElementById('alumModalId').value = newAlum.id;
-    saveAlumni(list);
-  }
-  if (closeAfter) closeAlumModal();
-  render();
-  return true;
-}
-
-function saveAlum() { if (saveAlumInternal(true)) toast('Сохранено'); }
-
-function closeAlumModal() { document.getElementById('alumModalBg').classList.remove('show'); currentAlumId = null; }
-
-function deleteAlumFromModal() {
-  const id = document.getElementById('alumModalId').value;
-  if (!id) return;
-  if (!confirm('Удалить выпускника из базы?')) return;
-  const list = loadAlumniRaw();
-  const a = list.find(x => x.id === id);
-  if (a) { a.deleted = true; a.updated_at = nowIso(); saveAlumni(list); }
-  closeAlumModal();
-  render();
-  toast('Удалён');
-}
-
-// ===== УПРАВЛЕНИЕ КОЛОНКАМИ ВЫПУСКНИКОВ =====
-const ALUM_KIND_OPTIONS = [
-  { value:'active',   label:'В работе' },
-  { value:'success',  label:'Успех'    },
-  { value:'rejected', label:'Отказ/пауза' }
-];
-let _alumStatusesDraft = null;
-let _alumStatusesSortable = null;
-function genAlumStatusId() { return 'st_' + Math.random().toString(36).slice(2, 8); }
-function openAlumStatusesModal() {
-  _alumStatusesDraft = ALUMNI_STATUSES.map(s => Object.assign({}, s));
-  renderAlumStatusesList();
-  document.getElementById('alumStatusesModalBg').classList.add('show');
-}
-function closeAlumStatusesModal() {
-  document.getElementById('alumStatusesModalBg').classList.remove('show');
-  _alumStatusesDraft = null;
-  if (_alumStatusesSortable) { try { _alumStatusesSortable.destroy(); } catch {} _alumStatusesSortable = null; }
-}
-function renderAlumStatusesList() {
-  const list = document.getElementById('alumStatusesList');
-  if (!list || !_alumStatusesDraft) return;
-  list.innerHTML = _alumStatusesDraft.map((s, i) => {
-    const kindOpts = ALUM_KIND_OPTIONS.map(k =>
-      '<option value="'+k.value+'"'+(s.kind === k.value ? ' selected' : '')+'>'+k.label+'</option>'
-    ).join('');
-    return '<div class="alum-status-row" data-idx="'+i+'">'+
-      '<span class="alum-status-handle" title="Перетащить">⋮⋮</span>'+
-      '<label class="alum-status-color" style="background:'+s.color+'" title="Сменить цвет">'+
-        '<input type="color" value="'+s.color+'" oninput="updateAlumStatus('+i+', \'color\', this.value); this.parentNode.style.background=this.value">'+
-      '</label>'+
-      '<input class="alum-status-name" type="text" value="'+escapeHtml(s.name)+'" placeholder="Название" oninput="updateAlumStatus('+i+', \'name\', this.value)">'+
-      '<select class="alum-status-kind" onchange="updateAlumStatus('+i+', \'kind\', this.value)">'+kindOpts+'</select>'+
-      '<button class="alum-status-del" onclick="removeAlumStatusDraft('+i+')" title="Удалить колонку">✕</button>'+
-    '</div>';
-  }).join('');
-  // Sortable for reordering
-  if (_alumStatusesSortable) { try { _alumStatusesSortable.destroy(); } catch {} _alumStatusesSortable = null; }
-  if (typeof Sortable !== 'undefined') {
-    _alumStatusesSortable = Sortable.create(list, {
-      handle: '.alum-status-handle',
-      animation: 150,
-      ghostClass: 'sortable-ghost',
-      dragClass: 'sortable-drag',
-      onEnd: (evt) => {
-        if (evt.oldIndex === evt.newIndex) return;
-        const moved = _alumStatusesDraft.splice(evt.oldIndex, 1)[0];
-        _alumStatusesDraft.splice(evt.newIndex, 0, moved);
-        renderAlumStatusesList();
-      }
-    });
-  }
-}
-function updateAlumStatus(i, key, val) {
-  if (!_alumStatusesDraft || !_alumStatusesDraft[i]) return;
-  _alumStatusesDraft[i][key] = val;
-  if (key === 'name') _alumStatusesDraft[i].short = val;
-}
-function addAlumStatus() {
-  if (!_alumStatusesDraft) return;
-  const palette = ['#3b82f6','#f97316','#a855f7','#10b981','#eab308','#ec4899','#0ea5e9','#6366f1','#dc2626','#9ca3af'];
-  const used = new Set(_alumStatusesDraft.map(s => s.color));
-  const color = palette.find(c => !used.has(c)) || palette[Math.floor(Math.random()*palette.length)];
-  _alumStatusesDraft.push({ id: genAlumStatusId(), name: 'Новая колонка', short: 'Новая', color, kind: 'active' });
-  renderAlumStatusesList();
-  // Фокус на новый input
-  setTimeout(() => {
-    const rows = document.querySelectorAll('#alumStatusesList .alum-status-row');
-    const last = rows[rows.length - 1];
-    if (last) { last.classList.add('is-new'); const inp = last.querySelector('.alum-status-name'); if (inp) { inp.focus(); inp.select(); } }
-  }, 30);
-}
-function removeAlumStatusDraft(i) {
-  if (!_alumStatusesDraft || _alumStatusesDraft.length <= 1) {
-    alert('Нужна хотя бы одна колонка.'); return;
-  }
-  _alumStatusesDraft.splice(i, 1);
-  renderAlumStatusesList();
-}
-function resetAlumStatusesToDefault() {
-  if (!confirm('Сбросить колонки к стандартному набору? Существующие выпускники с пропавшими статусами уйдут в первую колонку.')) return;
-  _alumStatusesDraft = DEFAULT_ALUMNI_STATUSES.map(s => Object.assign({}, s));
-  renderAlumStatusesList();
-}
-function saveAlumStatusesFromModal() {
-  if (!_alumStatusesDraft || !_alumStatusesDraft.length) return;
-  // Sanity check: имена не пустые
-  for (const s of _alumStatusesDraft) {
-    const n = (s.name || '').trim();
-    if (!n) { alert('У всех колонок должно быть имя.'); return; }
-    s.name = n; s.short = n.length > 16 ? n.slice(0,15)+'…' : n;
-  }
-  // Миграция выпускников из удалённых колонок в первую
-  const newIds = new Set(_alumStatusesDraft.map(s => s.id));
-  const firstId = _alumStatusesDraft[0].id;
-  const alumni = loadAlumniRaw();
-  let migrated = 0;
-  for (const a of alumni) {
-    if (a.status && !newIds.has(a.status)) {
-      a.status = firstId;
-      a.updated_at = nowIso();
-      migrated++;
-    }
-  }
-  if (migrated) saveAlumni(alumni);
-  // Применяем
-  ALUMNI_STATUSES = _alumStatusesDraft.slice();
-  saveAlumniStatuses(ALUMNI_STATUSES);
-  closeAlumStatusesModal();
-  render();
-  toast(migrated ? 'Колонки сохранены. Перенесено выпускников: ' + migrated : 'Колонки сохранены');
-}
-
-// ===== УПРАВЛЕНИЕ КОЛОНКАМИ ЛИДОВ =====
-const LEAD_KIND_OPTIONS = [
-  { value:'active',  label:'В работе' },
-  { value:'won',     label:'Победа'   },
-  { value:'lost',    label:'Отказ'    }
-];
-let _leadStatusesDraft = null;
-let _leadStatusesSortable = null;
-let _pipesSortable = null;
-let _stagesPipe = 'cc';
-let _pipeDeleteMode = false;
-function genStageId() { return 's_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
-function genPipeId() { return 'p_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
-function phaseKind(ph) { return ph === 'won' ? 'won' : ph === 'lost' ? 'lost' : 'active'; }
-function dealsByPipe() {
-  const m = {};
-  loadLeads().forEach(l => { const k = dealPipe(l); (m[k] = m[k] || { total: 0, active: 0 }); m[k].total++; if (leadStatusKind(l.status) === 'active') m[k].active++; });
-  return m;
-}
-function openPipesPage(pipeId) {
-  if (pipeId && pipeId !== 'all' && PIPELINES_BY_ID[pipeId]) _stagesPipe = pipeId;
-  navTo('pipes');
-  selectPipe(_stagesPipe);
-}
-function selectPipe(id) {
-  if (!PIPELINES_BY_ID[id]) id = (PIPELINES.find(p => p.id !== 'inbox') || PIPELINES[0]).id;
-  _stagesPipe = id;
-  _pipeDeleteMode = false;
-  loadStagesDraft();
-  renderPipes();
-}
-function loadStagesDraft() { _leadStatusesDraft = pipeStatuses(_stagesPipe).map(st => Object.assign({}, st)); }
-
-// не перерисовываем страницу, пока в неё что-то печатают
-function renderPipesSafe() {
-  const a = document.activeElement;
-  if (a && (a.id === 'pipeNameInput' || (a.closest && a.closest('#leadStatusesList')))) return;
-  const page = document.querySelector('.page[data-page="pipes"]');
-  if (!page || !page.classList.contains('active')) return;
-  renderPipes();
-}
-function renderPipes() {
-  const side = document.getElementById('pipesList');
-  const main = document.getElementById('pipesMain');
-  if (!side || !main) return;
-  if (!PIPELINES_BY_ID[_stagesPipe]) _stagesPipe = (PIPELINES.find(p => p.id !== 'inbox') || PIPELINES[0]).id;
-  if (!_leadStatusesDraft) loadStagesDraft();
-  const counts = dealsByPipe();
-  side.innerHTML = PIPELINES.map(p => {
-    const c = counts[p.id] || { total: 0, active: 0 };
-    const handle = p.id === 'inbox'
-      ? '<span class="pipe-item-handle" style="opacity:.25" title="«Разобрать» всегда последняя">⋮⋮</span>'
-      : '<span class="pipe-item-handle" title="Перетащить">⋮⋮</span>';
-    return '<div class="pipe-item' + (p.id === _stagesPipe ? ' active' : '') + '" style="--_c:' + p.color + '" data-pipe="' + p.id + '" onclick="selectPipe(\'' + p.id + '\')">'
-      + handle
-      + '<span class="pipe-item-dot"></span>'
-      + '<span class="pipe-item-name">' + escapeHtml(p.name) + '</span>'
-      + '<span class="pipe-item-count" title="В работе из всех сделок">' + c.active + ' / ' + c.total + '</span>'
-      + '</div>';
-  }).join('');
-  if (_pipesSortable) { try { _pipesSortable.destroy(); } catch {} _pipesSortable = null; }
-  if (typeof Sortable !== 'undefined') {
-    _pipesSortable = Sortable.create(side, {
-      handle: '.pipe-item-handle', animation: 150, ghostClass: 'sortable-ghost', dragClass: 'sortable-drag',
-      onEnd: () => {
-        const order = [...side.querySelectorAll('.pipe-item')].map(e => e.dataset.pipe);
-        const list = order.map(id => PIPELINES_BY_ID[id]).filter(Boolean).map(x => Object.assign({}, x));
-        savePipelines(list);
-        render(); renderPipes();
-      }
-    });
-  }
-
-  const p = PIPELINES_BY_ID[_stagesPipe];
-  const c = counts[p.id] || { total: 0, active: 0 };
-  const tplName = pipeById(p.id).tpl === 'intensive' ? 'интенсив' : 'B2B';
-  const others = PIPELINES.filter(x => x.id !== p.id);
-  main.innerHTML =
-    '<div class="pipe-head">'
-    + '<label class="pipe-color" style="background:' + p.color + '" title="Цвет воронки"><input type="color" value="' + p.color + '" oninput="setPipeColor(this.value)"></label>'
-    + '<input class="pipe-name-input" id="pipeNameInput" type="text" value="' + escapeHtml(p.name) + '" ' + (p.system ? 'disabled title="Системная воронка"' : 'onchange="renamePipeline(this.value)"') + '>'
-    + '</div>'
-    + '<div class="pipe-sub">Сделок: <b>' + c.total + '</b>, из них в работе <b>' + c.active + '</b>. Шаблон стадий: ' + tplName + '.</div>'
-    + '<div class="deal-section-label">Колонки воронки</div>'
-    + '<div id="leadStatusesList" style="display:flex;flex-direction:column;gap:8px"></div>'
-    + '<button onclick="addLeadStatus()" style="width:100%;margin-top:10px;padding:11px;background:var(--bg);border:1px dashed var(--border-2);border-radius:10px;color:var(--text-2);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer">+ Добавить колонку</button>'
-    + '<div style="display:flex;gap:10px;margin-top:16px;justify-content:flex-end;flex-wrap:wrap">'
-    + '<button class="modal-btn cancel" onclick="resetLeadStatusesToDefault()" style="margin-right:auto">Сбросить к стандарту</button>'
-    + '<button class="modal-btn cancel" onclick="selectPipe(\'' + p.id + '\')">Отменить правки</button>'
-    + '<button class="modal-btn primary" onclick="saveLeadStatusesFromModal()">Сохранить колонки</button>'
-    + '</div>'
-    + (p.id === 'inbox' ? '' :
-      '<div class="pipe-danger">'
-      + (_pipeDeleteMode
-        ? '<div class="pipe-danger-box"><b>Удалить воронку «' + escapeHtml(p.name) + '»?</b><br>'
-          + (c.total ? 'В ней сделок: ' + c.total + '. Они не удалятся, а переедут в выбранную воронку, стадия подберётся по фазе.' : 'Сделок в ней нет.')
-          + '<select id="pipeMoveTarget">' + others.map(x => '<option value="' + x.id + '"' + (x.id === 'inbox' ? ' selected' : '') + '>' + escapeHtml(x.name) + '</option>').join('') + '</select>'
-          + '<div class="pipe-danger-actions"><button class="modal-btn cancel" onclick="cancelDeletePipe()">Отмена</button>'
-          + '<button class="modal-btn primary" style="background:var(--red)" onclick="confirmDeletePipe()">Удалить и перенести</button></div></div>'
-        : '<button class="modal-btn cancel" style="color:var(--red);border:1px solid #fecaca" onclick="startDeletePipe()">Удалить воронку</button>')
-      + '</div>');
-  renderLeadStatusesList();
-}
-
-function addPipeline() {
-  const palette = ['#6366f1','#ec4899','#14b8a6','#f59e0b','#8b5cf6','#0ea5e9','#22c55e','#ef4444'];
-  const used = new Set(PIPELINES.map(x => x.color));
-  const color = palette.find(x => !used.has(x)) || palette[0];
-  const tpl = confirm('Короткий цикл, как у интенсивов (Интерес → Пригласил → Думает → Оплатил)?\n\nОК — интенсив. Отмена — B2B (Новый → Созвон → КП → Переговоры → Выиграно).') ? 'intensive' : 'b2b';
-  const np = { id: genPipeId(), name: 'Новая воронка', short: 'Новая воронка', tpl, color };
-  const list = PIPELINES.map(x => Object.assign({}, x));
-  const at = list.findIndex(x => x.id === 'inbox');
-  if (at >= 0) list.splice(at, 0, np); else list.push(np);
-  savePipelines(list);
-  selectPipe(np.id);
-  render();
-  setTimeout(() => { const el = document.getElementById('pipeNameInput'); if (el) { el.focus(); el.select(); } }, 50);
-}
-function renamePipeline(val) {
-  const name = String(val || '').trim();
-  if (!name) { renderPipes(); return; }
-  const list = PIPELINES.map(x => Object.assign({}, x));
-  const p = list.find(x => x.id === _stagesPipe);
-  if (!p) return;
-  p.name = name; p.short = pipeShort(name);
-  savePipelines(list);
-  render(); renderPipes();
-  toast('Воронка переименована');
-}
-function setPipeColor(val) {
-  const list = PIPELINES.map(x => Object.assign({}, x));
-  const p = list.find(x => x.id === _stagesPipe);
-  if (!p) return;
-  p.color = val;
-  savePipelines(list);
-  render(); renderPipes();
-}
-function startDeletePipe() { _pipeDeleteMode = true; renderPipes(); }
-function cancelDeletePipe() { _pipeDeleteMode = false; renderPipes(); }
-function confirmDeletePipe() {
-  const p = PIPELINES_BY_ID[_stagesPipe];
-  if (!p || p.id === 'inbox') return;
-  const target = (document.getElementById('pipeMoveTarget') || {}).value || 'inbox';
-  if (!PIPELINES_BY_ID[target]) return;
-  const leads = loadLeadsRaw();
-  let moved = 0;
-  for (const l of leads) {
-    if (l.deleted || dealPipe(l) !== p.id) continue;
-    l.product = target;
-    l.status = mapStatusToPipe(l.status, target, true);
-    l.updated_at = tsPlus1(l.updated_at);
-    moved++;
-  }
-  if (moved) saveLeads(leads);
-  const stages = Object.assign({}, PIPE_STAGES);
-  delete stages[p.id];
-  PIPE_STAGES = stages;
-  localStorage.setItem('pipe_stages', JSON.stringify(stages));
-  savePipelines(PIPELINES.filter(x => x.id !== p.id).map(x => Object.assign({}, x)));
-  if (leadsPipe === p.id) { leadsPipe = 'all'; try { localStorage.setItem('_leads_pipe', 'all'); } catch {} }
-  rebuildStatusRegistry();
-  selectPipe((PIPELINES.find(x => x.id !== 'inbox') || PIPELINES[0]).id);
-  render();
-  toast(moved ? 'Воронка удалена, сделок перенесено: ' + moved : 'Воронка удалена');
-}
-
-function renderLeadStatusesList() {
-  const list = document.getElementById('leadStatusesList');
-  if (!list || !_leadStatusesDraft) return;
-  const counts = {};
-  loadLeads().filter(l => dealPipe(l) === _stagesPipe).forEach(l => { counts[l.status] = (counts[l.status] || 0) + 1; });
-  list.innerHTML = _leadStatusesDraft.map((st, i) => {
-    const phaseOpts = PIPE_PHASES.map(ph =>
-      '<option value="' + ph.id + '"' + (st.phase === ph.id ? ' selected' : '') + '>' + (ph.id === 'won' ? 'Выиграно · в финансы' : ph.name) + '</option>'
-    ).join('');
-    const n = counts[st.id] || 0;
-    const system = st.phase === 'won' || st.phase === 'lost';
-    return '<div class="alum-status-row" data-idx="' + i + '">'
-      + '<span class="alum-status-handle" title="Перетащить">⋮⋮</span>'
-      + '<label class="alum-status-color" style="background:' + st.color + '" title="Сменить цвет">'
-      + '<input type="color" value="' + st.color + '" oninput="updateLeadStatus(' + i + ', \'color\', this.value); this.parentNode.style.background=this.value">'
-      + '</label>'
-      + '<input class="alum-status-name" type="text" value="' + escapeHtml(st.name) + '" placeholder="Название" oninput="updateLeadStatus(' + i + ', \'name\', this.value)">'
-      + (n ? '<span class="stage-count" title="Сделок в этой колонке">' + n + '</span>' : '')
-      + '<select class="alum-status-kind" onchange="updateLeadStatus(' + i + ', \'phase\', this.value)">' + phaseOpts + '</select>'
-      + '<select class="alum-status-kind stage-wait" title="Колонка-лист ожидания: карточка в ней = человек в списке" onchange="updateLeadStatus(' + i + ', \'wait\', this.value)">'
-      +   '<option value="">без списка</option>'
-      +   loadWaitlists().filter(w => !w.closed).map(w => '<option value="' + w.id + '"' + (st.wait === w.id ? ' selected' : '') + '>⏳ ' + escapeHtml(w.name) + '</option>').join('')
-      + '</select>'
-      + (system
-        ? '<button class="alum-status-del" style="opacity:.25;cursor:default" title="Системная колонка: кормит финансы, удалить нельзя">✕</button>'
-        : '<button class="alum-status-del" onclick="removeLeadStatusDraft(' + i + ')" title="Удалить колонку">✕</button>')
-      + '</div>';
-  }).join('');
-  if (_leadStatusesSortable) { try { _leadStatusesSortable.destroy(); } catch {} _leadStatusesSortable = null; }
-  if (typeof Sortable !== 'undefined') {
-    _leadStatusesSortable = Sortable.create(list, {
-      handle: '.alum-status-handle', animation: 150, ghostClass: 'sortable-ghost', dragClass: 'sortable-drag',
-      onEnd: (evt) => {
-        if (evt.oldIndex === evt.newIndex) return;
-        const moved = _leadStatusesDraft.splice(evt.oldIndex, 1)[0];
-        _leadStatusesDraft.splice(evt.newIndex, 0, moved);
-        renderLeadStatusesList();
-      }
-    });
-  }
-}
-function updateLeadStatus(i, key, val) {
-  if (!_leadStatusesDraft || !_leadStatusesDraft[i]) return;
-  _leadStatusesDraft[i][key] = val;
-  if (key === 'name') _leadStatusesDraft[i].short = val;
-  if (key === 'phase') { _leadStatusesDraft[i].kind = phaseKind(val); renderLeadStatusesList(); }
-}
-function addLeadStatus() {
-  if (!_leadStatusesDraft) return;
-  const palette = ['#3b82f6','#f97316','#a855f7','#10b981','#eab308','#ec4899','#0ea5e9','#6366f1','#dc2626','#9ca3af'];
-  const used = new Set(_leadStatusesDraft.map(st => st.color));
-  const color = palette.find(c => !used.has(c)) || palette[Math.floor(Math.random() * palette.length)];
-  const at = _leadStatusesDraft.findIndex(st => st.phase === 'won' || st.phase === 'lost');
-  const row = { id: genStageId(), name: 'Новая колонка', short: 'Новая колонка', color, phase: 'work', kind: 'active' };
-  if (at >= 0) _leadStatusesDraft.splice(at, 0, row); else _leadStatusesDraft.push(row);
-  renderLeadStatusesList();
-  setTimeout(() => {
-    const idx = _leadStatusesDraft.indexOf(row);
-    const el = document.querySelectorAll('#leadStatusesList .alum-status-row')[idx];
-    if (el) { const inp = el.querySelector('.alum-status-name'); if (inp) { inp.focus(); inp.select(); } }
-  }, 30);
-}
-function removeLeadStatusDraft(i) {
-  if (!_leadStatusesDraft || _leadStatusesDraft.length <= 1) { alert('Нужна хотя бы одна колонка.'); return; }
-  _leadStatusesDraft.splice(i, 1);
-  renderLeadStatusesList();
-}
-function resetLeadStatusesToDefault() {
-  if (!confirm('Вернуть стандартные колонки этой воронки? Сделки из пропавших колонок переедут в колонку той же фазы.')) return;
-  _leadStatusesDraft = PIPE_TEMPLATES[pipeById(_stagesPipe).tpl].map(st => Object.assign({}, st));
-  renderLeadStatusesList();
-}
-function saveLeadStatusesFromModal() {
-  if (!_leadStatusesDraft || !_leadStatusesDraft.length) return;
-  for (const st of _leadStatusesDraft) {
-    const n = (st.name || '').trim();
-    if (!n) { alert('У всех колонок должно быть название.'); return; }
-    st.name = n; st.short = n; st.phase = st.phase || 'work'; st.kind = phaseKind(st.phase);
-  }
-  if (!_leadStatusesDraft.some(st => st.phase === 'won')) {
-    if (!confirm('В воронке не останется колонки «Выиграно». Продажи этого продукта перестанут попадать в финансы и «Купившие». Сохранить всё равно?')) return;
-  }
-  // У встроенной стадии сменили фазу: даём ей свой id, иначе «выиграно/нет» разъедется между воронками
-  const builtin = new Map([...PIPE_TEMPLATES.b2b, ...PIPE_TEMPLATES.intensive].map(st => [st.id, st]));
-  const reId = {};
-  const draft = _leadStatusesDraft.map(st => {
-    const b = builtin.get(st.id);
-    if (b && b.phase !== st.phase) { const nid = genStageId(); reId[st.id] = nid; return Object.assign({}, st, { id: nid }); }
-    return Object.assign({}, st);
-  });
-  const oldList = pipeStatuses(_stagesPipe);
-  const newIds = new Set(draft.map(st => st.id));
-  const leads = loadLeadsRaw();
-  const moves = [];
-  let lost = 0;
-  for (const l of leads) {
-    if (l.deleted || dealPipe(l) !== _stagesPipe) continue;
-    let target = null;
-    if (reId[l.status]) target = reId[l.status];
-    else if (!newIds.has(l.status)) {
-      const old = oldList.find(st => st.id === l.status) || LEAD_STATUSES.find(st => st.id === l.status);
-      const t = (old && draft.find(st => st.phase === old.phase)) || draft[0];
-      target = t.id; lost++;
-    }
-    if (target && target !== l.status) moves.push([l, target]);
-  }
-  if (lost && !confirm('В удалённых колонках сделок: ' + lost + '. Они переедут в колонку той же фазы, а если такой нет, в первую. Сохранить?')) return;
-  PIPE_STAGES[_stagesPipe] = draft.map(st => ({ id: st.id, name: st.name, short: st.short, color: st.color, phase: st.phase, kind: st.kind, wait: st.wait || undefined }));
-  localStorage.setItem('pipe_stages', JSON.stringify(PIPE_STAGES));
-  rebuildStatusRegistry();
-  if (moves.length) {
-    moves.forEach(([l, t]) => { l.status = t; l.updated_at = tsPlus1(l.updated_at); });
-    saveLeads(leads);
-  }
-  const pname = pipeById(_stagesPipe).name;
-  loadStagesDraft();
-  render();
-  renderPipes();
-  toast(moves.length ? 'Колонки «' + pname + '» сохранены. Перенесено сделок: ' + moves.length : 'Колонки «' + pname + '» сохранены');
 }
 
 // ===== INTEREST TAGS MANAGER =====
@@ -6026,179 +4762,8 @@ function saveInterestTagsFromModal() {
 }
 
 // ===== WAITLIST MODAL (создание/редактирование одного списка) =====
-let _currentWaitlistId = null;
-function openWaitlistModal(id) {
-  const w = id ? waitlistById(id) : null;
-  _currentWaitlistId = w ? w.id : null;
-  document.getElementById('waitlistModalId').value = w ? w.id : '';
-  document.getElementById('waitlistName').value = w ? w.name : '';
-  document.getElementById('waitlistDate').value = w ? (w.event_date || '') : '';
-  document.getElementById('waitlistClosed').value = w && w.closed ? '1' : '0';
-  document.getElementById('waitlistNote').value = w ? (w.note || '') : '';
-  document.getElementById('waitlistDeleteBtn').style.display = w ? '' : 'none';
-  document.getElementById('waitlistModalBg').classList.add('show');
-  setTimeout(() => { if (!w) document.getElementById('waitlistName').focus(); }, 50);
-}
-function closeWaitlistModal() {
-  document.getElementById('waitlistModalBg').classList.remove('show');
-  _currentWaitlistId = null;
-}
-function saveWaitlistFromModal() {
-  const name = document.getElementById('waitlistName').value.trim();
-  if (!name) { alert('Название обязательно'); return; }
-  const date = document.getElementById('waitlistDate').value || null;
-  const closed = document.getElementById('waitlistClosed').value === '1';
-  const note = document.getElementById('waitlistNote').value.trim();
-  const lists = loadWaitlistsRaw();
-  if (_currentWaitlistId) {
-    const w = lists.find(x => x.id === _currentWaitlistId);
-    if (!w) return;
-    w.name = name; w.event_date = date; w.closed = closed; w.note = note;
-    w.updated_at = nowIso();
-  } else {
-    const now = nowIso();
-    lists.push({ id: genWaitlistId(), name, event_date: date, closed, note, created_at: now, updated_at: now });
-  }
-  saveWaitlists(lists);
-  closeWaitlistModal();
-  render();
-  toast('Список сохранён');
-}
-function deleteWaitlistFromModal() {
-  if (!_currentWaitlistId) return;
-  if (!confirm('Удалить список ожидания? Ссылки у лидов останутся, но список пропадёт из вкладки.')) return;
-  const lists = loadWaitlistsRaw();
-  const w = lists.find(x => x.id === _currentWaitlistId);
-  if (w) { w.deleted = true; w.updated_at = nowIso(); saveWaitlists(lists); }
-  closeWaitlistModal();
-  render();
-  toast('Удалено');
-}
-
-function convertAlumFromModal() {
-  if (!currentAlumId) return;
-  convertAlumToLead(currentAlumId);
-  closeAlumModal();
-}
-
-// «→ в Лиды»: создаём лид в активной воронке, выпускник остаётся в базе с пометкой
-function convertAlumToLead(id) {
-  const list = loadAlumni();
-  const a = list.find(x => x.id === id);
-  if (!a || a.converted) return;
-  const now = nowIso();
-  const leads = loadLeads();
-  const histLines = (a.history||[]).map(h => '— ' + h.text).join('\n');
-  const histText = 'Из базы выпускников' + (a.group ? ' · '+a.group : '') + (a.username ? ' · @'+a.username.replace(/^@/,'') : '')
-    + (a.note ? '. '+a.note : '') + (histLines ? '\nКасания:\n'+histLines : '');
-  const newLead = {
-    id: genLeadId(),
-    name: a.name,
-    company: a.company || a.group || '',
-    telegram: a.username ? '@' + String(a.username).replace(/^@/, '') : '',
-    phone: a.phone || '',
-    channel: 'alumni',
-    potential_chek_rub: a.potential_chek_rub || 0,
-    status: 'first_contact',
-    created_at: now, updated_at: now, status_changed_at: now, closed_at: null,
-    next_action: a.next_action || 'Связаться, прощупать задачу',
-    next_action_date: a.next_action_date || null,
-    transcripts: Array.isArray(a.transcripts) ? a.transcripts.slice() : [],
-    interests: Array.isArray(a.interests) ? a.interests.slice() : [],
-    waitlists: Array.isArray(a.waitlists) ? a.waitlists.slice() : [],
-    history: [{ date: now, text: histText }]
-  };
-  leads.push(newLead);
-  saveLeads(leads);
-  a.converted = true; a.lead_id = newLead.id;
-  const initialId = (ALUMNI_STATUSES[0] || {}).id;
-  if ((a.status || initialId) === initialId && ALUMNI_STATUSES[1]) a.status = ALUMNI_STATUSES[1].id;
-  a.last_touch_at = now; a.updated_at = now;
-  saveAlumni(list);
-  render();
-  toast('Заведён в Лиды →');
-}
-
-function openAlumLead(id) {
-  const a = loadAlumni().find(x => x.id === id);
-  navTo('leads');
-  if (a && a.lead_id) setTimeout(() => openLeadModal(a.lead_id), 120);
-}
-
-function renderWaitlists() {
-  const cont = document.getElementById('waitlistsContainer');
-  const lists = loadWaitlists().slice().sort((a, b) => {
-    // сначала открытые, внутри — по дате события (ближайшие первыми)
-    if (!!a.closed !== !!b.closed) return a.closed ? 1 : -1;
-    const da = a.event_date || '9999-12-31';
-    const db = b.event_date || '9999-12-31';
-    return da.localeCompare(db);
-  });
-  const leads = loadLeads();
-  const alumni = loadAlumni();
-  const clientsWl = loadClients();
-  const dealsByClient = {};
-  leads.forEach(l => { (dealsByClient[l.client_id] = dealsByClient[l.client_id] || []).push(l); });
-  // Badge
-  const openCount = lists.filter(w => !w.closed).length;
-  const badge = document.getElementById('navWaitlistsBadge');
-  if (badge) badge.textContent = openCount;
-
-  if (!cont) return;
-  if (!lists.length) {
-    cont.innerHTML = '<div class="waitlist-empty">Ни одного списка. Заведи первый — например, «Интенсив ' + MONTHS_FULL[new Date().getMonth()] + '».</div>';
-    return;
-  }
-  cont.innerHTML = lists.map(w => {
-    // в список ожидания могут попасть и лиды, и выпускники
-    const members = []
-      .concat(clientsWl.filter(c => Array.isArray(c.waitlists) && c.waitlists.includes(w.id))
-        .map(c => {
-          const ds = (dealsByClient[c.id] || []).slice().sort((a, b) => (leadStatusKind(a.status) === 'active' ? 0 : 1) - (leadStatusKind(b.status) === 'active' ? 0 : 1) || new Date(b.updated_at) - new Date(a.updated_at));
-          const d = ds[0];
-          return d ? { kind:'lead', id:d.id, name:c.name, company:c.company, interests:c.interests, chek:d.potential_chek_rub, st:dealStatusDef(d) } : null;
-        }).filter(Boolean))
-      .concat(alumni.filter(a => Array.isArray(a.waitlists) && a.waitlists.includes(w.id))
-        .map(a => ({ kind:'alum', id:a.id, name:a.name, company:a.company || a.group, interests:a.interests, chek:a.potential_chek_rub, st:alumStatusById(a.status) })));
-    const dateStr = w.event_date ? fmtDateShort(w.event_date) : 'без даты';
-    const cls = 'waitlist-card' + (w.closed ? ' closed' : '');
-    const rows = members.length
-      ? members.map(m => {
-          const st = m.st || {};
-          const chek = m.chek ? fmtMoneyRubShort(m.chek) : '';
-          const interests = (Array.isArray(m.interests) && m.interests.length)
-            ? m.interests.map(id => { const t = interestTagById(id); return t ? '<span class="lead-card-interest" style="--_c:'+t.color+'">'+escapeHtml(t.name)+'</span>' : ''; }).join('')
-            : '';
-          const opener = m.kind === 'alum' ? 'openAlumModal' : 'openLeadModal';
-          const kindTag = m.kind === 'alum' ? ' <span class="waitlist-member-kind">выпускник</span>' : '';
-          return '<div class="waitlist-member" onclick="'+opener+'(\''+m.id+'\')">'+
-            '<div class="waitlist-member-main">'+
-              '<div class="waitlist-member-name">'+escapeHtml(m.name)+(m.company ? ' <span class="waitlist-member-company">· '+escapeHtml(m.company)+'</span>' : '')+kindTag+'</div>'+
-              (interests ? '<div class="lead-card-interests">'+interests+'</div>' : '')+
-            '</div>'+
-            '<div class="waitlist-member-side">'+
-              (chek ? '<span class="waitlist-member-chek">'+chek+'</span>' : '')+
-              '<span class="waitlist-member-status" style="--_c:'+(st.color||'#9ca3af')+'">'+escapeHtml(st.short||st.name||'')+'</span>'+
-            '</div>'+
-          '</div>';
-        }).join('')
-      : '<div class="waitlist-empty" style="padding:14px">Пока никто не добавлен. Открой карточку лида или выпускника и отметь чипс с этим списком.</div>';
-    return '<div class="'+cls+'">'+
-      '<div class="waitlist-head" onclick="openWaitlistModal(\''+w.id+'\')">'+
-        '<div>'+
-          '<div class="waitlist-name">'+escapeHtml(w.name)+(w.closed ? ' <span class="waitlist-closed-tag">закрыт</span>' : '')+'</div>'+
-          '<div class="waitlist-sub">'+escapeHtml(dateStr)+' · '+members.length+' чел.'+(w.note ? ' · '+escapeHtml(w.note) : '')+'</div>'+
-        '</div>'+
-        '<button class="waitlist-edit" onclick="event.stopPropagation(); openWaitlistModal(\''+w.id+'\')" title="Редактировать">⚙</button>'+
-      '</div>'+
-      '<div class="waitlist-members">'+rows+'</div>'+
-    '</div>';
-  }).join('');
-}
-
 function render() {
-  ensurePipelines();
-  renderPipesSafe();
+  ensureModel();
   renderMetrics();
   renderWeekBars();
   renderRecentList();
@@ -6213,8 +4778,6 @@ function render() {
   renderHistory();
   renderCalcRecent();
   renderLeadsKanban();
-  renderAlumni();
-  renderWaitlists();
   renderProjects();
   renderEvents();
   renderAlert();
@@ -6848,7 +5411,7 @@ function generateLeadsMarkdown(allLeads) {
     const inPipe = leads.filter(l => dealPipe(l) === pipe.id);
     if (!inPipe.length) continue;
     md += '## '+pipe.name+' ('+inPipe.length+')\n\n';
-    for (const st of pipeStatuses(pipe.id)) {
+    for (const st of STAGES) {
       const group = inPipe.filter(l => l.status === st.id);
       if (!group.length) continue;
       md += '### '+st.name+' ('+group.length+')\n\n';
@@ -6857,6 +5420,7 @@ function generateLeadsMarkdown(allLeads) {
         md += '#### '+l.name+(l.company ? ' — '+l.company : '')+(l.title && l.title !== l.name ? ' · '+l.title : '')+'\n';
         md += '- channel: '+(CHANNEL_LABELS[l.channel]||l.channel)+(l.potential_chek_rub ? ', chek: '+l.potential_chek_rub.toLocaleString('ru-RU')+' ₽' : '')+'\n';
         if (l.telegram || l.phone) md += '- контакт:'+(l.telegram ? ' TG '+l.telegram : '')+(l.phone ? ' тел '+l.phone : '')+'\n';
+        if (l.flow) md += '- поток: '+l.flow+'\n';
         if (l.next_action) md += '- next: '+l.next_action+(l.next_action_date ? ' ('+l.next_action_date+')' : '')+'\n';
         md += '- обновлён: '+new Date(l.updated_at).toISOString().slice(0,10)+'\n\n';
         const hist = (l.history || []).slice(0, 5);
@@ -7105,10 +5669,10 @@ seedLeadsIfEmpty();
 importLeadsFromVault();
 migrateDealsToLeads();
 migrateTranscripts();
-ensurePipelines();
+ensureModel();
 seedProjectsIfEmpty();
 const savedPage = localStorage.getItem('activeTab') || 'home';
-navTo(['home','leads','pipes','alumni','waitlists','today','finance','history','projects','events'].includes(savedPage) ? savedPage : 'home');
+navTo(['home','leads','today','finance','history','projects','events'].includes(savedPage) ? savedPage : 'home');
 render();
 setInterval(render, 60000);
 // Первый заход без кэша — подтянуть курируемую ленту из GitHub; дальше обновляет кнопка (живой поиск)
