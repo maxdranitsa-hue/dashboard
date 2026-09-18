@@ -824,10 +824,11 @@
   .lead-card-note { margin-top:8px; padding-top:8px; border-top:1px solid var(--border); font-size:11px; color:var(--text-2); line-height:1.35; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
   .lead-card-note.lost { color:#d70015; }
   .chip-channel { background:var(--fill); color:var(--text-2); font-weight:600; }
-  .lead-card-assign { display:inline-flex; align-items:center; font-family:inherit; font-size:10.5px; font-weight:700; line-height:1.6; padding:2px 8px; border:1px dashed var(--border-2); border-radius:999px; background:transparent; color:var(--text-3); cursor:pointer; appearance:none; -webkit-appearance:none; outline:none; max-width:100px; text-overflow:ellipsis; }
+  .lead-card-assign { display:inline-block; vertical-align:middle; font-family:inherit; font-size:10.5px; font-weight:700; line-height:1.6; padding:1px 8px; border:1px dashed var(--border-2); border-radius:999px; background:transparent; color:var(--text-3); cursor:pointer; appearance:none; -webkit-appearance:none; outline:none; max-width:100px; text-overflow:ellipsis; height:auto; }
   .lead-card-assign:hover { border-color:var(--green-light-2); color:var(--green-dark); background:var(--green-bg-soft); }
 
-  .chip { --_c:#9ca3af; display:inline-flex; align-items:center; gap:4px; font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:999px; white-space:nowrap; line-height:1.6; }
+  .chip { --_c:#9ca3af; display:inline-flex; align-items:center; gap:4px; font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:999px; white-space:nowrap; line-height:1.6; max-width:100%; overflow:hidden; text-overflow:ellipsis; }
+  .lead-card-tags .chip { display:inline-block; vertical-align:middle; }
   .chip-product { background:color-mix(in srgb, var(--_c) 13%, #fff); color:color-mix(in srgb, var(--_c) 72%, #111); }
   .chip-product.none { background:var(--fill); color:var(--text-3); font-weight:600; }
   .chip-flow { background:#fff4e0; color:#8a4b00; }
@@ -3400,20 +3401,22 @@ function leadCardEl(lead, clientsMap, perClient, grads, assignOpts) {
   const assign = !dealHasProduct(lead)
     ? '<select class="lead-card-assign" onclick="event.stopPropagation()" onchange="if(this.value) setDealPipe(\''+lead.id+'\', this.value)" title="Назначить продукт"><option value="">+ продукт</option>'+assignOpts+'</select>'
     : '';
-  const channel = lead.channel && !(lead.channel === 'alumni' && grads.has(lead.client_id)) ? channelDisplay(lead.channel) : '';
+  const isGrad = grads.has(lead.client_id);
+  const chName = lead.channel ? channelDisplay(lead.channel) : '';
+  const channel = chName && !(isGrad && (lead.channel === 'alumni' || /выпускник/i.test(chName))) ? chName : '';
   const chips = prods.map(p => '<span class="chip chip-product" style="--_c:'+p.color+'">'+escapeHtml(p.short)+'</span>').join('')
-    + assign
+    + (lead.flow ? '<span class="chip chip-flow" title="Поток: '+escapeHtml(lead.flow)+'">'+escapeHtml(lead.flow)+'</span>' : '')
     + (channel ? '<span class="chip chip-channel" title="Канал">'+escapeHtml(channel)+'</span>' : '')
-    + (lead.flow ? '<span class="chip chip-flow" title="Поток">'+escapeHtml(lead.flow)+'</span>' : '')
-    + (grads.has(lead.client_id) ? '<span class="chip chip-grad" title="Выпускник'+(cohorts.length ? ' · '+escapeHtml(cohorts.join(', ')) : '')+'">Выпускник</span>' : '')
-    + (others > 0 ? '<span class="chip chip-more" title="У клиента есть и другие сделки">+'+others+' '+pluralDeals(others)+'</span>' : '');
+    + (isGrad ? '<span class="chip chip-grad" title="Выпускник'+(cohorts.length ? ' · '+escapeHtml(cohorts.join(', ')) : '')+'">Выпускник</span>' : '')
+    + (others > 0 ? '<span class="chip chip-more" title="У клиента есть и другие сделки">+'+others+' '+pluralDeals(others)+'</span>' : '')
+    + assign;
   // Нижняя строка как в референсе: у активных следующий шаг, у закрытых последняя запись истории (у отказа красным, как причина)
   const clock = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
   let foot = '';
   if (st.kind === 'active') {
     foot = lead.next_action
       ? '<div class="lead-card-next">'+clock+'<span>'+escapeHtml(lead.next_action)+(lead.next_action_date ? ' <b>· '+escapeHtml(fmtDateShort(lead.next_action_date))+'</b>' : '')+'</span></div>'
-      : '<div class="lead-card-next muted">'+clock+'<span>Следующий шаг не задан</span></div>';
+      : '';
   } else {
     const last = (lead.history || []).slice().sort((a, b) => new Date(b.date) - new Date(a.date))[0];
     if (last && last.text) foot = '<div class="lead-card-note '+(st.kind === 'lost' ? 'lost' : '')+'">'+escapeHtml(last.text)+'</div>';
@@ -3423,7 +3426,7 @@ function leadCardEl(lead, clientsMap, perClient, grads, assignOpts) {
     + (sub ? '<div class="lead-card-company">'+escapeHtml(sub)+'</div>' : '')
     + '<div class="lead-card-tags">'+chips+'</div>'
     + '<div class="lead-card-meta">'
-    +   (lead.potential_chek_rub ? '<span class="lead-card-amount">'+escapeHtml(fmtMoneyRub(lead.potential_chek_rub))+'</span>' : st.kind === 'active' ? '<span class="lead-card-amount none">чек не указан</span>' : '<span></span>')
+    +   (lead.potential_chek_rub ? '<span class="lead-card-amount">'+escapeHtml(fmtMoneyRub(lead.potential_chek_rub))+'</span>' : '<span></span>')
     +   '<span class="lead-card-days '+daysCls+'">'+daysText+'</span>'
     + '</div>'
     + foot;
