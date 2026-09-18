@@ -4,9 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Дашборд — Макс Драница</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
   :root {
@@ -48,8 +45,7 @@
   }
   html, body { height:100%; -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', system-ui, sans-serif;
-    font-feature-settings: 'cv11', 'ss01';
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', system-ui, sans-serif;
     background: var(--bg);
     color: var(--text);
     font-size: 14px;
@@ -237,6 +233,7 @@
     filter: drop-shadow(0 0 5px rgba(0, 214, 143, 0.55));
   }
   .user-name { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.2; }
+  .user-role { font-size: 11px; color: var(--text-3); }
 
   /* ============ CONTENT ============ */
   .content { display: flex; flex-direction: column; gap: 14px; }
@@ -349,12 +346,15 @@
   .metric-card {
     background: var(--sidebar-bg);
     border-radius: var(--r-lg);
-    padding: 22px 24px;
+    padding: 20px 22px;
     position: relative;
     cursor: default;
-    transition: transform .15s;
+    box-shadow: 0 0 0 1px var(--hair), var(--shadow);
+    transition: transform .15s var(--ease), box-shadow .15s var(--ease);
   }
   .metric-card:hover { transform: translateY(-2px); }
+  .metric-ico { width: 30px; height: 30px; border-radius: 50%; background: var(--fill); display: flex; align-items: center; justify-content: center; color: var(--text-2); flex-shrink: 0; }
+  .metric-ico svg { width: 15px; height: 15px; }
   .metric-card.accent {
     background: linear-gradient(160deg, var(--green-dark) 0%, var(--green-darker) 100%);
     color: #fff;
@@ -378,12 +378,13 @@
       radial-gradient(ellipse at bottom left, rgba(0,214,143,.06), transparent 50%),
       linear-gradient(160deg, var(--green-dark) 0%, var(--green-darker) 100%);
     color: #fff;
-    padding: 26px 28px;
+    padding: 22px 24px;
     display: flex;
     align-items: stretch;
     gap: 22px;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 0 0 1px rgba(13,58,44,.35), var(--shadow);
   }
   .metric-card.hero::before { display: none; }
   .hero-left {
@@ -441,12 +442,12 @@
   }
   .metric-head {
     display: flex; justify-content: space-between; align-items: flex-start;
-    margin-bottom: 18px;
+    margin-bottom: 14px; gap: 10px;
   }
   .metric-label {
-    font-size: 14px; font-weight: 600;
-    color: var(--text);
-    letter-spacing: -.2px;
+    font-size: 13px; font-weight: 600;
+    color: var(--text-2);
+    letter-spacing: -.1px;
   }
   .metric-card.accent .metric-label { color: rgba(255,255,255,.95); }
   .metric-arrow {
@@ -463,10 +464,11 @@
   }
   .metric-arrow svg { width: 14px; height: 14px; }
   .metric-value {
-    font-size: 40px; font-weight: 700;
+    font-size: 32px; font-weight: 700;
     line-height: 1;
-    letter-spacing: -1px;
-    margin-bottom: 14px;
+    letter-spacing: -.03em;
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 12px;
   }
   .metric-card.accent .metric-value { color: #fff; }
   .metric-trend {
@@ -770,7 +772,7 @@
   .kanban-col-title { font-size:12.5px; font-weight:700; letter-spacing:-.01em; display:flex; align-items:center; gap:7px; color:var(--text); white-space:nowrap; }
   .kanban-col-dot { width:8px; height:8px; border-radius:50%; background:var(--_lead-color); box-shadow:0 0 0 3px color-mix(in srgb, var(--_lead-color) 18%, transparent); flex-shrink:0; }
   .kanban-col-count { font-size:11px; font-weight:700; background:#fff; padding:2px 7px; border-radius:999px; color:var(--text-2); box-shadow:0 1px 1px rgba(0,0,0,.04); font-variant-numeric:tabular-nums; }
-  .kanban-col-sum { font-size:11px; font-weight:700; color:color-mix(in srgb, var(--_lead-color) 70%, #111); white-space:nowrap; font-variant-numeric:tabular-nums; }
+  .kanban-col-sum { font-size:11px; font-weight:700; color:color-mix(in srgb, var(--_lead-color) 70%, #111); white-space:nowrap; font-variant-numeric:tabular-nums; padding:0 4px 8px; margin-top:-4px; }
   .kanban-col-head-right { display:flex; align-items:center; gap:4px; }
   .kanban-col-add, .kanban-col-fold { width:22px; height:22px; border-radius:7px; border:none; background:transparent; color:var(--text-3); cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; line-height:1; transition:background .15s var(--ease), color .15s var(--ease), transform .1s var(--ease); }
   .kanban-col-add { font-size:16px; font-weight:600; }
@@ -814,6 +816,9 @@
   .lead-card-days { font-size:10.5px; color:var(--text-3); font-weight:600; }
   .lead-card-days.warn { color:#c77700; }
   .lead-card-days.bad { color:#d70015; }
+  .lead-card-next { margin-top:8px; padding-top:8px; border-top:1px solid var(--border); font-size:11px; color:var(--text-2); display:flex; gap:6px; align-items:flex-start; line-height:1.35; }
+  .lead-card-next svg { width:12px; height:12px; flex-shrink:0; margin-top:2px; color:var(--text-3); }
+  .lead-card-next b { font-weight:700; color:var(--text-2); white-space:nowrap; }
   .lead-card-assign { margin-top:8px; width:100%; font-family:inherit; font-size:11px; font-weight:600; border:1px dashed var(--border-2); border-radius:8px; padding:5px 8px; background:transparent; color:var(--text-2); cursor:pointer; appearance:none; -webkit-appearance:none; outline:none; }
   .lead-card-assign:hover { border-color:var(--green-light-2); color:var(--green-dark); background:var(--green-bg-soft); }
 
@@ -1008,33 +1013,33 @@
   /* ============ MODAL ============ */
   .modal-bg { display:none; position:fixed; inset:0; background:rgba(20,24,22,.32); backdrop-filter:blur(10px) saturate(140%); -webkit-backdrop-filter:blur(10px) saturate(140%); z-index:100; justify-content:center; align-items:flex-start; padding:40px 20px; overflow-y:auto; }
   .modal-bg.show { display:flex; animation:scrimIn .2s var(--ease); }
-  .modal { background:#fff; border-radius:20px; padding:24px; width:100%; max-width:520px; box-shadow:0 0 0 1px var(--hair), 0 30px 80px -20px rgba(0,0,0,.4); margin:auto; }
+  .modal { background:#fff; border-radius:22px; padding:24px; width:100%; max-width:560px; box-shadow:0 0 0 1px var(--hair), 0 30px 80px -20px rgba(0,0,0,.4); margin:auto; }
   .modal-bg.show .modal { animation:modalIn .26s var(--ease); }
   @keyframes scrimIn { from { opacity:0; } to { opacity:1; } }
   @keyframes modalIn { from { opacity:0; transform:translateY(10px) scale(.98); } to { opacity:1; transform:none; } }
-  .modal.compact { padding:20px; max-width:460px; }
+  .modal.compact { padding:22px 24px; max-width:540px; }
   .modal h3 { font-size:18px; margin-bottom:18px; font-weight:700; letter-spacing:-.2px; }
 
   /* Lead modal — компактная */
   .lead-modal-head { display:flex; justify-content:space-between; align-items:flex-start; gap:14px; margin-bottom:14px; }
   .lead-modal-title-block { flex:1; min-width:0; }
-  .lead-modal-name { font-size:18px; font-weight:700; line-height:1.2; word-break:break-word; }
+  .lead-modal-name { font-size:19px; font-weight:700; line-height:1.2; letter-spacing:-.02em; word-break:break-word; }
   .lead-modal-company { font-size:13px; color:var(--text-2); margin-top:3px; word-break:break-word; }
-  .lead-modal-close { background:var(--bg); border:none; border-radius:50%; width:32px; height:32px; cursor:pointer; color:var(--text-2); font-size:18px; line-height:1; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .lead-modal-close { background:var(--fill); border:none; border-radius:10px; width:32px; height:32px; cursor:pointer; color:var(--text-2); font-size:18px; line-height:1; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
   .lead-modal-close:hover { background:var(--border); color:var(--text); }
-  .lead-fields-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px 12px; margin-bottom:14px; }
+  .lead-fields-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
   .lead-field-mini { display:flex; flex-direction:column; gap:3px; min-width:0; }
-  .lead-field-mini label { font-size:10px; color:var(--text-3); text-transform:uppercase; letter-spacing:.4px; font-weight:600; }
-  .lead-field-mini select, .lead-field-mini input { width:100%; border:1px solid var(--border-2); border-radius:9px; padding:8px 10px; font-size:13px; font-family:inherit; outline:none; background:#fff; color:var(--text); transition:border-color .15s var(--ease), box-shadow .15s var(--ease); }
-  .lead-field-mini select:focus, .lead-field-mini input:focus { border-color:var(--green-dark); box-shadow:0 0 0 3px var(--ring); }
+  .lead-field-mini label { font-size:11px; color:var(--text-3); text-transform:uppercase; letter-spacing:.8px; font-weight:700; margin-bottom:3px; }
+  .lead-field-mini select, .lead-field-mini input { width:100%; border:1px solid transparent; border-radius:10px; padding:10px 12px; font-size:13px; font-family:inherit; outline:none; background:var(--bg); color:var(--text); transition:border-color .15s var(--ease), background .15s var(--ease); }
+  .lead-field-mini select:focus, .lead-field-mini input:focus { border-color:var(--green-mid); background:#fff; }
   .lead-field-mini.full { grid-column: span 2; }
-  .lead-field-mini textarea { width:100%; border:1.5px solid var(--border-2); border-radius:8px; padding:7px 10px; font-size:13px; font-family:inherit; line-height:1.45; outline:none; background:#fff; resize:vertical; min-height:56px; box-sizing:border-box; color:var(--text); }
-  .lead-field-mini textarea:focus { border-color:var(--green-dark); }
+  .lead-field-mini textarea { width:100%; border:1px solid transparent; border-radius:10px; padding:10px 12px; font-size:13px; font-family:inherit; line-height:1.45; outline:none; background:var(--bg); resize:vertical; min-height:70px; box-sizing:border-box; color:var(--text); transition:border-color .15s var(--ease), background .15s var(--ease); }
+  .lead-field-mini textarea:focus { border-color:var(--green-mid); background:#fff; }
   .lead-icon-tr { color:var(--text-3); }
-  .lead-icon-input { display:flex; align-items:center; gap:7px; width:100%; border:1px solid var(--border-2); border-radius:9px; padding:0 10px; background:#fff; box-sizing:border-box; transition:border-color .15s var(--ease), box-shadow .15s var(--ease); }
-  .lead-icon-input:focus-within { border-color:var(--green-dark); box-shadow:0 0 0 3px var(--ring); }
+  .lead-icon-input { display:flex; align-items:center; gap:8px; width:100%; border:1px solid transparent; border-radius:10px; padding:0 12px; background:var(--bg); box-sizing:border-box; transition:border-color .15s var(--ease), background .15s var(--ease); }
+  .lead-icon-input:focus-within { border-color:var(--green-mid); background:#fff; }
   .lead-icon-input svg { width:15px; height:15px; flex-shrink:0; }
-  .lead-icon-input input { flex:1; width:auto; border:none; background:transparent; outline:none; padding:8px 0; font-size:13px; font-family:inherit; color:var(--text); min-width:0; }
+  .lead-icon-input input { flex:1; width:auto; border:none; background:transparent; outline:none; padding:10px 0; font-size:13px; font-family:inherit; color:var(--text); min-width:0; }
   .lead-icon-tg { color:#26A5E4; }
   .lead-icon-ph { color:var(--green-dark); }
   .lead-icon-co { color:var(--text-3); }
@@ -1121,8 +1126,8 @@
   /* транскрипты */
   .lm-form { background:var(--green-bg-soft); border-radius:10px; padding:10px; margin-bottom:10px; display:none; }
   .lm-form.show { display:block; }
-  .lm-form input, .lm-form textarea { width:100%; border:1.5px solid var(--border-2); border-radius:8px; padding:8px 10px; font-family:inherit; font-size:13px; outline:none; background:#fff; color:var(--text); box-sizing:border-box; }
-  .lm-form input:focus, .lm-form textarea:focus { border-color:var(--green-dark); }
+  .lm-form input, .lm-form textarea { width:100%; border:1px solid transparent; border-radius:10px; padding:10px 12px; font-family:inherit; font-size:13px; outline:none; background:#fff; color:var(--text); box-sizing:border-box; }
+  .lm-form input:focus, .lm-form textarea:focus { border-color:var(--green-mid); }
   .lm-form textarea { min-height:58px; resize:vertical; margin-top:7px; line-height:1.45; }
   .lm-form-actions { display:flex; gap:6px; margin-top:7px; justify-content:flex-end; }
   .lm-tr-item { display:flex; align-items:flex-start; gap:9px; background:var(--bg); border-radius:9px; padding:9px 10px; margin-bottom:7px; }
@@ -1142,14 +1147,20 @@
   .lead-history-title { font-size:12px; font-weight:700; color:var(--text-2); text-transform:uppercase; letter-spacing:.4px; }
   .lead-history-add-btn { background:var(--green-dark); color:#fff; border:none; border-radius:7px; padding:5px 11px; font-size:11px; font-weight:700; cursor:pointer; font-family:inherit; display:inline-flex; align-items:center; gap:4px; }
   .lead-history-add-btn:hover { background:var(--green-darker); }
-  .lead-history-list { display:flex; flex-direction:column; gap:8px; margin-bottom:14px; }
+  .lead-history-list { display:flex; flex-direction:column; gap:2px; margin-bottom:14px; }
   .lead-history-empty { font-size:12px; color:var(--text-3); padding:10px; text-align:center; font-style:italic; background:var(--bg); border-radius:8px; }
-  .lead-history-item { position:relative; background:var(--bg); border-radius:8px; padding:9px 12px; font-size:13px; line-height:1.45; }
-  .lead-history-date { font-size:10px; color:var(--text-3); font-weight:600; margin-bottom:3px; text-transform:uppercase; letter-spacing:.3px; padding-right:24px; }
+  .lead-history-item { position:relative; display:flex; gap:11px; align-items:flex-start; background:transparent; border-radius:10px; padding:7px 10px 7px 8px; font-size:12.5px; line-height:1.45; }
+  .hist-dot { width:8px; height:8px; border-radius:50%; background:var(--border-2); margin-top:6px; flex-shrink:0; box-shadow:0 0 0 3px #fff; position:relative; z-index:1; }
+  .lead-history-item:first-child .hist-dot { background:var(--good, #178a5e); }
+  .hist-body { flex:1; min-width:0; }
+  .lead-history-list:not(:empty) { position:relative; }
+  .lead-history-list::before { content:''; position:absolute; left:11px; top:14px; bottom:14px; width:1px; background:var(--border-2); }
+  .lead-history-item.editing { display:block; background:var(--green-bg-soft); padding:10px; }
+  .lead-history-date { font-size:11px; color:var(--text-3); font-weight:500; margin-top:2px; padding-right:24px; }
   .lead-history-text { color:var(--text); white-space:pre-wrap; word-break:break-word; }
   .lead-history-edit { position:absolute; top:6px; right:8px; color:var(--text-2); font-size:14px; line-height:1; pointer-events:none; }
   .lead-history-item:not(.editing) { cursor:pointer; transition:background .12s; }
-  .lead-history-item:not(.editing):hover { background:var(--green-bg-soft); }
+  .lead-history-item:not(.editing):hover { background:var(--fill); }
   .lead-history-item:not(.editing):hover .lead-history-edit { color:var(--green-dark); }
   .lead-history-item.editing { background:var(--green-bg-soft); cursor:default; }
   .lead-history-editdate { width:100%; border:1.5px solid var(--border-2); border-radius:6px; padding:6px 8px; font-family:inherit; font-size:12px; margin-bottom:6px; background:#fff; color:var(--text); }
@@ -1162,15 +1173,15 @@
   .lead-modal-actions button { white-space:nowrap; }
   .lead-modal-actions-left { display:flex; gap:6px; }
   .lead-modal-actions-right { display:flex; gap:6px; }
-  .lead-modal-actions .danger { background:transparent; color:#dc2626; border:1px solid #fecaca; padding:7px 12px; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; }
-  .lead-modal-actions .danger:hover { background:#fee2e2; }
+  .lead-modal-actions .danger { background:var(--fill); color:#d70015; border:none; padding:10px 14px; border-radius:11px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; }
+  .lead-modal-actions .danger:hover { background:rgba(215,0,21,.1); }
   .modal-field { margin-bottom:14px; }
   .modal-field label { display:block; font-size:11px; color:var(--text-2); text-transform:uppercase; letter-spacing:.4px; margin-bottom:6px; font-weight:600; }
   .modal-field input, .modal-field textarea, .modal-field select { width:100%; border:1.5px solid var(--border-2); border-radius:10px; padding:11px 14px; font-size:13px; font-family:inherit; outline:none; transition:border-color .12s; background:#fff; }
   .modal-field input:focus, .modal-field textarea:focus, .modal-field select:focus { border-color:var(--green-dark); }
   .modal-field textarea { resize:vertical; min-height:60px; }
   .modal-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:20px; }
-  .modal-btn { padding:10px 20px; border-radius:10px; border:none; font-size:13px; font-weight:600; cursor:pointer; transition:background .15s var(--ease), transform .1s var(--ease); font-family:inherit; }
+  .modal-btn { padding:10px 17px; border-radius:11px; border:none; font-size:13px; font-weight:600; letter-spacing:-.005em; cursor:pointer; transition:background .15s var(--ease), transform .1s var(--ease); font-family:inherit; }
   .modal-btn:active { transform:scale(.97); }
   .modal-btn.primary { background:var(--green-dark); color:#fff; }
   .modal-btn.primary:hover { background:var(--green-darker); }
@@ -1222,6 +1233,31 @@
   .toast { position:fixed; bottom:24px; left:50%; transform:translate(-50%, 8px); background:rgba(28,28,30,.9); backdrop-filter:blur(14px) saturate(140%); -webkit-backdrop-filter:blur(14px) saturate(140%); color:#fff; padding:12px 22px; border-radius:14px; font-weight:600; font-size:13px; letter-spacing:-.005em; box-shadow:0 12px 32px -8px rgba(0,0,0,.4); opacity:0; transition:opacity .25s var(--ease), transform .25s var(--ease); z-index:1000; pointer-events:none; }
   .toast.show { opacity:1; transform:translate(-50%, 0); }
 
+  /* ===== ШАГ 5: тултип графиков, остальные разделы в общих токенах ===== */
+  .tip { position:fixed; z-index:200; pointer-events:none; background:rgba(28,28,30,.96); color:#fff; border-radius:10px; padding:9px 12px; font-size:12px; line-height:1.45; box-shadow:var(--shadow-lg); opacity:0; transform:translateY(4px); transition:opacity .12s var(--ease), transform .12s var(--ease); max-width:260px; }
+  .tip.show { opacity:1; transform:translateY(0); }
+  .tip b { font-weight:700; }
+  .tip .tip-row { display:flex; align-items:center; gap:10px; justify-content:space-between; margin-top:4px; }
+  .tip .tip-k { display:inline-flex; align-items:center; gap:6px; color:rgba(255,255,255,.72); }
+  .tip .tip-sw { width:8px; height:8px; border-radius:2px; }
+  .tip .tip-v { font-variant-numeric:tabular-nums; font-weight:700; }
+  .bar-shape { cursor:default; }
+  .bar-shape:hover { filter:brightness(1.06); }
+  .donut-svg { cursor:default; }
+  .events-select { border:1px solid transparent; background:var(--fill); border-radius:10px; padding:8px 12px; font-family:inherit; font-weight:500; }
+  .events-select:focus { outline:none; background:#fff; border-color:var(--green-mid); }
+  .ev-card { box-shadow:0 0 0 1px var(--hair), var(--shadow); border-color:transparent; border-radius:var(--r); }
+  .ev-card.ev-soon { box-shadow:0 0 0 1.5px var(--green-light-2), var(--shadow); }
+  .history-filter-btn { border:1px solid var(--border-2); border-radius:999px; padding:6px 12px; font-family:inherit; font-size:12px; font-weight:600; background:#fff; }
+  .history-filter-btn.active { background:var(--green-bg-soft); color:var(--green-dark); border-color:color-mix(in srgb, var(--green-dark) 45%, transparent); }
+  .history-day, .deal-item, .project-idea-item, .archive-month { background:var(--fill); }
+  .project-card { background:var(--fill); }
+  .project-card:hover { background:#fff; box-shadow:0 0 0 1px var(--hair), var(--shadow-lg); }
+  .check-box { border-radius:7px; }
+  .quick-input, .touch-input, .log-input { border:1px solid transparent; background:var(--bg); border-radius:10px; padding:10px 12px; font-family:inherit; font-size:13px; outline:none; transition:border-color .15s var(--ease), background .15s var(--ease); }
+  .quick-input:focus, .touch-input:focus, .log-input:focus { border-color:var(--green-mid); background:#fff; }
+  .alert { border-radius:var(--r); box-shadow:0 0 0 1px rgba(253,230,138,.6); border-color:transparent; }
+
   /* ============ RESPONSIVE ============ */
   @media (max-width: 1280px) {
     .dashboard-grid { grid-template-columns: 1fr 1fr; }
@@ -1245,8 +1281,18 @@
     .leads-menu { background:#fff; }
   }
   @media (max-width: 720px) {
-    .app { padding: 8px; gap: 8px; }
-    .sidebar { width: 100%; position: relative; height: auto; }
+    .app { padding: 8px; gap: 8px; flex-direction: column; }
+    .sidebar { width: 100%; position: relative; height: auto; flex-direction: row; align-items: center; gap: 2px; padding: 8px 10px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    .sidebar::-webkit-scrollbar { display: none; }
+    .brand { padding: 0 8px 0 2px; flex-shrink: 0; }
+    .brand-name { display: none; }
+    .menu-section-label { display: none; }
+    .menu-item { padding: 8px 10px; gap: 7px; font-size: 12.5px; flex-shrink: 0; margin-bottom: 0; }
+    .menu-item.active::before { display: none; }
+    .menu-badge { padding: 2px 6px; }
+    .sync-widget { display: none; }
+    .user-chip > div { display: none; }
+    .user-avatar { width: 36px; height: 36px; }
     .main { gap: 8px; }
     .metrics-row { grid-template-columns: 1fr; }
     .bars-row { gap: 8px; }
@@ -1334,6 +1380,7 @@
         </div>
         <div>
           <div class="user-name">Макс Драница</div>
+          <div class="user-role">8 Digital · собственник</div>
         </div>
       </div>
     </header>
@@ -1363,7 +1410,7 @@
           <div class="metric-card clickable" onclick="openLeadsWithFilter('closed')" title="Открыть закрытые сделки">
             <div class="metric-head">
               <div class="metric-label">Закрытые лиды</div>
-              <div class="metric-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></div>
+              <div class="metric-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
             </div>
             <div class="metric-value" id="metricClosed">0</div>
             <div class="metric-trend">
@@ -1375,7 +1422,7 @@
           <div class="metric-card clickable" onclick="openLeadsWithFilter('active')" title="Открыть активную воронку">
             <div class="metric-head">
               <div class="metric-label">Активные лиды</div>
-              <div class="metric-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></div>
+              <div class="metric-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2.5"/><path d="M8 7V5.5A2.5 2.5 0 0 1 10.5 3h3A2.5 2.5 0 0 1 16 5.5V7"/></svg></div>
             </div>
             <div class="metric-value" id="metricActive">0</div>
             <div class="metric-trend">
@@ -1387,7 +1434,7 @@
           <div class="metric-card clickable" onclick="openLeadsWithFilter('wait')" title="Открыть лиды, ждущие ответа">
             <div class="metric-head">
               <div class="metric-label">Ждут ответа</div>
-              <div class="metric-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></div>
+              <div class="metric-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
             </div>
             <div class="metric-value" id="metricWait">0</div>
             <div class="metric-trend">
@@ -2004,6 +2051,7 @@
 </div>
 
 <div class="toast" id="toast"></div>
+<div class="tip" id="tip"></div>
 
 <script>
 const MONTHS_RU = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
@@ -2770,6 +2818,19 @@ function renderMetrics() {
 }
 
 // ===== WEEK BARS (касания за неделю) =====
+// Тултип графиков (как в референсе): один элемент на страницу, позиция у курсора
+function showTip(html, x, y) {
+  const el = document.getElementById('tip'); if (!el) return;
+  el.innerHTML = html; el.classList.add('show');
+  const r = el.getBoundingClientRect();
+  let left = x - r.width / 2, top = y - r.height - 12;
+  left = Math.max(10, Math.min(left, window.innerWidth - r.width - 10));
+  if (top < 10) top = y + 16;
+  el.style.left = left + 'px'; el.style.top = top + 'px';
+}
+function hideTip() { const el = document.getElementById('tip'); if (el) el.classList.remove('show'); }
+function pluralRu(n, one, few, many) { const m10 = n % 10, m100 = n % 100; if (m10 === 1 && m100 !== 11) return one; if (m10 >= 2 && m10 <= 4 && (m100 < 10 || m100 >= 20)) return few; return many; }
+
 function renderWeekBars() {
   const el = document.getElementById('weekBars');
   if (!el) return;
@@ -2797,7 +2858,8 @@ function renderWeekBars() {
     maxVal = Math.max(maxVal, touches);
     days.push({ label: DAYS_SHORT[i+1] || DAYS_SHORT[0], val: touches, isToday: i === todayIdx, isFuture: d > now && i !== todayIdx });
   }
-  el.innerHTML = days.map(d => {
+  const DAY_FULL = ['понедельник','вторник','среда','четверг','пятница','суббота','воскресенье'];
+  el.innerHTML = days.map((d, i) => {
     const heightPct = maxVal === 0 ? 0 : (d.val / maxVal) * 100;
     let cls;
     if (d.isFuture) cls = 'empty';
@@ -2806,10 +2868,16 @@ function renderWeekBars() {
     else if (d.val >= 7) cls = 'full';
     else cls = 'partial';
     return `<div class="bar-col">
-      <div class="bar-shape ${cls}" data-val="${d.val}" style="height:${Math.max(20, heightPct)}%"></div>
+      <div class="bar-shape ${cls}" data-val="${d.val}" data-i="${i}" style="height:${Math.max(20, heightPct)}%"></div>
       <div class="bar-label">${d.label}</div>
     </div>`;
   }).join('');
+  el.querySelectorAll('.bar-shape').forEach(b => {
+    const d = days[+b.dataset.i];
+    b.addEventListener('mousemove', e => showTip('<b>' + DAY_FULL[+b.dataset.i] + (d.isToday ? ' · сегодня' : '') + '</b>'
+      + '<div class="tip-row"><span class="tip-k">Касаний</span><span class="tip-v">' + (d.isFuture ? 'ещё не было' : d.val + ' ' + pluralRu(d.val, 'касание', 'касания', 'касаний')) + '</span></div>', e.clientX, e.clientY));
+    b.addEventListener('mouseleave', hideTip);
+  });
 }
 
 // ===== RECENT LIST (touches/calls) =====
@@ -2937,6 +3005,15 @@ function renderDonut() {
   document.getElementById('donutLabel').textContent = pct >= 100 ? 'цель закрыта 🔥' : 'от цели';
   document.getElementById('donutDone').textContent = fmtMoneyRubShort(total);
   document.getElementById('donutLeft').textContent = fmtMoneyRubShort(Math.max(0, GOAL_RUB - total));
+  const svg = document.querySelector('.donut-svg');
+  if (svg && !svg._tipWired) {
+    svg._tipWired = true;
+    svg.addEventListener('mousemove', e => showTip('<b>Прогресс ' + MONTHS_RU[new Date().getMonth()] + '</b>'
+      + '<div class="tip-row"><span class="tip-k"><span class="tip-sw" style="background:#1a5d3f"></span>Сделано</span><span class="tip-v">' + fmtMoneyRub(getCurrentMonthRevenue()) + '</span></div>'
+      + '<div class="tip-row"><span class="tip-k"><span class="tip-sw" style="background:#d7dce3"></span>Осталось</span><span class="tip-v">' + fmtMoneyRub(Math.max(0, GOAL_RUB - getCurrentMonthRevenue())) + '</span></div>'
+      + '<div class="tip-row"><span class="tip-k">Цель</span><span class="tip-v">' + fmtMoneyRub(GOAL_RUB) + '</span></div>', e.clientX, e.clientY));
+    svg.addEventListener('mouseleave', hideTip);
+  }
 }
 
 // ===== STREAK =====
@@ -3194,12 +3271,12 @@ function renderLeadsKanban() {
       '<div class="kanban-col-head">'
       + '<div class="kanban-col-title"><span class="kanban-col-dot"></span>'+escapeHtml(st.short)+'</div>'
       + '<div class="kanban-col-head-right">'
-      +   (sum && st.kind !== 'lost' ? '<span class="kanban-col-sum">'+escapeHtml(fmtMoneyRubShort(sum))+'</span>' : '')
       +   '<div class="kanban-col-count">'+colLeads.length+'</div>' + add + fold
       + '</div></div>'
+      + '<div class="kanban-col-sum">'+(sum && st.kind !== 'lost' ? escapeHtml(fmtMoneyRubShort(sum)) : '&nbsp;')+'</div>'
       + '<div class="kanban-col-body" data-status="'+st.id+'"></div>';
     const body = col.querySelector('.kanban-col-body');
-    if (!colLeads.length) body.innerHTML = '<div class="kanban-col-empty">Пусто</div>';
+    if (!colLeads.length) body.innerHTML = '<div class="kanban-col-empty">Перетащите сюда сделку</div>';
     colLeads.forEach(lead => body.appendChild(leadCardEl(lead, clientsMap, perClient, grads, assignOpts)));
     board.appendChild(col);
   });
@@ -3226,6 +3303,7 @@ function renderLeadsKanban() {
 }
 function leadCardEl(lead, clientsMap, perClient, grads, assignOpts) {
   const c = clientsMap.get(lead.client_id);
+  const st = leadStatusById(lead.status) || {};
   const name = (c && c.name) || lead.name;
   const company = (c && c.company) || lead.company || '';
   const sub = (lead.title && lead.title.trim() && lead.title !== name) ? lead.title : company;
@@ -3252,7 +3330,11 @@ function leadCardEl(lead, clientsMap, perClient, grads, assignOpts) {
     + '<div class="lead-card-meta">'
     +   (lead.potential_chek_rub ? '<span class="lead-card-amount">'+fmtMoneyRubShort(lead.potential_chek_rub)+'</span>' : '<span></span>')
     +   '<span class="lead-card-days '+daysCls+'">'+daysText+'</span>'
-    + '</div>' + assign;
+    + '</div>'
+    + (lead.next_action && st.kind === 'active'
+        ? '<div class="lead-card-next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>'+escapeHtml(lead.next_action)+(lead.next_action_date ? ' <b>· '+escapeHtml(fmtDateShort(lead.next_action_date))+'</b>' : '')+'</span></div>'
+        : '')
+    + assign;
   card.onclick = () => openLeadModal(lead.id);
   return card;
 }
@@ -4712,9 +4794,12 @@ function histItemHtml(h, i, ctx) {
       + '</div></div>';
   }
   return '<div class="lead-history-item" title="Нажми, чтобы редактировать" onclick="startHistEdit(\''+ctx+'\','+i+')">'
-    + '<span class="lead-history-edit" aria-hidden="true">✎</span>'
-    + '<div class="lead-history-date">'+dateStr+'</div>'
-    + '<div class="lead-history-text">'+escapeHtml(h.text)+'</div></div>';
+    + '<span class="hist-dot"></span>'
+    + '<div class="hist-body">'
+    +   '<span class="lead-history-edit" aria-hidden="true">✎</span>'
+    +   '<div class="lead-history-text">'+escapeHtml(h.text)+'</div>'
+    +   '<div class="lead-history-date">'+dateStr+'</div>'
+    + '</div></div>';
 }
 function rerenderHist(ctx) {
   const l = loadLeads().find(x => x.id === currentLeadId);
