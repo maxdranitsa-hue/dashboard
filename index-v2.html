@@ -760,7 +760,7 @@
   .seg-pill:active { transform:scale(.96); }
   .seg-pill.active { background:color-mix(in srgb, var(--_c) 12%, #fff); border-color:color-mix(in srgb, var(--_c) 55%, transparent); color:color-mix(in srgb, var(--_c) 72%, #111); }
   .seg-pill.none.active { background:var(--fill); border-color:var(--text-3); color:var(--text); }
-  .seg-pill.main { box-shadow:0 0 0 2px color-mix(in srgb, var(--_c) 30%, transparent); }
+  .seg-pill.is-main { box-shadow:0 0 0 2px color-mix(in srgb, var(--_c) 30%, transparent); }
 
   .kanban { display:grid; gap:10px; overflow-x:auto; padding-bottom:8px; align-items:start; }
   .kanban-col { --_lead-color:#9ca3af; background:var(--fill); border-radius:var(--r); padding:10px 8px; min-height:320px; display:flex; flex-direction:column; transition:background .2s var(--ease); }
@@ -3886,7 +3886,7 @@ function renderLeadProductPills(values) {
   const cur = [...new Set((Array.isArray(values) ? values : (values ? [values] : [])).filter(isProductId))];
   hid.value = JSON.stringify(cur);
   el.innerHTML = PRODUCTS.map(p =>
-    '<button type="button" class="seg-pill'+(cur.includes(p.id) ? ' active' : '')+(cur[0] === p.id && cur.length > 1 ? ' main' : '')+'" style="--_c:'+p.color+'" onclick="setLeadProduct(\''+p.id+'\')" title="'+escapeHtml(p.name)+(cur[0] === p.id && cur.length > 1 ? ' · основной' : '')+'"><span class="seg-in"><span class="seg-dot"></span>'+escapeHtml(p.short)+'</span></button>'
+    '<button type="button" class="seg-pill'+(cur.includes(p.id) ? ' active' : '')+(cur[0] === p.id && cur.length > 1 ? ' is-main' : '')+'" style="--_c:'+p.color+'" onclick="setLeadProduct(\''+p.id+'\')" title="'+escapeHtml(p.name)+(cur[0] === p.id && cur.length > 1 ? ' · основной' : '')+'"><span class="seg-in"><span class="seg-dot"></span>'+escapeHtml(p.short)+'</span></button>'
   ).join('') + '<button type="button" class="seg-pill none'+(cur.length ? '' : ' active')+'" onclick="setLeadProduct(\'\')"><span class="seg-in">Без продукта</span></button>';
 }
 function setLeadProduct(id) {
