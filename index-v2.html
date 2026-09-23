@@ -856,6 +856,75 @@
   .sortable-ghost { opacity:.3; }
   .sortable-drag { box-shadow:0 16px 40px -8px rgba(0,0,0,.35) !important; transform:rotate(1.5deg) scale(1.02); }
 
+  /* ============ ПЛИТКИ ПРОДУКТОВ (вид «Продукты» на доске, префикс pt-) ============ */
+  .pv-seg { display:inline-flex; padding:3px; background:var(--fill); border-radius:10px; gap:2px; }
+  .pv-btn { display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border:none; border-radius:8px; background:transparent; font-family:inherit; font-size:12.5px; font-weight:600; color:var(--text-2); cursor:pointer; transition:background .18s var(--ease), color .18s var(--ease), box-shadow .18s var(--ease), transform .1s var(--ease); }
+  .pv-btn svg { width:14px; height:14px; }
+  .pv-btn:active { transform:scale(.96); }
+  .pv-btn.active { background:#fff; color:var(--text); box-shadow:0 1px 2px rgba(0,0,0,.08), 0 3px 8px -2px rgba(0,0,0,.08); }
+  .view-products #leadsPipeTabs, .view-products .leads-toolbar, .view-products #leadsActiveFilterBanner, .view-products #leadsBoard, .view-products #leadsProductHero { display:none !important; }
+  #leadsProducts { display:none; }
+  .view-products #leadsProducts { display:grid; }
+  .pt-wrap { grid-template-columns:minmax(0,1fr) 296px; gap:16px; align-items:start; }
+  .pt-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(248px, 1fr)); gap:12px; }
+  .pt-tile { --_c:#9ca3af; position:relative; background:#fff; border-radius:16px; padding:16px 16px 13px; box-shadow:0 0 0 1px var(--hair), var(--shadow); cursor:pointer; display:flex; flex-direction:column; gap:12px; min-height:196px; transition:box-shadow .2s var(--ease), transform .2s var(--ease); overflow:hidden; }
+  .pt-tile::before { content:''; position:absolute; right:-40px; top:-40px; width:120px; height:120px; border-radius:50%; background:radial-gradient(closest-side, color-mix(in srgb, var(--_c) 14%, transparent), transparent); pointer-events:none; }
+  .pt-tile:hover { transform:translateY(-2px); box-shadow:0 0 0 1px var(--hair), 0 2px 4px rgba(0,0,0,.04), 0 16px 32px -14px rgba(0,0,0,.24); }
+  .pt-tile:active { transform:scale(.99); }
+  .pt-tile.empty { background:color-mix(in srgb, #fff 60%, var(--fill)); box-shadow:0 0 0 1px var(--border); }
+  .pt-head { display:flex; align-items:center; gap:10px; min-width:0; }
+  .pt-ava { width:36px; height:36px; border-radius:11px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#fff; letter-spacing:.3px; background:var(--_c); box-shadow:inset 0 -1px 0 rgba(0,0,0,.12); }
+  .pt-title { min-width:0; }
+  .pt-name { font-size:14px; font-weight:700; color:var(--text); letter-spacing:-.01em; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .pt-sub { font-size:11.5px; color:var(--text-2); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .pt-nums { display:flex; align-items:flex-end; gap:12px; }
+  .pt-big { font-size:30px; font-weight:700; letter-spacing:-.03em; line-height:1; color:var(--text); font-variant-numeric:tabular-nums; }
+  .pt-big-label { font-size:10.5px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:.05em; margin-top:5px; }
+  .pt-sum { margin-left:auto; text-align:right; }
+  .pt-sum b { display:block; font-size:14px; font-weight:700; color:var(--green-dark); font-variant-numeric:tabular-nums; letter-spacing:-.01em; }
+  .pt-sum span { font-size:10.5px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:.05em; }
+  .pt-strip { display:flex; height:6px; border-radius:999px; overflow:hidden; background:var(--fill); gap:2px; }
+  .pt-strip span { height:100%; min-width:4px; border-radius:2px; transition:width .5s var(--ease); }
+  .pt-stages { display:flex; flex-wrap:wrap; gap:4px 10px; font-size:11px; font-weight:600; color:var(--text-2); font-variant-numeric:tabular-nums; }
+  .pt-stages i { display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--_s); margin-right:5px; vertical-align:1px; }
+  .pt-stages .zero { color:var(--text-3); font-weight:500; }
+  .pt-foot { margin-top:auto; border-top:1px solid var(--border); padding-top:10px; display:flex; flex-direction:column; gap:4px; font-size:11.5px; color:var(--text-2); line-height:1.35; }
+  .pt-names { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .pt-names b { color:var(--text); font-weight:600; }
+  .pt-paid { display:flex; justify-content:space-between; gap:8px; }
+  .pt-paid b { color:var(--text); font-weight:700; font-variant-numeric:tabular-nums; }
+  .pt-paid.none { color:var(--text-3); }
+  .pt-open { position:absolute; right:12px; top:14px; width:24px; height:24px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:var(--text-3); background:transparent; transition:background .15s var(--ease), color .15s var(--ease), transform .2s var(--ease); }
+  .pt-open svg { width:13px; height:13px; }
+  .pt-tile:hover .pt-open { background:var(--fill); color:var(--text); transform:translateX(2px); }
+  .pt-empty-hint { font-size:11.5px; color:var(--text-3); line-height:1.4; }
+  .pt-drop { position:absolute; inset:0; z-index:3; border-radius:16px; border:2px dashed transparent; display:flex; align-items:center; justify-content:center; text-align:center; padding:12px; font-size:13px; font-weight:700; color:transparent; pointer-events:none; transition:border-color .15s var(--ease), background .15s var(--ease), color .15s var(--ease); }
+  .pt-drop .lead-card { display:none; }
+  .pt-wrap.dragging .pt-tile { transform:none; }
+  .pt-wrap.dragging .pt-drop { pointer-events:auto; border-color:color-mix(in srgb, var(--_c) 45%, transparent); background:color-mix(in srgb, var(--_c) 6%, rgba(255,255,255,.88)); color:color-mix(in srgb, var(--_c) 75%, #111); backdrop-filter:blur(2px); -webkit-backdrop-filter:blur(2px); }
+  .pt-wrap.dragging .pt-drop.pt-over { border-style:solid; border-color:var(--_c); background:color-mix(in srgb, var(--_c) 14%, #fff); box-shadow:0 0 0 4px color-mix(in srgb, var(--_c) 18%, transparent); }
+  .pt-inbox { background:var(--fill); border-radius:var(--r); padding:10px 8px 8px; display:flex; flex-direction:column; position:sticky; top:12px; max-height:calc(100vh - 32px); }
+  .pt-inbox-head { display:flex; align-items:center; justify-content:space-between; gap:6px; padding:2px 4px 0; margin-bottom:4px; }
+  .pt-inbox-hint { font-size:11px; color:var(--text-3); padding:0 4px 10px; line-height:1.4; }
+  .pt-inbox-body { flex:1; min-height:80px; overflow:auto; border-radius:10px; padding-right:2px; scrollbar-width:thin; }
+  .pt-inbox-body .lead-card { cursor:grab; }
+  .pt-inbox-body .kanban-col-empty { padding:28px 8px; }
+  .chip-stage { color:#fff; background:var(--_c); }
+  .pt-hero { --_c:#9ca3af; display:flex; align-items:center; gap:12px; padding:12px 14px; margin:-4px 0 14px; border-radius:14px; background:linear-gradient(90deg, color-mix(in srgb, var(--_c) 10%, #fff), var(--fill) 70%); box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--_c) 18%, transparent); flex-wrap:wrap; }
+  .pt-back { display:inline-flex; align-items:center; gap:5px; padding:6px 10px 6px 8px; border-radius:9px; border:none; background:#fff; font-family:inherit; font-size:12px; font-weight:600; color:var(--text-2); cursor:pointer; box-shadow:0 0 0 1px var(--hair), 0 1px 2px rgba(0,0,0,.04); transition:color .15s var(--ease), transform .1s var(--ease); white-space:nowrap; }
+  .pt-back svg { width:12px; height:12px; }
+  .pt-back:hover { color:var(--text); }
+  .pt-back:active { transform:scale(.96); }
+  .pt-hero-body { min-width:0; flex:1; }
+  .pt-hero-name { font-size:15px; font-weight:700; color:var(--text); letter-spacing:-.012em; line-height:1.2; }
+  .pt-hero-sub { font-size:12px; color:var(--text-2); margin-top:2px; }
+  .pt-hero-sub b { color:var(--green-dark); font-weight:700; font-variant-numeric:tabular-nums; }
+  .pt-hero-stages { display:flex; gap:6px; flex-wrap:wrap; }
+  .pt-hero-stage { display:inline-flex; align-items:center; gap:5px; padding:4px 9px; border-radius:999px; background:#fff; font-size:11px; font-weight:700; color:var(--text-2); box-shadow:0 0 0 1px var(--hair); font-variant-numeric:tabular-nums; }
+  .pt-hero-stage i { width:7px; height:7px; border-radius:50%; background:var(--_s); display:inline-block; }
+  .pt-hero-stage.zero { color:var(--text-3); font-weight:600; }
+  .pt-hero-stage.zero i { opacity:.35; }
+
   /* ============ CHECKLIST / LOGS ============ */
   .checklist { list-style: none; }
   .check-item { display: flex; align-items: center; gap: 13px; padding: 12px 0; border-bottom: 1px solid var(--border); cursor: pointer; user-select: none; }
@@ -1276,6 +1345,15 @@
     .dashboard-grid { grid-template-columns: 1fr; }
     .grid-col:nth-child(3) { grid-column: span 1; }
     .kanban { grid-template-columns: 1fr !important; }
+    .pt-wrap { grid-template-columns:minmax(0,1fr); }
+    .pt-grid { min-width:0; }
+    .pv-btn span { display:none; }
+    .pv-btn { padding:6px 8px; }
+    .pt-hero { gap:10px; }
+    .pt-hero .pt-back { flex-basis:100%; align-self:flex-start; width:max-content; }
+    .pt-hero-stages { flex-basis:100%; }
+    .pt-inbox { position:static; max-height:none; }
+    .pt-inbox-body { max-height:60vh; }
     .kanban-col.collapsed .kanban-col-body { min-height:0; }
   }
   @media (prefers-reduced-motion: reduce) {
@@ -1647,7 +1725,11 @@
         <div class="card">
           <div class="card-head">
             <div class="card-title">Сделки</div>
-            <div style="display:flex;gap:8px;position:relative">
+            <div style="display:flex;gap:8px;position:relative;align-items:center">
+              <div class="pv-seg" id="leadsViewSeg">
+                <button class="pv-btn" data-view="products" onclick="setLeadsView('products')" title="Плитки продуктов"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg><span>Продукты</span></button>
+                <button class="pv-btn" data-view="board" onclick="setLeadsView('board')" title="Доска по стадиям"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="5" height="18" rx="1.5"/><rect x="9.5" y="3" width="5" height="12" rx="1.5"/><rect x="16" y="3" width="5" height="8" rx="1.5"/></svg><span>Доска</span></button>
+              </div>
               <button class="btn btn-secondary" onclick="toggleLeadsMenu(event)" title="Ещё">⋯</button>
               <div class="leads-menu" id="leadsMenu" hidden>
                 <button onclick="closeLeadsMenu(); openMergeModal()">Похожие клиенты<span class="count" id="leadsDupCount" hidden></span></button>
@@ -1657,6 +1739,7 @@
               <button class="btn btn-primary" onclick="openLeadModal()">+ Сделка</button>
             </div>
           </div>
+          <div id="leadsProductHero"></div>
           <div class="seg" id="leadsPipeTabs"></div>
           <div class="leads-toolbar">
             <div class="leads-search">
@@ -1673,6 +1756,10 @@
           </div>
           <div id="leadsActiveFilterBanner" style="display:none;"></div>
           <div class="kanban" id="leadsBoard"></div>
+          <div class="pt-wrap" id="leadsProducts">
+            <div class="pt-grid" id="ptGrid"></div>
+            <div class="pt-inbox" id="ptInbox"></div>
+          </div>
         </div>
       </section>
 
@@ -2139,6 +2226,7 @@
 <script>
 const MONTHS_RU = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
 const MONTHS_FULL = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+const MONTHS_PREP = ['январе','феврале','марте','апреле','мае','июне','июле','августе','сентябре','октябре','ноябре','декабре'];
 const DAYS_FULL = ['воскресенье','понедельник','вторник','среда','четверг','пятница','суббота'];
 const DAYS_SHORT = ['В','П','В','С','Ч','П','С'];
 // ===== ОДНА ДОСКА (с 18.09.2026) =====
@@ -3140,6 +3228,7 @@ const STATUS_GROUPS = {
 };
 
 function openLeadsWithFilter(group) {
+  setLeadsView('board', { silent: true });
   leadsStatusGroup = group;
   leadsPipe = 'all';
   try { localStorage.setItem('_leads_pipe', 'all'); } catch {}
@@ -3221,6 +3310,124 @@ function setLeadsPipe(id) {
   try { localStorage.setItem('_leads_pipe', id); } catch {}
   renderLeadsKanban();
 }
+// Вид доски: 'products' (плитки продуктов + колонка без продукта) | 'board' (колонки по стадиям). Локальная настройка.
+let leadsView = (function () { try { return localStorage.getItem('_leads_view') === 'board' ? 'board' : 'products'; } catch { return 'products'; } })();
+function setLeadsView(v, opts) {
+  leadsView = v === 'board' ? 'board' : 'products';
+  try { localStorage.setItem('_leads_view', leadsView); } catch {}
+  if (!(opts && opts.silent)) renderLeadsKanban();
+}
+// Клик по плитке: проваливаемся в доску этого продукта
+function openProductBoard(id) {
+  leadsPipe = id;
+  try { localStorage.setItem('_leads_pipe', id); } catch {}
+  setLeadsView('board', { silent: true });
+  renderLeadsKanban();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function productInitials(p) { return (p.short || p.name || '').replace(/[^A-Za-zА-Яа-яЁё0-9]/g, '').slice(0, 2).toUpperCase() || '·'; }
+// Сводка по продукту: сколько в работе, по стадиям, сумма воронки, оплачено в этом месяце, с кем работаем
+function productSummary(pid, all, clientsMap) {
+  const now = new Date(), Y = now.getFullYear(), M = now.getMonth();
+  const inProd = pid === 'inbox' ? (l => !dealHasProduct(l)) : (l => dealProducts(l).includes(pid));
+  const active = all.filter(l => leadStatusKind(l.status) === 'active' && inProd(l)).sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+  const byStage = {}; STAGES.filter(st => st.kind === 'active').forEach(st => byStage[st.id] = 0);
+  active.forEach(l => { byStage[l.status] = (byStage[l.status] || 0) + 1; });
+  const sum = active.reduce((a, l) => a + (l.potential_chek_rub || 0), 0);
+  const wonAll = all.filter(l => leadIsWon(l) && dealPipe(l) === pid);
+  const wonNow = wonAll.filter(l => l.closed_at && new Date(l.closed_at).getFullYear() === Y && new Date(l.closed_at).getMonth() === M);
+  const paidNow = wonNow.reduce((a, l) => a + (l.potential_chek_rub || 0), 0);
+  const seenN = new Set();
+  const names = active.map(l => { const c = clientsMap.get(l.client_id); return ((c && c.name) || l.name || '').split(/\s+/).slice(0, 2).join(' '); }).filter(x => x && !seenN.has(x) && seenN.add(x));
+  return { active, byStage, sum, wonAll, wonNow, paidNow, names: names.slice(0, 3), people: names.length, month: M, year: Y };
+}
+function ptStageStrip(byStage, total) {
+  if (!total) return '<div class="pt-strip"></div>';
+  return '<div class="pt-strip">' + STAGES.filter(st => st.kind === 'active' && byStage[st.id]).map(st =>
+    '<span style="width:' + (byStage[st.id] / total * 100) + '%;background:' + st.color + '" title="' + escapeHtml(st.name) + ': ' + byStage[st.id] + '"></span>').join('') + '</div>';
+}
+function renderLeadsProducts(all, grads, clientsMap, perClient, assignOpts) {
+  const grid = document.getElementById('ptGrid'), inbox = document.getElementById('ptInbox');
+  if (!grid || !inbox) return;
+  const wrap = document.getElementById('leadsProducts');
+  const monthName = MONTHS_PREP[new Date().getMonth()];
+  const arrow = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+  grid.innerHTML = PRODUCTS.map(p => {
+    const s = productSummary(p.id, all, clientsMap);
+    const n = s.active.length;
+    const stages = STAGES.filter(st => st.kind === 'active').map(st =>
+      '<span class="' + (s.byStage[st.id] ? '' : 'zero') + '" style="--_s:' + st.color + '"><i></i>' + escapeHtml(st.short) + ' ' + (s.byStage[st.id] || 0) + '</span>').join('');
+    const paid = s.wonNow.length
+      ? '<div class="pt-paid"><span>Оплачено в ' + escapeHtml(monthName) + '</span><b>' + escapeHtml(fmtMoneyRubShort(s.paidNow)) + ' · ' + s.wonNow.length + '</b></div>'
+      : '<div class="pt-paid none"><span>В ' + escapeHtml(monthName) + ' оплат нет</span><b>' + (s.wonAll.length ? s.wonAll.length + ' ' + pluralRu(s.wonAll.length, 'оплата', 'оплаты', 'оплат') + ' всего' : '') + '</b></div>';
+    const who = n
+      ? '<div class="pt-names">' + s.names.map(x => '<b>' + escapeHtml(x) + '</b>').join(', ') + (s.people > s.names.length ? ' <span>и ещё ' + (s.people - s.names.length) + '</span>' : '') + '</div>'
+      : '<div class="pt-empty-hint">Нет сделок в работе. Перетащите сюда карточку из колонки справа.</div>';
+    return '<div class="pt-tile' + (n ? '' : ' empty') + '" style="--_c:' + p.color + '" data-product="' + p.id + '" onclick="openProductBoard(\'' + p.id + '\')" title="Открыть доску «' + escapeHtml(p.name) + '»">'
+      + '<div class="pt-open">' + arrow + '</div>'
+      + '<div class="pt-head"><div class="pt-ava">' + escapeHtml(productInitials(p)) + '</div><div class="pt-title"><div class="pt-name">' + escapeHtml(p.name) + '</div><div class="pt-sub">' + (p.intensive ? 'Интенсив · ' : '') + s.wonAll.length + ' ' + pluralRu(s.wonAll.length, 'оплата', 'оплаты', 'оплат') + ' за всё время</div></div></div>'
+      + '<div class="pt-nums"><div><div class="pt-big">' + n + '</div><div class="pt-big-label">в работе</div></div><div class="pt-sum"><b>' + escapeHtml(s.sum ? fmtMoneyRubShort(s.sum) : '—') + '</b><span>в воронке</span></div></div>'
+      + ptStageStrip(s.byStage, n)
+      + '<div class="pt-stages">' + stages + '</div>'
+      + '<div class="pt-foot">' + who + paid + '</div>'
+      + '<div class="pt-drop" data-product="' + p.id + '">В «' + escapeHtml(p.short) + '»</div>'
+      + '</div>';
+  }).join('');
+  // Колонка «Без продукта»: активные сделки без продукта, тянутся на плитки
+  const inboxLeads = filterLeads(all).filter(l => !dealHasProduct(l) && leadStatusKind(l.status) === 'active').sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+  inbox.style.setProperty('--_lead-color', NO_PRODUCT.color);
+  inbox.innerHTML = '<div class="pt-inbox-head"><div class="kanban-col-title"><span class="kanban-col-dot"></span>Без продукта</div><div class="kanban-col-count">' + inboxLeads.length + '</div></div>'
+    + '<div class="pt-inbox-hint">' + (inboxLeads.length ? 'Перетащите карточку на плитку продукта, и сделка попадёт в его воронку.' : 'Все сделки разобраны по продуктам.') + '</div>'
+    + '<div class="pt-inbox-body" id="ptInboxBody"></div>';
+  const body = document.getElementById('ptInboxBody');
+  if (!inboxLeads.length) body.innerHTML = '<div class="kanban-col-empty">Пусто</div>';
+  inboxLeads.forEach(l => {
+    const card = leadCardEl(l, clientsMap, perClient, grads, assignOpts);
+    const st = leadStatusById(l.status) || {};
+    const tags = card.querySelector('.lead-card-tags');
+    if (tags) tags.insertAdjacentHTML('afterbegin', '<span class="chip chip-stage" style="--_c:' + st.color + '">' + escapeHtml(st.short || '') + '</span>');
+    body.appendChild(card);
+  });
+  if (typeof Sortable !== 'undefined') {
+    const clearOver = () => wrap.querySelectorAll('.pt-over').forEach(el => el.classList.remove('pt-over'));
+    Sortable.create(body, {
+      group: { name: 'pt', pull: 'clone', put: false },
+      sort: false, animation: 180, easing: 'cubic-bezier(.2,.8,.2,1)',
+      ghostClass: 'sortable-ghost', dragClass: 'sortable-drag',
+      filter: 'select', preventOnFilter: false,
+      onStart: () => wrap.classList.add('dragging'),
+      onEnd: () => { wrap.classList.remove('dragging'); clearOver(); },
+      onMove: evt => { clearOver(); if (evt.to && evt.to.classList.contains('pt-drop')) evt.to.classList.add('pt-over'); }
+    });
+    grid.querySelectorAll('.pt-drop').forEach(drop => {
+      Sortable.create(drop, {
+        group: { name: 'pt', pull: false, put: true },
+        sort: false, animation: 0,
+        onAdd: evt => { const id = evt.item.dataset.leadId; const pid = drop.dataset.product; evt.item.remove(); wrap.classList.remove('dragging'); setDealPipe(id, pid); }
+      });
+    });
+  }
+}
+// Шапка над доской, когда открыт один продукт: «← Все продукты», имя, сводка, стадии
+function renderLeadsProductHero(all, clientsMap) {
+  const host = document.getElementById('leadsProductHero'); if (!host) return;
+  const show = leadsView === 'board' && (isProductId(leadsPipe) || leadsPipe === 'inbox');
+  if (!show) { host.innerHTML = ''; return; }
+  const p = pipeById(leadsPipe);
+  const s = productSummary(p.id, all, clientsMap);
+  const n = s.active.length;
+  const monthName = MONTHS_PREP[s.month];
+  const stages = STAGES.filter(st => st.kind === 'active').map(st =>
+    '<span class="pt-hero-stage' + (s.byStage[st.id] ? '' : ' zero') + '" style="--_s:' + st.color + '"><i></i>' + escapeHtml(st.short) + ' ' + (s.byStage[st.id] || 0) + '</span>').join('');
+  host.innerHTML = '<div class="pt-hero" style="--_c:' + p.color + '">'
+    + '<button class="pt-back" onclick="setLeadsView(\'products\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>Все продукты</button>'
+    + '<div class="pt-ava">' + escapeHtml(productInitials(p)) + '</div>'
+    + '<div class="pt-hero-body"><div class="pt-hero-name">' + escapeHtml(p.name) + '</div>'
+    + '<div class="pt-hero-sub">' + n + ' ' + pluralDeals(n) + ' в работе' + (s.sum ? ' · <b>' + escapeHtml(fmtMoneyRub(s.sum)) + '</b> в воронке' : '')
+    + (s.wonNow.length ? ' · оплачено в ' + escapeHtml(monthName) + ' <b>' + escapeHtml(fmtMoneyRub(s.paidNow)) + '</b> (' + s.wonNow.length + ')' : ' · в ' + escapeHtml(monthName) + ' оплат нет') + '</div></div>'
+    + '<div class="pt-hero-stages">' + stages + '</div>'
+    + '</div>';
+}
 // Свёрнутые колонки: по умолчанию «Оплатил» и «Отказ», чтобы доска показывала работу, а не архив
 let kanbanCollapsed = (function () {
   try { const a = JSON.parse(localStorage.getItem('_kanban_collapsed') || 'null'); return new Set(Array.isArray(a) ? a : ['won', 'lost']); }
@@ -3293,6 +3500,10 @@ function renderLeadsKanban() {
   const board = document.getElementById('leadsBoard');
   if (!board) return;
   const leads = filterLeads(all).filter(l => leadInTab(l, grads));
+  // Вид: плитки продуктов или колонки по стадиям
+  const leadsPage = board.closest('.page');
+  if (leadsPage) leadsPage.classList.toggle('view-products', leadsView === 'products');
+  document.querySelectorAll('#leadsViewSeg .pv-btn').forEach(b => b.classList.toggle('active', b.dataset.view === leadsView));
 
   // Баннер активного статус-фильтра
   const banner = document.getElementById('leadsActiveFilterBanner');
@@ -3320,6 +3531,8 @@ function renderLeadsKanban() {
   const perClient = {};
   all.forEach(l => { perClient[l.client_id] = (perClient[l.client_id] || 0) + 1; });
   const assignOpts = PRODUCTS.map(p => '<option value="'+p.id+'">'+escapeHtml(p.name)+'</option>').join('');
+  renderLeadsProductHero(all, clientsMap);
+  if (leadsView === 'products') { renderLeadsProducts(all, grads, clientsMap, perClient, assignOpts); }
   const cols = STAGES.filter(st => !visibleStatuses || visibleStatuses.includes(st.id));
 
   board.innerHTML = '';
@@ -3406,7 +3619,7 @@ function leadCardEl(lead, clientsMap, perClient, grads, assignOpts) {
   const isGrad = grads.has(lead.client_id);
   const chName = lead.channel ? channelDisplay(lead.channel) : '';
   const channel = chName && !(isGrad && (lead.channel === 'alumni' || /выпускник/i.test(chName))) ? chName : '';
-  const chips = prods.map(p => '<span class="chip chip-product" style="--_c:'+p.color+'">'+escapeHtml(p.short)+'</span>').join('')
+  const chips = prods.filter(p => !(leadsView === 'board' && p.id === leadsPipe)).map(p => '<span class="chip chip-product" style="--_c:'+p.color+'">'+escapeHtml(p.short)+'</span>').join('')
     + (lead.flow ? '<span class="chip chip-flow" title="Поток: '+escapeHtml(lead.flow)+'">'+escapeHtml(lead.flow)+'</span>' : '')
     + (channel ? '<span class="chip chip-channel" title="Канал">'+escapeHtml(channel)+'</span>' : '')
     + (isGrad ? '<span class="chip chip-grad" title="Выпускник'+(cohorts.length ? ' · '+escapeHtml(cohorts.join(', ')) : '')+'">Выпускник</span>' : '')
@@ -5128,7 +5341,8 @@ function hmLastMonths(n) {
 function hmLeadsSubtitle() {
   const act = loadLeads().filter(l => leadStatusKind(l.status) === 'active');
   const sum = act.reduce((a, l) => a + (l.potential_chek_rub || 0), 0);
-  return act.length + ' ' + pluralRu(act.length, 'активная сделка', 'активные сделки', 'активных сделок') + ' на ' + fmtMoneyRub(sum) + ' · перетащите карточку, чтобы сменить стадию';
+  const hint = (typeof leadsView !== 'undefined' && leadsView === 'products') ? 'перетащите карточку на плитку, чтобы отнести сделку к продукту' : 'перетащите карточку, чтобы сменить стадию';
+  return act.length + ' ' + pluralRu(act.length, 'активная сделка', 'активные сделки', 'активных сделок') + ' на ' + fmtMoneyRub(sum) + ' · ' + hint;
 }
 function hmHomeSubtitle() { const d = new Date(); return HM_MONTHS_NOM[d.getMonth()] + ' ' + d.getFullYear() + ' · цель месяца ' + fmtMoneyRub(GOAL_RUB); }
 function hmDrawChart() {
@@ -5215,10 +5429,12 @@ function hmDrawStuck() {
   }).join('');
 }
 function hmOpenStuck() {
+  setLeadsView('board', { silent: true });
   navTo('leads');
   if (typeof leadsFilterStuckOn !== 'undefined' && !leadsFilterStuckOn) toggleStuckFilter(); else renderLeadsKanban();
 }
 function hmOpenProduct(id) {
+  setLeadsView('board', { silent: true });
   leadsPipe = id;
   try { localStorage.setItem('_leads_pipe', id); } catch {}
   navTo('leads');
