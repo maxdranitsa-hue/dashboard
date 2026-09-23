@@ -864,66 +864,59 @@
   .pv-btn.active { background:#fff; color:var(--text); box-shadow:0 1px 2px rgba(0,0,0,.08), 0 3px 8px -2px rgba(0,0,0,.08); }
   .view-products #leadsPipeTabs, .view-products .leads-toolbar, .view-products #leadsActiveFilterBanner, .view-products #leadsBoard, .view-products #leadsProductHero { display:none !important; }
   #leadsProducts { display:none; }
-  .view-products #leadsProducts { display:grid; }
-  .pt-wrap { grid-template-columns:minmax(0,1fr) 296px; gap:16px; align-items:start; }
-  .pt-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(248px, 1fr)); gap:12px; }
-  .pt-tile { --_c:#9ca3af; position:relative; background:#fff; border-radius:16px; padding:16px 16px 13px; box-shadow:0 0 0 1px var(--hair), var(--shadow); cursor:pointer; display:flex; flex-direction:column; gap:12px; min-height:196px; transition:box-shadow .2s var(--ease), transform .2s var(--ease); overflow:hidden; }
-  .pt-tile::before { content:''; position:absolute; right:-40px; top:-40px; width:120px; height:120px; border-radius:50%; background:radial-gradient(closest-side, color-mix(in srgb, var(--_c) 14%, transparent), transparent); pointer-events:none; }
-  .pt-tile:hover { transform:translateY(-2px); box-shadow:0 0 0 1px var(--hair), 0 2px 4px rgba(0,0,0,.04), 0 16px 32px -14px rgba(0,0,0,.24); }
+  .view-products #leadsProducts { display:block; }
+  .pt-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(212px, 1fr)); gap:12px; }
+  .pt-tile { --_c:#9ca3af; position:relative; background:#fff; border-radius:18px; padding:18px 18px 16px; box-shadow:0 0 0 1px var(--hair), var(--shadow); cursor:pointer; display:flex; flex-direction:column; gap:14px; min-height:150px; transition:box-shadow .2s var(--ease), transform .2s var(--ease), background .2s var(--ease); }
+  .pt-tile:hover { transform:translateY(-2px); box-shadow:0 0 0 1px var(--hair), 0 2px 4px rgba(0,0,0,.04), 0 16px 32px -14px rgba(0,0,0,.22); }
   .pt-tile:active { transform:scale(.99); }
-  .pt-tile.empty { background:color-mix(in srgb, #fff 60%, var(--fill)); box-shadow:0 0 0 1px var(--border); }
-  .pt-head { display:flex; align-items:center; gap:10px; min-width:0; }
-  .pt-ava { width:36px; height:36px; border-radius:11px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#fff; letter-spacing:.3px; background:var(--_c); box-shadow:inset 0 -1px 0 rgba(0,0,0,.12); }
-  .pt-title { min-width:0; }
-  .pt-name { font-size:14px; font-weight:700; color:var(--text); letter-spacing:-.01em; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .pt-sub { font-size:11.5px; color:var(--text-2); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .pt-nums { display:flex; align-items:flex-end; gap:12px; }
-  .pt-big { font-size:30px; font-weight:700; letter-spacing:-.03em; line-height:1; color:var(--text); font-variant-numeric:tabular-nums; }
-  .pt-big-label { font-size:10.5px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:.05em; margin-top:5px; }
-  .pt-sum { margin-left:auto; text-align:right; }
-  .pt-sum b { display:block; font-size:14px; font-weight:700; color:var(--green-dark); font-variant-numeric:tabular-nums; letter-spacing:-.01em; }
-  .pt-sum span { font-size:10.5px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:.05em; }
-  .pt-strip { display:flex; height:6px; border-radius:999px; overflow:hidden; background:var(--fill); gap:2px; }
-  .pt-strip span { height:100%; min-width:4px; border-radius:2px; transition:width .5s var(--ease); }
-  .pt-stages { display:flex; flex-wrap:wrap; gap:4px 10px; font-size:11px; font-weight:600; color:var(--text-2); font-variant-numeric:tabular-nums; }
-  .pt-stages i { display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--_s); margin-right:5px; vertical-align:1px; }
-  .pt-stages .zero { color:var(--text-3); font-weight:500; }
-  .pt-foot { margin-top:auto; border-top:1px solid var(--border); padding-top:10px; display:flex; flex-direction:column; gap:4px; font-size:11.5px; color:var(--text-2); line-height:1.35; }
-  .pt-names { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .pt-names b { color:var(--text); font-weight:600; }
-  .pt-paid { display:flex; justify-content:space-between; gap:8px; }
-  .pt-paid b { color:var(--text); font-weight:700; font-variant-numeric:tabular-nums; }
-  .pt-paid.none { color:var(--text-3); }
-  .pt-open { position:absolute; right:12px; top:14px; width:24px; height:24px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:var(--text-3); background:transparent; transition:background .15s var(--ease), color .15s var(--ease), transform .2s var(--ease); }
+  .pt-tile.empty { background:color-mix(in srgb, #fff 55%, var(--fill)); box-shadow:0 0 0 1px var(--border); }
+  .pt-tile.empty:hover { transform:none; box-shadow:0 0 0 1px var(--border-2); }
+  .pt-ico { width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; letter-spacing:.2px; background:color-mix(in srgb, var(--_c) 12%, #fff); color:color-mix(in srgb, var(--_c) 78%, #111); }
+  .pt-tile.empty .pt-ico { background:var(--fill); color:var(--text-3); }
+  .pt-open { position:absolute; right:14px; top:16px; width:24px; height:24px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:var(--text-3); transition:background .15s var(--ease), color .15s var(--ease), transform .2s var(--ease); }
   .pt-open svg { width:13px; height:13px; }
   .pt-tile:hover .pt-open { background:var(--fill); color:var(--text); transform:translateX(2px); }
-  .pt-empty-hint { font-size:11.5px; color:var(--text-3); line-height:1.4; }
-  .pt-drop { position:absolute; inset:0; z-index:3; border-radius:16px; border:2px dashed transparent; display:flex; align-items:center; justify-content:center; text-align:center; padding:12px; font-size:13px; font-weight:700; color:transparent; pointer-events:none; transition:border-color .15s var(--ease), background .15s var(--ease), color .15s var(--ease); }
-  .pt-drop .lead-card { display:none; }
-  .pt-wrap.dragging .pt-tile { transform:none; }
-  .pt-wrap.dragging .pt-drop { pointer-events:auto; border-color:color-mix(in srgb, var(--_c) 45%, transparent); background:color-mix(in srgb, var(--_c) 6%, rgba(255,255,255,.88)); color:color-mix(in srgb, var(--_c) 75%, #111); backdrop-filter:blur(2px); -webkit-backdrop-filter:blur(2px); }
-  .pt-wrap.dragging .pt-drop.pt-over { border-style:solid; border-color:var(--_c); background:color-mix(in srgb, var(--_c) 14%, #fff); box-shadow:0 0 0 4px color-mix(in srgb, var(--_c) 18%, transparent); }
-  .pt-inbox { background:var(--fill); border-radius:var(--r); padding:10px 8px 8px; display:flex; flex-direction:column; position:sticky; top:12px; max-height:calc(100vh - 32px); }
-  .pt-inbox-head { display:flex; align-items:center; justify-content:space-between; gap:6px; padding:2px 4px 0; margin-bottom:4px; }
-  .pt-inbox-hint { font-size:11px; color:var(--text-3); padding:0 4px 10px; line-height:1.4; }
-  .pt-inbox-body { flex:1; min-height:80px; overflow:auto; border-radius:10px; padding-right:2px; scrollbar-width:thin; }
-  .pt-inbox-body .lead-card { cursor:grab; }
-  .pt-inbox-body .kanban-col-empty { padding:28px 8px; }
-  .chip-stage { color:#fff; background:var(--_c); }
-  .pt-hero { --_c:#9ca3af; display:flex; align-items:center; gap:12px; padding:12px 14px; margin:-4px 0 14px; border-radius:14px; background:linear-gradient(90deg, color-mix(in srgb, var(--_c) 10%, #fff), var(--fill) 70%); box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--_c) 18%, transparent); flex-wrap:wrap; }
-  .pt-back { display:inline-flex; align-items:center; gap:5px; padding:6px 10px 6px 8px; border-radius:9px; border:none; background:#fff; font-family:inherit; font-size:12px; font-weight:600; color:var(--text-2); cursor:pointer; box-shadow:0 0 0 1px var(--hair), 0 1px 2px rgba(0,0,0,.04); transition:color .15s var(--ease), transform .1s var(--ease); white-space:nowrap; }
+  .pt-name { font-size:13.5px; font-weight:600; color:var(--text-2); letter-spacing:-.005em; line-height:1.25; }
+  .pt-big { font-size:34px; font-weight:700; letter-spacing:-.035em; line-height:1; color:var(--text); font-variant-numeric:tabular-nums; margin-top:4px; }
+  .pt-tile.empty .pt-big { color:var(--text-3); }
+  .pt-sub { font-size:12px; color:var(--text-2); margin-top:6px; line-height:1.35; }
+  .pt-sub b { color:var(--text); font-weight:600; font-variant-numeric:tabular-nums; }
+  .pt-drop { position:absolute; inset:0; z-index:3; border-radius:18px; border:2px dashed transparent; display:flex; align-items:center; justify-content:center; text-align:center; padding:12px; font-size:13px; font-weight:700; color:transparent; pointer-events:none; transition:border-color .15s var(--ease), background .15s var(--ease), color .15s var(--ease); }
+  .pt-drop .lead-card, .pt-drop .pt-row { display:none; }
+  #leadsProducts.dragging .pt-tile { transform:none; }
+  #leadsProducts.dragging .pt-drop { pointer-events:auto; border-color:var(--green-light-2); background:rgba(255,255,255,.9); color:var(--green-dark); }
+  #leadsProducts.dragging .pt-drop.pt-over { border-style:solid; border-color:var(--green-mid); background:var(--green-bg-soft); box-shadow:0 0 0 4px rgba(26,93,63,.14); }
+  .pt-inbox { margin-top:22px; }
+  .pt-inbox-head { display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:10px; flex-wrap:wrap; }
+  .pt-inbox-title { font-size:15px; font-weight:700; color:var(--text); letter-spacing:-.012em; }
+  .pt-inbox-title span { color:var(--text-3); font-weight:600; margin-left:6px; font-variant-numeric:tabular-nums; }
+  .pt-inbox-hint { font-size:12px; color:var(--text-3); }
+  .pt-list { display:flex; flex-direction:column; gap:6px; }
+  .pt-row { display:grid; grid-template-columns:minmax(0,1fr) 120px 110px 78px auto; align-items:center; gap:14px; padding:11px 14px; background:#fff; border-radius:12px; box-shadow:0 0 0 1px var(--hair); cursor:grab; transition:box-shadow .15s var(--ease), transform .15s var(--ease); }
+  .pt-row:hover { box-shadow:0 0 0 1px var(--hair), 0 6px 16px -10px rgba(0,0,0,.2); }
+  .pt-row:active { cursor:grabbing; }
+  .pt-row-name { font-size:13px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .pt-row-sub { font-size:11.5px; color:var(--text-3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:1px; }
+  .pt-row-stage { --_s:#9ca3af; font-size:12px; color:var(--text-2); display:flex; align-items:center; gap:7px; white-space:nowrap; }
+  .pt-row-stage i { width:7px; height:7px; border-radius:50%; background:var(--_s); flex-shrink:0; }
+  .pt-row-sum { font-size:12.5px; font-weight:600; color:var(--text); font-variant-numeric:tabular-nums; text-align:right; }
+  .pt-row-sum.none { color:var(--text-3); font-weight:500; }
+  .pt-row-days { font-size:11.5px; color:var(--text-3); text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
+  .pt-row-days.warn { color:#c77700; } .pt-row-days.bad { color:#d70015; }
+  .pt-row .lead-card-assign { justify-self:end; }
+  .pt-more { margin-top:8px; align-self:flex-start; background:var(--fill); border:none; border-radius:9px; padding:7px 12px; font-family:inherit; font-size:12.5px; font-weight:600; color:var(--text-2); cursor:pointer; }
+  .pt-more:hover { color:var(--text); }
+  .pt-list .sortable-ghost { opacity:.35; }
+  .pt-hero { --_c:#9ca3af; display:flex; align-items:center; gap:12px; padding:10px 12px 10px 10px; margin:-4px 0 14px; border-radius:14px; background:var(--fill); flex-wrap:wrap; }
+  .pt-back { display:inline-flex; align-items:center; gap:5px; padding:7px 11px 7px 8px; border-radius:9px; border:none; background:#fff; font-family:inherit; font-size:12px; font-weight:600; color:var(--text-2); cursor:pointer; box-shadow:0 0 0 1px var(--hair), 0 1px 2px rgba(0,0,0,.04); transition:color .15s var(--ease), transform .1s var(--ease); white-space:nowrap; }
   .pt-back svg { width:12px; height:12px; }
   .pt-back:hover { color:var(--text); }
   .pt-back:active { transform:scale(.96); }
+  .pt-hero .pt-ico { width:32px; height:32px; border-radius:10px; font-size:11.5px; }
   .pt-hero-body { min-width:0; flex:1; }
-  .pt-hero-name { font-size:15px; font-weight:700; color:var(--text); letter-spacing:-.012em; line-height:1.2; }
-  .pt-hero-sub { font-size:12px; color:var(--text-2); margin-top:2px; }
-  .pt-hero-sub b { color:var(--green-dark); font-weight:700; font-variant-numeric:tabular-nums; }
-  .pt-hero-stages { display:flex; gap:6px; flex-wrap:wrap; }
-  .pt-hero-stage { display:inline-flex; align-items:center; gap:5px; padding:4px 9px; border-radius:999px; background:#fff; font-size:11px; font-weight:700; color:var(--text-2); box-shadow:0 0 0 1px var(--hair); font-variant-numeric:tabular-nums; }
-  .pt-hero-stage i { width:7px; height:7px; border-radius:50%; background:var(--_s); display:inline-block; }
-  .pt-hero-stage.zero { color:var(--text-3); font-weight:600; }
-  .pt-hero-stage.zero i { opacity:.35; }
+  .pt-hero-name { font-size:14.5px; font-weight:700; color:var(--text); letter-spacing:-.012em; line-height:1.2; }
+  .pt-hero-sub { font-size:12px; color:var(--text-2); margin-top:1px; }
+  .pt-hero-sub b { color:var(--text); font-weight:600; font-variant-numeric:tabular-nums; }
 
   /* ============ CHECKLIST / LOGS ============ */
   .checklist { list-style: none; }
@@ -1345,13 +1338,18 @@
     .dashboard-grid { grid-template-columns: 1fr; }
     .grid-col:nth-child(3) { grid-column: span 1; }
     .kanban { grid-template-columns: 1fr !important; }
-    .pt-wrap { grid-template-columns:minmax(0,1fr); }
-    .pt-grid { min-width:0; }
+    .pt-grid { min-width:0; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px; }
+    .pt-tile { padding:14px 14px 13px; min-height:0; gap:10px; }
+    .pt-big { font-size:28px; }
     .pv-btn span { display:none; }
     .pv-btn { padding:6px 8px; }
+    .pt-row { grid-template-columns:minmax(0,1fr) auto; gap:4px 10px; }
+    .pt-row-stage { grid-column:1; }
+    .pt-row-sum { grid-column:2; grid-row:1; }
+    .pt-row-days { grid-column:2; grid-row:2; }
+    .pt-row .lead-card-assign { grid-column:1 / -1; justify-self:start; }
     .pt-hero { gap:10px; }
     .pt-hero .pt-back { flex-basis:100%; align-self:flex-start; width:max-content; }
-    .pt-hero-stages { flex-basis:100%; }
     .pt-inbox { position:static; max-height:none; }
     .pt-inbox-body { max-height:60vh; }
     .kanban-col.collapsed .kanban-col-body { min-height:0; }
@@ -1756,7 +1754,7 @@
           </div>
           <div id="leadsActiveFilterBanner" style="display:none;"></div>
           <div class="kanban" id="leadsBoard"></div>
-          <div class="pt-wrap" id="leadsProducts">
+          <div id="leadsProducts">
             <div class="pt-grid" id="ptGrid"></div>
             <div class="pt-inbox" id="ptInbox"></div>
           </div>
@@ -3341,53 +3339,49 @@ function productSummary(pid, all, clientsMap) {
   const names = active.map(l => { const c = clientsMap.get(l.client_id); return ((c && c.name) || l.name || '').split(/\s+/).slice(0, 2).join(' '); }).filter(x => x && !seenN.has(x) && seenN.add(x));
   return { active, byStage, sum, wonAll, wonNow, paidNow, names: names.slice(0, 3), people: names.length, month: M, year: Y };
 }
-function ptStageStrip(byStage, total) {
-  if (!total) return '<div class="pt-strip"></div>';
-  return '<div class="pt-strip">' + STAGES.filter(st => st.kind === 'active' && byStage[st.id]).map(st =>
-    '<span style="width:' + (byStage[st.id] / total * 100) + '%;background:' + st.color + '" title="' + escapeHtml(st.name) + ': ' + byStage[st.id] + '"></span>').join('') + '</div>';
-}
+let ptInboxShowAll = false;
+function ptToggleInbox() { ptInboxShowAll = !ptInboxShowAll; renderLeadsKanban(); }
 function renderLeadsProducts(all, grads, clientsMap, perClient, assignOpts) {
   const grid = document.getElementById('ptGrid'), inbox = document.getElementById('ptInbox');
   if (!grid || !inbox) return;
   const wrap = document.getElementById('leadsProducts');
-  const monthName = MONTHS_PREP[new Date().getMonth()];
   const arrow = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
   grid.innerHTML = PRODUCTS.map(p => {
     const s = productSummary(p.id, all, clientsMap);
     const n = s.active.length;
-    const stages = STAGES.filter(st => st.kind === 'active').map(st =>
-      '<span class="' + (s.byStage[st.id] ? '' : 'zero') + '" style="--_s:' + st.color + '"><i></i>' + escapeHtml(st.short) + ' ' + (s.byStage[st.id] || 0) + '</span>').join('');
-    const paid = s.wonNow.length
-      ? '<div class="pt-paid"><span>Оплачено в ' + escapeHtml(monthName) + '</span><b>' + escapeHtml(fmtMoneyRubShort(s.paidNow)) + ' · ' + s.wonNow.length + '</b></div>'
-      : '<div class="pt-paid none"><span>В ' + escapeHtml(monthName) + ' оплат нет</span><b>' + (s.wonAll.length ? s.wonAll.length + ' ' + pluralRu(s.wonAll.length, 'оплата', 'оплаты', 'оплат') + ' всего' : '') + '</b></div>';
-    const who = n
-      ? '<div class="pt-names">' + s.names.map(x => '<b>' + escapeHtml(x) + '</b>').join(', ') + (s.people > s.names.length ? ' <span>и ещё ' + (s.people - s.names.length) + '</span>' : '') + '</div>'
-      : '<div class="pt-empty-hint">Нет сделок в работе. Перетащите сюда карточку из колонки справа.</div>';
     return '<div class="pt-tile' + (n ? '' : ' empty') + '" style="--_c:' + p.color + '" data-product="' + p.id + '" onclick="openProductBoard(\'' + p.id + '\')" title="Открыть доску «' + escapeHtml(p.name) + '»">'
       + '<div class="pt-open">' + arrow + '</div>'
-      + '<div class="pt-head"><div class="pt-ava">' + escapeHtml(productInitials(p)) + '</div><div class="pt-title"><div class="pt-name">' + escapeHtml(p.name) + '</div><div class="pt-sub">' + (p.intensive ? 'Интенсив · ' : '') + s.wonAll.length + ' ' + pluralRu(s.wonAll.length, 'оплата', 'оплаты', 'оплат') + ' за всё время</div></div></div>'
-      + '<div class="pt-nums"><div><div class="pt-big">' + n + '</div><div class="pt-big-label">в работе</div></div><div class="pt-sum"><b>' + escapeHtml(s.sum ? fmtMoneyRubShort(s.sum) : '—') + '</b><span>в воронке</span></div></div>'
-      + ptStageStrip(s.byStage, n)
-      + '<div class="pt-stages">' + stages + '</div>'
-      + '<div class="pt-foot">' + who + paid + '</div>'
+      + '<div class="pt-ico">' + escapeHtml(productInitials(p)) + '</div>'
+      + '<div><div class="pt-name">' + escapeHtml(p.name) + '</div>'
+      + '<div class="pt-big">' + n + '</div>'
+      + '<div class="pt-sub">' + (n ? pluralDeals(n) + ' в работе' + (s.sum ? ' · <b>' + escapeHtml(fmtMoneyRubShort(s.sum)) + '</b>' : '') : 'нет сделок в работе') + '</div></div>'
       + '<div class="pt-drop" data-product="' + p.id + '">В «' + escapeHtml(p.short) + '»</div>'
       + '</div>';
   }).join('');
-  // Колонка «Без продукта»: активные сделки без продукта, тянутся на плитки
+  // Сделки без продукта: компактные строки, тянутся на плитки
   const inboxLeads = filterLeads(all).filter(l => !dealHasProduct(l) && leadStatusKind(l.status) === 'active').sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
-  inbox.style.setProperty('--_lead-color', NO_PRODUCT.color);
-  inbox.innerHTML = '<div class="pt-inbox-head"><div class="kanban-col-title"><span class="kanban-col-dot"></span>Без продукта</div><div class="kanban-col-count">' + inboxLeads.length + '</div></div>'
-    + '<div class="pt-inbox-hint">' + (inboxLeads.length ? 'Перетащите карточку на плитку продукта, и сделка попадёт в его воронку.' : 'Все сделки разобраны по продуктам.') + '</div>'
-    + '<div class="pt-inbox-body" id="ptInboxBody"></div>';
+  const LIMIT = 8;
+  const shown = ptInboxShowAll ? inboxLeads : inboxLeads.slice(0, LIMIT);
+  if (!inboxLeads.length) { inbox.innerHTML = ''; return; }
+  inbox.innerHTML = '<div class="pt-inbox-head"><div class="pt-inbox-title">Без продукта<span>' + inboxLeads.length + '</span></div><div class="pt-inbox-hint">Перетащите строку на плитку продукта</div></div>'
+    + '<div class="pt-list" id="ptInboxBody">' + shown.map(l => {
+      const c = clientsMap.get(l.client_id);
+      const name = (c && c.name) || l.name || 'Без имени';
+      const company = (c && c.company) || l.company || '';
+      const st = leadStatusById(l.status) || {};
+      const days = daysSince(l.updated_at);
+      const daysCls = days > 7 ? 'bad' : days > 3 ? 'warn' : '';
+      const daysText = days === 0 ? 'сегодня' : days + ' ' + pluralRu(days, 'день', 'дня', 'дней');
+      return '<div class="pt-row" data-lead-id="' + l.id + '" onclick="openLeadModal(\'' + l.id + '\')">'
+        + '<div><div class="pt-row-name">' + escapeHtml(name) + '</div>' + (company ? '<div class="pt-row-sub">' + escapeHtml(company) + '</div>' : '') + '</div>'
+        + '<div class="pt-row-stage" style="--_s:' + (st.color || '#9ca3af') + '"><i></i>' + escapeHtml(st.short || '') + '</div>'
+        + '<div class="pt-row-sum' + (l.potential_chek_rub ? '' : ' none') + '">' + (l.potential_chek_rub ? escapeHtml(fmtMoneyRub(l.potential_chek_rub)) : '') + '</div>'
+        + '<div class="pt-row-days ' + daysCls + '">' + daysText + '</div>'
+        + '<select class="lead-card-assign" onclick="event.stopPropagation()" onchange="if(this.value) setDealPipe(\'' + l.id + '\', this.value)" title="Назначить продукт"><option value="">→ продукт</option>' + assignOpts + '</select>'
+        + '</div>';
+    }).join('') + '</div>'
+    + (inboxLeads.length > LIMIT ? '<button class="pt-more" onclick="ptToggleInbox()">' + (ptInboxShowAll ? 'Свернуть' : 'Показать все ' + inboxLeads.length) + '</button>' : '');
   const body = document.getElementById('ptInboxBody');
-  if (!inboxLeads.length) body.innerHTML = '<div class="kanban-col-empty">Пусто</div>';
-  inboxLeads.forEach(l => {
-    const card = leadCardEl(l, clientsMap, perClient, grads, assignOpts);
-    const st = leadStatusById(l.status) || {};
-    const tags = card.querySelector('.lead-card-tags');
-    if (tags) tags.insertAdjacentHTML('afterbegin', '<span class="chip chip-stage" style="--_c:' + st.color + '">' + escapeHtml(st.short || '') + '</span>');
-    body.appendChild(card);
-  });
   if (typeof Sortable !== 'undefined') {
     const clearOver = () => wrap.querySelectorAll('.pt-over').forEach(el => el.classList.remove('pt-over'));
     Sortable.create(body, {
@@ -3408,7 +3402,7 @@ function renderLeadsProducts(all, grads, clientsMap, perClient, assignOpts) {
     });
   }
 }
-// Шапка над доской, когда открыт один продукт: «← Все продукты», имя, сводка, стадии
+// Шапка над доской, когда открыт один продукт: «← Все продукты», имя, сводка
 function renderLeadsProductHero(all, clientsMap) {
   const host = document.getElementById('leadsProductHero'); if (!host) return;
   const show = leadsView === 'board' && (isProductId(leadsPipe) || leadsPipe === 'inbox');
@@ -3416,16 +3410,11 @@ function renderLeadsProductHero(all, clientsMap) {
   const p = pipeById(leadsPipe);
   const s = productSummary(p.id, all, clientsMap);
   const n = s.active.length;
-  const monthName = MONTHS_PREP[s.month];
-  const stages = STAGES.filter(st => st.kind === 'active').map(st =>
-    '<span class="pt-hero-stage' + (s.byStage[st.id] ? '' : ' zero') + '" style="--_s:' + st.color + '"><i></i>' + escapeHtml(st.short) + ' ' + (s.byStage[st.id] || 0) + '</span>').join('');
   host.innerHTML = '<div class="pt-hero" style="--_c:' + p.color + '">'
     + '<button class="pt-back" onclick="setLeadsView(\'products\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>Все продукты</button>'
-    + '<div class="pt-ava">' + escapeHtml(productInitials(p)) + '</div>'
+    + '<div class="pt-ico">' + escapeHtml(productInitials(p)) + '</div>'
     + '<div class="pt-hero-body"><div class="pt-hero-name">' + escapeHtml(p.name) + '</div>'
-    + '<div class="pt-hero-sub">' + n + ' ' + pluralDeals(n) + ' в работе' + (s.sum ? ' · <b>' + escapeHtml(fmtMoneyRub(s.sum)) + '</b> в воронке' : '')
-    + (s.wonNow.length ? ' · оплачено в ' + escapeHtml(monthName) + ' <b>' + escapeHtml(fmtMoneyRub(s.paidNow)) + '</b> (' + s.wonNow.length + ')' : ' · в ' + escapeHtml(monthName) + ' оплат нет') + '</div></div>'
-    + '<div class="pt-hero-stages">' + stages + '</div>'
+    + '<div class="pt-hero-sub">' + n + ' ' + pluralDeals(n) + ' в работе' + (s.sum ? ' · <b>' + escapeHtml(fmtMoneyRub(s.sum)) + '</b> в воронке' : '') + '</div></div>'
     + '</div>';
 }
 // Свёрнутые колонки: по умолчанию «Оплатил» и «Отказ», чтобы доска показывала работу, а не архив
