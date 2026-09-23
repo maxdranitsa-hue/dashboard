@@ -865,54 +865,68 @@
   .view-products #leadsPipeTabs, .view-products .leads-toolbar, .view-products #leadsActiveFilterBanner, .view-products #leadsBoard, .view-products #leadsProductHero { display:none !important; }
   #leadsProducts { display:none; }
   .view-products #leadsProducts { display:block; }
-  .pt-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(212px, 1fr)); gap:12px; }
-  .pt-tile { --_c:#9ca3af; position:relative; background:#fff; border-radius:18px; padding:18px 18px 16px; box-shadow:0 0 0 1px var(--hair), var(--shadow); cursor:pointer; display:flex; flex-direction:column; gap:14px; min-height:150px; transition:box-shadow .2s var(--ease), transform .2s var(--ease), background .2s var(--ease); }
-  .pt-tile:hover { transform:translateY(-2px); box-shadow:0 0 0 1px var(--hair), 0 2px 4px rgba(0,0,0,.04), 0 16px 32px -14px rgba(0,0,0,.22); }
+  .pt-sticky { position:sticky; top:8px; z-index:6; background:var(--surface); padding:4px 0 14px; margin:-4px 0 6px; }
+  .pt-grid { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:14px; }
+  .pt-tile { position:relative; display:flex; align-items:center; gap:16px; padding:18px 20px; border-radius:20px; background:#fff; box-shadow:0 0 0 1px var(--hair), var(--shadow); cursor:pointer; min-height:110px; transition:box-shadow .2s var(--ease), transform .2s var(--ease); }
+  .pt-tile:hover { transform:translateY(-2px); box-shadow:0 0 0 1px var(--hair), 0 2px 4px rgba(0,0,0,.04), 0 18px 36px -16px rgba(0,0,0,.25); }
   .pt-tile:active { transform:scale(.99); }
   .pt-tile.empty { background:color-mix(in srgb, #fff 55%, var(--fill)); box-shadow:0 0 0 1px var(--border); }
   .pt-tile.empty:hover { transform:none; box-shadow:0 0 0 1px var(--border-2); }
-  .pt-ico { width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; letter-spacing:.2px; background:color-mix(in srgb, var(--_c) 12%, #fff); color:color-mix(in srgb, var(--_c) 78%, #111); }
-  .pt-tile.empty .pt-ico { background:var(--fill); color:var(--text-3); }
-  .pt-open { position:absolute; right:14px; top:16px; width:24px; height:24px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:var(--text-3); transition:background .15s var(--ease), color .15s var(--ease), transform .2s var(--ease); }
+  .pt-ico { position:relative; flex-shrink:0; width:60px; height:60px; border-radius:50%; background:#f3ede4; display:flex; align-items:center; justify-content:center; box-shadow:inset 0 0 0 1px rgba(0,0,0,.04); }
+  .pt-ico svg.mark { width:32px; height:32px; display:block; }
+  .pt-ico .pt-badge { position:absolute; right:-3px; bottom:-3px; width:24px; height:24px; border-radius:50%; background:#1c1c1e; color:#fff; display:flex; align-items:center; justify-content:center; box-shadow:0 0 0 2.5px #fff; }
+  .pt-ico .pt-badge svg { width:12px; height:12px; }
+  .pt-tile.empty .pt-ico { background:var(--fill); }
+  .pt-tile.empty .pt-ico svg.mark { opacity:.45; filter:grayscale(1); }
+  .pt-tile.empty .pt-badge { background:var(--text-3); }
+  .pt-body { min-width:0; flex:1; }
+  .pt-name { font-size:15px; font-weight:700; color:var(--text); letter-spacing:-.012em; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .pt-big { font-size:32px; font-weight:700; letter-spacing:-.035em; line-height:1.05; color:var(--text); font-variant-numeric:tabular-nums; margin-top:6px; }
+  .pt-tile.empty .pt-big { color:var(--text-3); }
+  .pt-sub { font-size:12px; color:var(--text-2); margin-top:4px; line-height:1.35; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .pt-sub b { color:var(--text); font-weight:600; font-variant-numeric:tabular-nums; }
+  .pt-open { position:absolute; right:14px; top:14px; width:24px; height:24px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:var(--text-3); transition:background .15s var(--ease), color .15s var(--ease), transform .2s var(--ease); }
   .pt-open svg { width:13px; height:13px; }
   .pt-tile:hover .pt-open { background:var(--fill); color:var(--text); transform:translateX(2px); }
-  .pt-name { font-size:13.5px; font-weight:600; color:var(--text-2); letter-spacing:-.005em; line-height:1.25; }
-  .pt-big { font-size:34px; font-weight:700; letter-spacing:-.035em; line-height:1; color:var(--text); font-variant-numeric:tabular-nums; margin-top:4px; }
-  .pt-tile.empty .pt-big { color:var(--text-3); }
-  .pt-sub { font-size:12px; color:var(--text-2); margin-top:6px; line-height:1.35; }
-  .pt-sub b { color:var(--text); font-weight:600; font-variant-numeric:tabular-nums; }
-  .pt-drop { position:absolute; inset:0; z-index:3; border-radius:18px; border:2px dashed transparent; display:flex; align-items:center; justify-content:center; text-align:center; padding:12px; font-size:13px; font-weight:700; color:transparent; pointer-events:none; transition:border-color .15s var(--ease), background .15s var(--ease), color .15s var(--ease); }
-  .pt-drop .lead-card, .pt-drop .pt-row { display:none; }
+  .pt-drop { position:absolute; inset:0; z-index:3; border-radius:20px; border:2px dashed transparent; display:flex; align-items:center; justify-content:center; gap:8px; text-align:center; padding:12px; font-size:14px; font-weight:700; color:#b45f3c; opacity:0; pointer-events:none; transition:border-color .15s var(--ease), background .15s var(--ease), opacity .15s var(--ease), transform .15s var(--ease); }
+  .pt-drop .pt-card, .pt-drop .lead-card { display:none; }
   #leadsProducts.dragging .pt-tile { transform:none; }
-  #leadsProducts.dragging .pt-drop { pointer-events:auto; border-color:var(--green-light-2); background:rgba(255,255,255,.9); color:var(--green-dark); }
-  #leadsProducts.dragging .pt-drop.pt-over { border-style:solid; border-color:var(--green-mid); background:var(--green-bg-soft); box-shadow:0 0 0 4px rgba(26,93,63,.14); }
-  .pt-inbox { margin-top:22px; }
-  .pt-inbox-head { display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:10px; flex-wrap:wrap; }
-  .pt-inbox-title { font-size:15px; font-weight:700; color:var(--text); letter-spacing:-.012em; }
-  .pt-inbox-title span { color:var(--text-3); font-weight:600; margin-left:6px; font-variant-numeric:tabular-nums; }
+  #leadsProducts.dragging .pt-drop { opacity:1; pointer-events:auto; border-color:#e6c2ae; background:rgba(251,247,241,.94); }
+  #leadsProducts.dragging .pt-drop.pt-over { border-style:solid; border-color:#d97757; background:#fbf1e9; box-shadow:0 0 0 5px rgba(217,119,87,.16); transform:scale(1.02); }
+  .pt-inbox { margin-top:8px; }
+  .pt-inbox-head { display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:12px; flex-wrap:wrap; }
+  .pt-inbox-title { font-size:16px; font-weight:700; color:var(--text); letter-spacing:-.015em; }
+  .pt-inbox-title span { color:var(--text-3); font-weight:600; margin-left:7px; font-variant-numeric:tabular-nums; }
   .pt-inbox-hint { font-size:12px; color:var(--text-3); }
-  .pt-list { display:flex; flex-direction:column; gap:6px; }
-  .pt-row { display:grid; grid-template-columns:minmax(0,1fr) 120px 110px 78px auto; align-items:center; gap:14px; padding:11px 14px; background:#fff; border-radius:12px; box-shadow:0 0 0 1px var(--hair); cursor:grab; transition:box-shadow .15s var(--ease), transform .15s var(--ease); }
-  .pt-row:hover { box-shadow:0 0 0 1px var(--hair), 0 6px 16px -10px rgba(0,0,0,.2); }
-  .pt-row:active { cursor:grabbing; }
-  .pt-row-name { font-size:13px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .pt-row-sub { font-size:11.5px; color:var(--text-3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:1px; }
-  .pt-row-stage { --_s:#9ca3af; font-size:12px; color:var(--text-2); display:flex; align-items:center; gap:7px; white-space:nowrap; }
+  .pt-cards { display:grid; grid-template-columns:repeat(auto-fill, minmax(252px, 1fr)); gap:10px; }
+  .pt-card { background:#fff; border-radius:14px; padding:12px 14px; box-shadow:0 0 0 1px var(--hair), 0 1px 2px rgba(0,0,0,.03); cursor:grab; display:flex; flex-direction:column; gap:6px; transition:box-shadow .2s var(--ease), transform .2s var(--ease); }
+  .pt-card:hover { box-shadow:0 0 0 1px var(--hair), 0 2px 4px rgba(0,0,0,.04), 0 12px 28px -12px rgba(0,0,0,.22); transform:translateY(-1px); }
+  .pt-card:active { cursor:grabbing; transform:scale(.985); }
+  .pt-card-top { display:flex; justify-content:space-between; align-items:baseline; gap:8px; }
+  .pt-card-name { flex:1; min-width:0; font-size:13.5px; font-weight:600; color:var(--text); line-height:1.3; letter-spacing:-.01em; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .pt-card-days { font-size:11px; color:var(--text-3); font-weight:600; white-space:nowrap; flex-shrink:0; }
+  .pt-card-days.warn { color:#c77700; } .pt-card-days.bad { color:#d70015; }
+  .pt-card-sub { font-size:11.5px; color:var(--text-2); margin-top:-4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .pt-card-foot { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-top:2px; }
+  .pt-card-left { display:flex; align-items:center; gap:10px; flex:1; min-width:0; overflow:hidden; }
+  .pt-card-left > * { overflow:hidden; text-overflow:ellipsis; }
+  .pt-row-stage { --_s:#9ca3af; font-size:11.5px; color:var(--text-2); display:flex; align-items:center; gap:6px; white-space:nowrap; }
   .pt-row-stage i { width:7px; height:7px; border-radius:50%; background:var(--_s); flex-shrink:0; }
-  .pt-row-sum { font-size:12.5px; font-weight:600; color:var(--text); font-variant-numeric:tabular-nums; text-align:right; }
-  .pt-row-sum.none { color:var(--text-3); font-weight:500; }
-  .pt-row-days { font-size:11.5px; color:var(--text-3); text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
-  .pt-row-days.warn { color:#c77700; } .pt-row-days.bad { color:#d70015; }
-  .pt-row .lead-card-assign { justify-self:end; }
-  .pt-more { margin-top:8px; align-self:flex-start; background:var(--fill); border:none; border-radius:9px; padding:7px 12px; font-family:inherit; font-size:12.5px; font-weight:600; color:var(--text-2); cursor:pointer; }
+  .pt-card-sum { font-size:12px; font-weight:700; color:var(--green-dark); font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .pt-card .lead-card-assign { flex-shrink:0; max-width:86px; }
+  .pt-more { margin-top:12px; background:var(--fill); border:none; border-radius:9px; padding:7px 12px; font-family:inherit; font-size:12.5px; font-weight:600; color:var(--text-2); cursor:pointer; }
   .pt-more:hover { color:var(--text); }
-  .pt-list .sortable-ghost { opacity:.35; }
-  .pt-hero { --_c:#9ca3af; display:flex; align-items:center; gap:12px; padding:10px 12px 10px 10px; margin:-4px 0 14px; border-radius:14px; background:var(--fill); flex-wrap:wrap; }
+  .pt-cards .sortable-ghost { opacity:.35; }
+  .pt-hero { display:flex; align-items:center; gap:12px; padding:10px 12px 10px 10px; margin:-4px 0 14px; border-radius:14px; background:var(--fill); flex-wrap:wrap; }
   .pt-back { display:inline-flex; align-items:center; gap:5px; padding:7px 11px 7px 8px; border-radius:9px; border:none; background:#fff; font-family:inherit; font-size:12px; font-weight:600; color:var(--text-2); cursor:pointer; box-shadow:0 0 0 1px var(--hair), 0 1px 2px rgba(0,0,0,.04); transition:color .15s var(--ease), transform .1s var(--ease); white-space:nowrap; }
   .pt-back svg { width:12px; height:12px; }
   .pt-back:hover { color:var(--text); }
   .pt-back:active { transform:scale(.96); }
-  .pt-hero .pt-ico { width:32px; height:32px; border-radius:10px; font-size:11.5px; }
+  .pt-hero .pt-ico { width:36px; height:36px; }
+  .pt-hero .pt-ico svg.mark { width:19px; height:19px; }
+  .pt-hero .pt-badge { width:16px; height:16px; right:-2px; bottom:-2px; box-shadow:0 0 0 2px var(--fill); }
+  .pt-hero .pt-badge svg { width:8px; height:8px; }
+  .pt-hero .pt-ico.initials { font-size:11.5px; font-weight:700; color:var(--text-2); background:#fff; }
   .pt-hero-body { min-width:0; flex:1; }
   .pt-hero-name { font-size:14.5px; font-weight:700; color:var(--text); letter-spacing:-.012em; line-height:1.2; }
   .pt-hero-sub { font-size:12px; color:var(--text-2); margin-top:1px; }
@@ -1338,16 +1352,21 @@
     .dashboard-grid { grid-template-columns: 1fr; }
     .grid-col:nth-child(3) { grid-column: span 1; }
     .kanban { grid-template-columns: 1fr !important; }
-    .pt-grid { min-width:0; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px; }
-    .pt-tile { padding:14px 14px 13px; min-height:0; gap:10px; }
-    .pt-big { font-size:28px; }
+    .pt-sticky { top:4px; padding:4px 0 10px; }
+    .pt-grid { min-width:0; gap:8px; }
+    .pt-tile { flex-direction:column; align-items:flex-start; gap:8px; padding:12px 12px 11px; min-height:0; border-radius:16px; }
+    .pt-ico { width:42px; height:42px; }
+    .pt-ico svg.mark { width:22px; height:22px; }
+    .pt-ico .pt-badge { width:18px; height:18px; }
+    .pt-ico .pt-badge svg { width:9px; height:9px; }
+    .pt-name { font-size:12px; white-space:normal; overflow-wrap:anywhere; }
+    .pt-big { font-size:24px; margin-top:2px; }
+    .pt-sub { display:none; }
+    .pt-open { display:none; }
+    .pt-drop { border-radius:16px; font-size:12px; }
+    .pt-cards { grid-template-columns:minmax(0,1fr); }
     .pv-btn span { display:none; }
     .pv-btn { padding:6px 8px; }
-    .pt-row { grid-template-columns:minmax(0,1fr) auto; gap:4px 10px; }
-    .pt-row-stage { grid-column:1; }
-    .pt-row-sum { grid-column:2; grid-row:1; }
-    .pt-row-days { grid-column:2; grid-row:2; }
-    .pt-row .lead-card-assign { grid-column:1 / -1; justify-self:start; }
     .pt-hero { gap:10px; }
     .pt-hero .pt-back { flex-basis:100%; align-self:flex-start; width:max-content; }
     .pt-inbox { position:static; max-height:none; }
@@ -1755,7 +1774,7 @@
           <div id="leadsActiveFilterBanner" style="display:none;"></div>
           <div class="kanban" id="leadsBoard"></div>
           <div id="leadsProducts">
-            <div class="pt-grid" id="ptGrid"></div>
+            <div class="pt-sticky"><div class="pt-grid" id="ptGrid"></div></div>
             <div class="pt-inbox" id="ptInbox"></div>
           </div>
         </div>
@@ -2259,18 +2278,23 @@ function mapStage(statusId) {
 // Продукты редактируются («⋯» → Продукты, или ⚙ у поля «Продукт» в карточке): localStorage `products` → dashboard-state.json.
 // `intensive` = после оплаты человек считается выпускником потока.
 const DEFAULT_PRODUCTS = [
-  { id:'cc',        name:'Claude Code 160к',            short:'Claude Code',  color:'#d97706', intensive:true },
-  { id:'claude50',  name:'Интенсив Claude 50к',         short:'Интенсив 50к', color:'#f97316', intensive:true },
+  { id:'cc',        name:'Claude Code',                 short:'Claude Code',  color:'#d97706', intensive:true, tile:true },
+  { id:'claude50',  name:'Claude для бизнеса',          short:'Claude для бизнеса', color:'#f97316', intensive:true, tile:true },
   { id:'corp',      name:'Корп обучение',               short:'Корп',         color:'#0ea5e9' },
   { id:'discovery', name:'Discovery',                   short:'Discovery',    color:'#10b981' },
   { id:'teens',     name:'Подростки',                   short:'Подростки',    color:'#a855f7', intensive:true },
   { id:'dev',       name:'Разработка и сопровождение',  short:'Разработка',   color:'#ef4444' }
 ];
 const INTENSIVE_IDS = ['cc', 'claude50', 'teens'];
+// Плитки в виде «Продукты»: по умолчанию три продукта Claude (Максим, 23.09.2026), флаг «плитка» в редакторе продуктов
+const TILE_DEFAULT_IDS = ['cc', 'claude50', 'p_mudw05rfcmk'];
+// Переименование 23.09.2026: «Claude Code 160к» → «Claude Code», «Интенсив Claude 50к» → «Claude для бизнеса» (только если имя ещё старое)
+const PRODUCT_RENAMES = { cc: { from:'Claude Code 160к', name:'Claude Code', short:'Claude Code' }, claude50: { from:'Интенсив Claude 50к', name:'Claude для бизнеса', short:'Claude для бизнеса' } };
 function normProduct(p) {
   const name = String((p && p.name) || '').trim();
   const short = String((p && p.short) || '').trim() || (name.length > 16 ? name.slice(0, 15) + '…' : name);
-  return { id: String((p && p.id) || ''), name, short, color: (p && p.color) || '#9ca3af', intensive: !!(p && p.intensive) };
+  const id = String((p && p.id) || '');
+  return { id, name, short, color: (p && p.color) || '#9ca3af', intensive: !!(p && p.intensive), tile: (p && typeof p.tile === 'boolean') ? p.tile : TILE_DEFAULT_IDS.includes(id) };
 }
 function loadProducts() {
   let list = null, fromOld = false;
@@ -2286,9 +2310,11 @@ function loadProducts() {
     } catch {}
   }
   if (!list || !list.length) list = DEFAULT_PRODUCTS;
+  let renamed = false;
+  list = list.map(p => { const r = p && PRODUCT_RENAMES[p.id]; if (r && p.name === r.from) { renamed = true; return Object.assign({}, p, { name: r.name, short: r.short }); } return p; });
   const seen = new Set();
   const out = list.map(normProduct).filter(p => p.id && p.name && !seen.has(p.id) && seen.add(p.id));
-  if (fromOld && out.length) { try { localStorage.setItem('products', JSON.stringify(out)); } catch {} }
+  if ((fromOld || renamed) && out.length) { try { localStorage.setItem('products', JSON.stringify(out)); } catch {} }
   return out;
 }
 let PRODUCTS = loadProducts();
@@ -3341,30 +3367,43 @@ function productSummary(pid, all, clientsMap) {
 }
 let ptInboxShowAll = false;
 function ptToggleInbox() { ptInboxShowAll = !ptInboxShowAll; renderLeadsKanban(); }
+// Настоящий знак Claude (Anthropic, #D97757), тот же файл, что на лендингах mdranitsa.com
+const CLAUDE_MARK = '<svg class="mark" viewBox="0 0 256 257" xmlns="http://www.w3.org/2000/svg"><path fill="#D97757" d="m50.228 170.321 50.357-28.257.843-2.463-.843-1.361h-2.462l-8.426-.518-28.775-.778-24.952-1.037-24.175-1.296-6.092-1.297L0 125.796l.583-3.759 5.12-3.434 7.324.648 16.202 1.101 24.304 1.685 17.629 1.037 26.118 2.722h4.148l.583-1.685-1.426-1.037-1.101-1.037-25.147-17.045-27.22-18.017-14.258-10.37-7.713-5.25-3.888-4.925-1.685-10.758 7-7.713 9.397.649 2.398.648 9.527 7.323 20.35 15.75L94.817 91.9l3.889 3.24 1.555-1.102.195-.777-1.75-2.917-14.453-26.118-15.425-26.572-6.87-11.018-1.814-6.61c-.648-2.723-1.102-4.991-1.102-7.778l7.972-10.823L71.42 0 82.05 1.426l4.472 3.888 6.61 15.101 10.694 23.786 16.591 32.34 4.861 9.592 2.592 8.879.973 2.722h1.685v-1.556l1.36-18.211 2.528-22.36 2.463-28.776.843-8.1 4.018-9.722 7.971-5.25 6.222 2.981 5.12 7.324-.713 4.73-3.046 19.768-5.962 30.98-3.889 20.739h2.268l2.593-2.593 10.499-13.934 17.628-22.036 7.778-8.749 9.073-9.657 5.833-4.601h11.018l8.1 12.055-3.628 12.443-11.342 14.388-9.398 12.184-13.48 18.147-8.426 14.518.778 1.166 2.01-.194 30.46-6.481 16.462-2.982 19.637-3.37 8.88 4.148.971 4.213-3.5 8.62-20.998 5.184-24.628 4.926-36.682 8.685-.454.324.519.648 16.526 1.555 7.065.389h17.304l32.21 2.398 8.426 5.574 5.055 6.805-.843 5.184-12.962 6.611-17.498-4.148-40.83-9.721-14-3.5h-1.944v1.167l11.666 11.406 21.387 19.314 26.767 24.887 1.36 6.157-3.434 4.86-3.63-.518-23.526-17.693-9.073-7.972-20.545-17.304h-1.36v1.814l4.73 6.935 25.017 37.59 1.296 11.536-1.814 3.76-6.481 2.268-7.13-1.297-14.647-20.544-15.1-23.138-12.185-20.739-1.49.843-7.194 77.448-3.37 3.953-7.778 2.981-6.48-4.925-3.436-7.972 3.435-15.749 4.148-20.544 3.37-16.333 3.046-20.285 1.815-6.74-.13-.454-1.49.194-15.295 20.999-23.267 31.433-18.406 19.702-4.407 1.75-7.648-3.954.713-7.064 4.277-6.286 25.47-32.405 15.36-20.092 9.917-11.6-.065-1.686h-.583L44.07 198.125l-12.055 1.555-5.185-4.86.648-7.972 2.463-2.593 20.35-13.999-.064.065Z"/></svg>';
+const PT_BADGES = {
+  code:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>',
+  online: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>',
+  biz:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18"/></svg>'
+};
+function ptKind(p) { const n = (p.name || '') + ' ' + (p.short || ''); return /code/i.test(n) ? 'code' : /online|онлайн/i.test(n) ? 'online' : 'biz'; }
+function ptIconHtml(p) {
+  if (p.tile) return '<div class="pt-ico">' + CLAUDE_MARK + '<span class="pt-badge">' + PT_BADGES[ptKind(p)] + '</span></div>';
+  return '<div class="pt-ico initials">' + escapeHtml(productInitials(p)) + '</div>';
+}
 function renderLeadsProducts(all, grads, clientsMap, perClient, assignOpts) {
   const grid = document.getElementById('ptGrid'), inbox = document.getElementById('ptInbox');
   if (!grid || !inbox) return;
   const wrap = document.getElementById('leadsProducts');
   const arrow = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
-  grid.innerHTML = PRODUCTS.map(p => {
+  const tiles = PRODUCTS.filter(p => p.tile);
+  grid.innerHTML = tiles.map(p => {
     const s = productSummary(p.id, all, clientsMap);
     const n = s.active.length;
-    return '<div class="pt-tile' + (n ? '' : ' empty') + '" style="--_c:' + p.color + '" data-product="' + p.id + '" onclick="openProductBoard(\'' + p.id + '\')" title="Открыть доску «' + escapeHtml(p.name) + '»">'
+    return '<div class="pt-tile' + (n ? '' : ' empty') + '" data-product="' + p.id + '" onclick="openProductBoard(\'' + p.id + '\')" title="Открыть доску «' + escapeHtml(p.name) + '»">'
       + '<div class="pt-open">' + arrow + '</div>'
-      + '<div class="pt-ico">' + escapeHtml(productInitials(p)) + '</div>'
-      + '<div><div class="pt-name">' + escapeHtml(p.name) + '</div>'
+      + ptIconHtml(p)
+      + '<div class="pt-body"><div class="pt-name">' + escapeHtml(p.name) + '</div>'
       + '<div class="pt-big">' + n + '</div>'
       + '<div class="pt-sub">' + (n ? pluralDeals(n) + ' в работе' + (s.sum ? ' · <b>' + escapeHtml(fmtMoneyRubShort(s.sum)) + '</b>' : '') : 'нет сделок в работе') + '</div></div>'
-      + '<div class="pt-drop" data-product="' + p.id + '">В «' + escapeHtml(p.short) + '»</div>'
+      + '<div class="pt-drop" data-product="' + p.id + '">' + CLAUDE_MARK.replace('class="mark"', 'class="mark" style="width:18px;height:18px"') + ' В «' + escapeHtml(p.short) + '»</div>'
       + '</div>';
-  }).join('');
-  // Сделки без продукта: компактные строки, тянутся на плитки
+  }).join('') || '<div class="kanban-col-empty">Отметьте продукты флагом «плитка» в «⋯» → Продукты…</div>';
+  // Разобрать: активные сделки без продукта, карточки тянутся на плитки
   const inboxLeads = filterLeads(all).filter(l => !dealHasProduct(l) && leadStatusKind(l.status) === 'active').sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
-  const LIMIT = 8;
+  const LIMIT = 24;
   const shown = ptInboxShowAll ? inboxLeads : inboxLeads.slice(0, LIMIT);
-  if (!inboxLeads.length) { inbox.innerHTML = ''; return; }
-  inbox.innerHTML = '<div class="pt-inbox-head"><div class="pt-inbox-title">Без продукта<span>' + inboxLeads.length + '</span></div><div class="pt-inbox-hint">Перетащите строку на плитку продукта</div></div>'
-    + '<div class="pt-list" id="ptInboxBody">' + shown.map(l => {
+  if (!inboxLeads.length) { inbox.innerHTML = '<div class="pt-inbox-head"><div class="pt-inbox-title">Разобрать<span>0</span></div><div class="pt-inbox-hint">Все сделки отнесены к продуктам</div></div>'; return; }
+  inbox.innerHTML = '<div class="pt-inbox-head"><div class="pt-inbox-title">Разобрать<span>' + inboxLeads.length + '</span></div><div class="pt-inbox-hint">Перетащите карточку на плитку продукта</div></div>'
+    + '<div class="pt-cards" id="ptInboxBody">' + shown.map(l => {
       const c = clientsMap.get(l.client_id);
       const name = (c && c.name) || l.name || 'Без имени';
       const company = (c && c.company) || l.company || '';
@@ -3372,13 +3411,13 @@ function renderLeadsProducts(all, grads, clientsMap, perClient, assignOpts) {
       const days = daysSince(l.updated_at);
       const daysCls = days > 7 ? 'bad' : days > 3 ? 'warn' : '';
       const daysText = days === 0 ? 'сегодня' : days + ' ' + pluralRu(days, 'день', 'дня', 'дней');
-      return '<div class="pt-row" data-lead-id="' + l.id + '" onclick="openLeadModal(\'' + l.id + '\')">'
-        + '<div><div class="pt-row-name">' + escapeHtml(name) + '</div>' + (company ? '<div class="pt-row-sub">' + escapeHtml(company) + '</div>' : '') + '</div>'
-        + '<div class="pt-row-stage" style="--_s:' + (st.color || '#9ca3af') + '"><i></i>' + escapeHtml(st.short || '') + '</div>'
-        + '<div class="pt-row-sum' + (l.potential_chek_rub ? '' : ' none') + '">' + (l.potential_chek_rub ? escapeHtml(fmtMoneyRub(l.potential_chek_rub)) : '') + '</div>'
-        + '<div class="pt-row-days ' + daysCls + '">' + daysText + '</div>'
+      return '<div class="pt-card" data-lead-id="' + l.id + '" onclick="openLeadModal(\'' + l.id + '\')">'
+        + '<div class="pt-card-top"><div class="pt-card-name">' + escapeHtml(name) + '</div><div class="pt-card-days ' + daysCls + '">' + daysText + '</div></div>'
+        + (company ? '<div class="pt-card-sub">' + escapeHtml(company) + '</div>' : '')
+        + '<div class="pt-card-foot"><div class="pt-card-left"><span class="pt-row-stage" style="--_s:' + (st.color || '#9ca3af') + '"><i></i>' + escapeHtml(st.short || '') + '</span>'
+        + (l.potential_chek_rub ? '<span class="pt-card-sum">' + escapeHtml(fmtMoneyRub(l.potential_chek_rub)) + '</span>' : '') + '</div>'
         + '<select class="lead-card-assign" onclick="event.stopPropagation()" onchange="if(this.value) setDealPipe(\'' + l.id + '\', this.value)" title="Назначить продукт"><option value="">→ продукт</option>' + assignOpts + '</select>'
-        + '</div>';
+        + '</div></div>';
     }).join('') + '</div>'
     + (inboxLeads.length > LIMIT ? '<button class="pt-more" onclick="ptToggleInbox()">' + (ptInboxShowAll ? 'Свернуть' : 'Показать все ' + inboxLeads.length) + '</button>' : '');
   const body = document.getElementById('ptInboxBody');
@@ -3402,7 +3441,7 @@ function renderLeadsProducts(all, grads, clientsMap, perClient, assignOpts) {
     });
   }
 }
-// Шапка над доской, когда открыт один продукт: «← Все продукты», имя, сводка
+// Шапка над доской, когда открыт один продукт: «← Все продукты», знак, имя, сводка
 function renderLeadsProductHero(all, clientsMap) {
   const host = document.getElementById('leadsProductHero'); if (!host) return;
   const show = leadsView === 'board' && (isProductId(leadsPipe) || leadsPipe === 'inbox');
@@ -3410,9 +3449,9 @@ function renderLeadsProductHero(all, clientsMap) {
   const p = pipeById(leadsPipe);
   const s = productSummary(p.id, all, clientsMap);
   const n = s.active.length;
-  host.innerHTML = '<div class="pt-hero" style="--_c:' + p.color + '">'
+  host.innerHTML = '<div class="pt-hero">'
     + '<button class="pt-back" onclick="setLeadsView(\'products\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>Все продукты</button>'
-    + '<div class="pt-ico">' + escapeHtml(productInitials(p)) + '</div>'
+    + ptIconHtml(p)
     + '<div class="pt-hero-body"><div class="pt-hero-name">' + escapeHtml(p.name) + '</div>'
     + '<div class="pt-hero-sub">' + n + ' ' + pluralDeals(n) + ' в работе' + (s.sum ? ' · <b>' + escapeHtml(fmtMoneyRub(s.sum)) + '</b> в воронке' : '') + '</div></div>'
     + '</div>';
@@ -5154,6 +5193,7 @@ function renderProductsList() {
       + '<input class="alum-status-name" type="text" value="'+escapeHtml(p.name)+'" placeholder="Название" oninput="updateProductDraft('+i+', \'name\', this.value)">'
       + '<input class="alum-status-name" style="flex:0 0 118px" type="text" value="'+escapeHtml(p.short)+'" placeholder="Коротко" title="Короткое имя для вкладки и чипса" oninput="updateProductDraft('+i+', \'short\', this.value)">'
       + '<label class="prod-flag" title="Кто оплатил, тот выпускник потока"><input type="checkbox"'+(p.intensive ? ' checked' : '')+' onchange="updateProductDraft('+i+', \'intensive\', this.checked)"> интенсив</label>'
+      + '<label class="prod-flag" title="Показывать плиткой в виде «Продукты»"><input type="checkbox"'+(p.tile ? ' checked' : '')+' onchange="updateProductDraft('+i+', \'tile\', this.checked)"> плитка</label>'
       + '<span class="stage-count" title="Сделок с этим продуктом">'+n+'</span>'
       + '<button class="alum-status-del" onclick="removeProductDraft('+i+')" title="Убрать продукт">✕</button>'
       + '</div>';
@@ -5178,7 +5218,7 @@ function updateProductDraft(i, key, val) {
 function addProductDraft() {
   if (!_productsDraft) return;
   const palette = ['#0ea5e9','#f97316','#a855f7','#10b981','#3b82f6','#ef4444','#eab308','#8b5cf6','#ec4899','#14b8a6'];
-  _productsDraft.push({ id: genProductId(), name: 'Новый продукт', short: '', color: palette[_productsDraft.length % palette.length], intensive: false });
+  _productsDraft.push({ id: genProductId(), name: 'Новый продукт', short: '', color: palette[_productsDraft.length % palette.length], intensive: false, tile: false });
   renderProductsList();
   setTimeout(() => {
     const rows = document.querySelectorAll('#productsList .alum-status-row');
